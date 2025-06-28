@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "core", 
+    "empresa",
+    "sistema",
 ]
 
 MIDDLEWARE = [
@@ -57,7 +59,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = "config.urls"
 
 #integra com o sistema de auth padrao do Django
-AUTH_USER_MODEL = 'core.Usuario' 
+AUTH_USER_MODEL = 'core.UsuarioBase' 
 AUTHENTICATION_BACKENDS = [
     'core.backends.EmailBackend',  #backend de autenticacao personalizado
     'django.contrib.auth.backends.ModelBackend',  #backend de autenticacao padrao
