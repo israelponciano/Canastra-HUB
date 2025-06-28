@@ -1,0 +1,136 @@
+{% extends 'master.html' %}
+{% load static %}
+{% block conteudo %}
+    <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    form {
+      max-width: 800px;
+      margin: auto;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="tel"] {
+      width: 100%;
+      padding: 5px;
+      margin-top: 3px;
+    }
+    .row {
+      display: flex;
+      gap: 10px;
+    }
+    .row > div {
+      flex: 1;
+    }
+    .radio-group {
+      margin-top: 10px;
+    }
+    .submit-btn {
+      margin-top: 20px;
+      text-align: right;
+    }
+    .submit-btn button {
+      background-color: limegreen;
+      color: white;
+      font-size: 18px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+    }
+  </style>
+
+  <form>
+    <label>HUB</label>
+    <input type="text" name="hub" placeholder="(os hubs que ele pode ver)">
+
+    <div class="radio-group">
+      <label>(o que a empresa dele é):</label>
+      <input type="radio" name="tipo" value="empresa"> Empresa
+      <input type="radio" name="tipo" value="startap"> Startap
+      <input type="radio" name="tipo" value="pre_incubada"> Pré-incubada
+      <input type="radio" name="tipo" value="pos_incubada"> Pós-incubada
+      <input type="radio" name="tipo" value="incubada"> Incubada
+    </div>
+
+    <label>Segmento</label>
+    <input type="text" name="segmento">
+
+    <label>Nome fantasia</label>
+    <input type="text" name="nome_fantasia">
+
+    <div class="row">
+      <div>
+        <label>Razão Social</label>
+        <input type="text" name="razao_social">
+      </div>
+      <div>
+        <label>CNPJ</label>
+        <input type="text" name="cnpj">
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label>E-mail</label>
+        <input type="email" name="email">
+      </div>
+      <div>
+        <label>Telefone</label>
+        <input type="tel" name="telefone">
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label>Senha</label>
+        <input type="password" name="senha">
+      </div>
+      <div>
+        <label>Confirmar Senha</label>
+        <input type="password" name="confirmar_senha">
+      </div>
+    </div>
+
+    <label>Endereço</label>
+
+    <div class="row">
+      <div>
+        <label>CEP</label>
+        <input type="text" name="cep">
+      </div>
+      <div>
+        <label>Rua</label>
+        <input type="text" name="rua">
+      </div>
+      <div>
+        <label>Número</label>
+        <input type="text" name="numero">
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label>Cidade</label>
+        <input type="text" name="cidade">
+      </div>
+      <div>
+        <label>Estado</label>
+        <input type="text" name="estado">
+      </div>
+      <div>
+        <label>Complemento</label>
+        <input type="text" name="complemento">
+      </div>
+    </div>
+
+    <div class="submit-btn">
+      <button type="submit">Cadastrar</button>
+    </div>
+  </form>
+{% endblock %}
