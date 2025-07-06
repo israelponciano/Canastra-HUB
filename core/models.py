@@ -65,6 +65,7 @@ class Estado(models.Model):
 
 class Cidade(models.Model):
     nome_cidade = models.CharField(max_length=100)
+    estado_cidade = models.ForeignKey(Estado, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.nome_cidade
