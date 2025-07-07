@@ -53,3 +53,20 @@ class Usuario(models.Model):
 
     def __str__(self):
         return f"Usuário: {self.user.nome}"
+    
+    
+class Estado(models.Model):
+    nome_estado = models.CharField(max_length=100)
+    sigla_estado = models.CharField(max_length=2)
+
+    def __str__(self):
+        return self.sigla_estado
+
+
+class Cidade(models.Model):
+    nome_cidade = models.CharField(max_length=100)
+    estado_cidade = models.ForeignKey(Estado, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.nome_cidade
+
