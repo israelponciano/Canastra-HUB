@@ -26,6 +26,22 @@ class FrmUsuario(forms.ModelForm):
         widgets = {
             'datNascimento': forms.DateInput(attrs={'type': 'date'})
         }
+        labels = {
+            'txtNomeCompleto': 'Nome completo',
+            'txtNomeSocial': 'Nome social',
+            'datNascimento': 'Data de nascimento',
+            'txtGenero': 'Gênero',
+            'txtEstadoCivil': 'Estado civil',
+            'txtNacionalidade': 'Nacionalidade',
+            'txtTelefonePrincipal': 'Telefone principal',
+            'txtTelefoneSecundario': 'Telefone secundário',
+            'txtCEP': 'CEP',
+            'txtRua': 'Rua',
+            'txtNumero': 'Número',
+            'txtComplemento': 'Complemento',
+            'txtCidade': 'Cidade',
+            'txtEstado': 'Estado',
+        }
 
 
 # ------------------ FORMULÁRIO DE CURRÍCULO ------------------
@@ -42,4 +58,13 @@ class FrmCurriculo(forms.ModelForm):
         widgets = {
             'txtCurriculoPdf': forms.ClearableFileInput(),
             'txtCartaApresentacao': forms.ClearableFileInput(),
+        }
+        labels = {
+            'txtCargoPretendido': 'Cargo pretendido',
+            'txtAreaInteresse': 'Área de interesse',
+            'decPretensaoSalarial': 'Pretensão salarial',
+            'txtDisponibilidade': 'Disponibilidade de horário',
+            'txtCurriculoPdf': 'Arquivo do currículo (PDF)',
+            'txtCartaApresentacao': 'Carta de apresentação (opcional)',
+            'bolDisponibilidadeRemoto': 'Disponível para trabalho remoto',
         }
