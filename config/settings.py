@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "core", 
     "empresa",
     "sistema",
+    "usuario",
 ]
 
 MIDDLEWARE = [
@@ -96,7 +97,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'db_canastra',
         'USER': 'postgres',
-        'PASSWORD': 'root',
+        'PASSWORD': 'postgres',
         'HOST': 'localhost', 
         'PORT': '5432',
     }
