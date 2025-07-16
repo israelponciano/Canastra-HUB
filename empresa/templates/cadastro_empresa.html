@@ -45,7 +45,8 @@
     }
   </style>
 
-  <form>
+  <form action="{% url 'empresa:criar_empresa' %}" method="POST">
+    {% csrf_token %}
     <label>HUB</label>
     <input type="text" name="hub" placeholder="(os hubs que ele pode ver)">
 
