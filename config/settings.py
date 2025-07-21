@@ -63,7 +63,7 @@ ROOT_URLCONF = "config.urls"
 AUTH_USER_MODEL = 'core.UsuarioBase' 
 AUTHENTICATION_BACKENDS = [
     'core.backends.EmailBackend',  #backend de autenticacao personalizado
-    'django.contrib.auth.backends.ModelBackend',  #backend de autenticacao padrao
+    #'django.contrib.auth.backends.ModelBackend',  #backend de autenticacao padrao
 ]
 
 TEMPLATES = [
@@ -83,9 +83,9 @@ TEMPLATES = [
 ]
 
 #URL de redirecionamento apos login
-LOGIN_REDIRECT_URL = 'core:main'
-LOGOUT_REDIRECT_URL = 'autenticacao:login'
-LOGIN_URL = 'autenticacao:login'
+LOGIN_REDIRECT_URL = 'core:home'
+LOGOUT_REDIRECT_URL = 'core:login'
+LOGIN_URL = 'core:login'
 
 WSGI_APPLICATION = "config.wsgi.application"
 

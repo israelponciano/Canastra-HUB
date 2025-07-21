@@ -1,0 +1,43 @@
+.form-group {
+    min-height: 70px;
+    transition: opacity 0.3s ease;
+}
+
+.hidden-group {
+    opacity: 0;
+    visibility: hidden;
+    height: 0;
+}
+
+.error-message {
+    min-height: 30px;
+    color: red;
+    visibility: visible;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    font-size: smaller;
+}
+
+.error-message.visible {
+    opacity: 1;
+}
+
+.space {
+    min-height: 30px;
+    color: red;
+    visibility: visible;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    font-size: smaller;
+}
+
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 5px 0;
+    font-size: 0.75em; /* Ajuste o valor conforme necessário */
+    flex-shrink: 0; /* Garante que o footer não encolha */
+    width: 100%; /* Garante que o footer ocupe toda a largura */
+    margin: 0; /* Remove as margens que podem estar causando os espaços em branco */
+}

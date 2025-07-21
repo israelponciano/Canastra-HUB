@@ -1,0 +1,178 @@
+/* body {
+    background-color: rgba(17, 17, 17, 0.736); /* Isso vai mudar o fundo da página para azul claro
+    color: aliceblue;
+} */
+
+.logo{
+    width: 158px; 
+    height: 35px; 
+    color: rgb(69, 68, 68);
+    background-color: rgb(195, 209, 236);
+    border-radius: 5px;
+    text-align: center;
+    padding-top: 5px;   
+}
+.formlogin{
+    width: 100vh;
+}
+.gestorii-input{
+   border-radius: 0; 
+}
+
+.fade-in {
+    opacity: 0;
+    transform: translateY(0px);
+    transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+}
+.fade-in_sair {
+    opacity: 0;
+    transform: translateX(20px);
+    transition: opacity 2s ease-in-out, transform 2s ease-in-out;
+}
+
+.fade-in.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+.fade-in.show_sair {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.cartao-vermelho{
+    background-color: rgb(255, 80, 80);
+    width: 100px;
+    height: 150px;
+    border-radius: 6px;
+}
+.cartao-verde{
+    background-color: rgb(80, 255, 133);
+    width: 100px;
+    height: 150px;
+    border-radius: 6px;
+}
+.cartao-azul{
+    background-color: rgb(80, 165, 255);
+    width: 100px;
+    height: 150px;
+    border-radius: 6px;
+}
+.legenda-cartao-vermelho{
+    background-color: rgb(255, 80, 80);
+    width: 25px;
+    height: 25px;
+    border-radius: 6px;
+}
+.legenda-cartao-verde{
+    background-color: rgb(80, 255, 133);
+    width: 25px;
+    height: 25px;
+    border-radius: 6px;
+}
+.legenda-cartao-azul{
+    background-color: rgb(80, 165, 255);
+    width: 25px;
+    height: 25px;
+    border-radius: 6px;
+}
+
+.azul{
+   background-color: rgb(80, 165, 255);
+}
+
+/* Estilizando o input do flatpickr */
+#datepicker {
+   padding: 10px 15px; /* Adiciona espaçamento interno */
+   border-radius: 8px; /* Bordas arredondadas */
+   border: 2px solid #007bff; /* Cor da borda */
+   font-size: 16px; /* Tamanho da fonte */
+   background-color: #f8f9fa; /* Cor de fundo do input */
+   transition: all 0.3s ease; /* Efeito de transição suave */
+}
+
+/* Estilizando o input quando o campo for focado */
+#datepicker:focus {
+   border-color: #0056b3; /* Cor da borda ao focar */
+   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Sombra suave ao focar */
+   background-color: #ffffff; /* Cor de fundo ao focar */
+}
+
+/* Estilizando o calendário do flatpickr */
+.flatpickr-calendar {
+   border-radius: 8px; /* Bordas arredondadas no calendário */
+   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Sombra do calendário */
+   background-color: #ffffff; /* Cor de fundo do calendário */
+}
+
+/* Estilizando os dias no calendário */
+.flatpickr-day {
+   padding: 10px;
+   color: #333;
+   font-size: 14px;
+   cursor: pointer;
+}
+
+/* Mudando a cor de fundo do dia ao passar o mouse */
+.flatpickr-day:hover {
+   background-color: #007bff;
+   color: #fff;
+}
+
+/* Estilizando o dia selecionado */
+.flatpickr-day.selected {
+   background-color: #007bff;
+   color: #fff;
+}
+
+/* ===================================================== */
+
+/* Estilizando o contêiner do switch */
+.switch {
+   position: relative;
+   display: inline-block;
+   width: 60px;
+   height: 34px;
+}
+
+/* Esconde o checkbox original */
+.switch input {
+   opacity: 0;
+   width: 0;
+   height: 0;
+}
+
+/* Estilizando o "slider" */
+.slider {
+   position: absolute;
+   cursor: pointer;
+   top: 0;
+   left: 0;
+   right: 0;
+   bottom: 0;
+   background-color: #ccc;
+   transition: 0.4s;
+   border-radius: 34px;
+}
+
+/* A parte interna do slider (quando o botão está ativo) */
+.slider:before {
+   content: "";
+   position: absolute;
+   height: 26px;
+   width: 26px;
+   border-radius: 50%;
+   left: 4px;
+   bottom: 4px;
+   background-color: white;
+   transition: 0.4s;
+}
+
+/* Quando o input (checkbox) estiver marcado */
+input:checked + .slider {
+   background-color: #4CAF50; /* Cor quando ativado (verde) */
+}
+
+/* Desloca o "slider" quando o checkbox estiver marcado */
+input:checked + .slider:before {
+   transform: translateX(26px);
+}
