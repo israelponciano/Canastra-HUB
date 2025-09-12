@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from core.models import Usuario, UsuarioBase, Cidade, Estado
+from core.models import Usuario, UsuarioBase, Cidade, Estado, Hub
 from empresa.models import Empresa, Segmento, EmpresaSegmento
 #from usuario.models import Usuario
 
@@ -39,6 +39,7 @@ class Command(BaseCommand):
       estado_id = 11
       )
       EmpresaSegmento.objects.create(empresa_id=empresa, segmento_id=segcafe)
+      EmpresaSegmento.objects.create(empresa_id=empresa, segmento_id=segtecnologia)
       
       user3 = UsuarioBase.objects.create_superuser(
          email='admin@teste',
@@ -47,7 +48,18 @@ class Command(BaseCommand):
          tipo='admin'
       )
 
+      hub1 = Hub.objects.create(
+      nome_hub = 'Café',
+      descricao = 'Cafeculura é melhor com o pessoal da canastra'
+      )
+      hub2 = Hub.objects.create(
+      nome_hub = 'Mel',
+      descricao = 'Mel é melhor com o pessoal da canastra'
+      )
+      
       print("User-1", user.email, usuario.curso)
       print("User-2", user2.email, empresa.segmentos)
       print("User-3", user3.email, user3.is_admin)
+      print("hub1", hub1.nome_hub)
+      print("hub2", hub2.nome_hub)
    

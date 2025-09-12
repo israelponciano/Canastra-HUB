@@ -48,10 +48,10 @@
   <form action="{% url 'empresa:criar_empresa' %}" method="POST">
     {% csrf_token %}
     <label>HUB</label>
-    <input type="text" name="hub" placeholder="(os hubs que ele pode ver)">
+    <input type="text" name="hub" placeholder="">
 
     <div class="radio-group">
-      <label>(o que a empresa dele é):</label>
+      <label>Tipo da empresa:</label>
       <input type="radio" name="tipo" value="empresa"> Empresa
       <input type="radio" name="tipo" value="startap"> Startap
       <input type="radio" name="tipo" value="pre_incubada"> Pré-incubada

@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, User
 from django.db.models.deletion import ProtectedError
-from core.models import UsuarioBase, Estado, Cidade
+from core.models import UsuarioBase, Estado, Cidade, Hub
 # Create your models here.
 class Segmento(models.Model):
     nome_segmento = models.CharField(max_length=100)
@@ -24,6 +24,7 @@ class Empresa(models.Model):
     estado = models.ForeignKey(Estado, on_delete=models.PROTECT)
 
     segmentos = models.ManyToManyField(Segmento, through='EmpresaSegmento')
+    hubs = models.ManyToManyField(Hub, through='EmpresaHub')
     
     def __str__(self):
         return f"Empresa: {self.user.nome}, {self.nomefantasia}, {self.tipo_empresa}"
@@ -35,3 +36,10 @@ class EmpresaSegmento(models.Model):
 
     def __str__(self):
         return f"{self.empresa.user.nome} - {self.segmento.nome_segmento}"
+    
+class EmpresaHub(models.Model):
+    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
+    hub = models.ForeignKey(Hub, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.empresa.user.nome} - {self.hub.nome_hub}"

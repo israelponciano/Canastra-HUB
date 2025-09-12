@@ -4,6 +4,7 @@ from django.db import models
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db.models.deletion import ProtectedError
+from django.core.validators import FileExtensionValidator
 
 class UsuarioManager(BaseUserManager):
     def create_user(self, email, nome, tipo, password=None):
@@ -28,6 +29,11 @@ class UsuarioBase(AbstractBaseUser):
 
     tipo = models.CharField(max_length=10, null=False)
 
+    foto = models.ImageField(upload_to="fotos_perfil/",
+                                    validators=[FileExtensionValidator(allowed_extensions=["jpg", "png", "jpeg"])],
+                                    null=True,
+                                    blank=True,
+                                    default=None)
     objects = UsuarioManager()
 
     USERNAME_FIELD = 'email'
@@ -46,7 +52,7 @@ class UsuarioBase(AbstractBaseUser):
     def is_staff(self):
         return self.is_admin
     
-    
+#USUARIO DO SISTEMA, INCOMPLETO    
 class Usuario(models.Model):
     user = models.OneToOneField(UsuarioBase, on_delete=models.CASCADE, primary_key=True)
     curso = models.CharField(max_length=100)
@@ -70,3 +76,15 @@ class Cidade(models.Model):
     def __str__(self):
         return self.nome_cidade
 
+class Hub(models.Model):
+    nome_hub = models.CharField(max_length=100)
+    descricao = models.CharField(max_length=250)
+    foto = models.ImageField(upload_to="fotos_hub/",
+                                    validators=[FileExtensionValidator(allowed_extensions=["jpg", "png", "jpeg"])],
+                                    null=True,
+                                    blank=True,
+                                    default=None)
+
+    def __str__(self):
+        return f"Usuário: {self.user.nome}"
+    
