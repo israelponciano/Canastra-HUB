@@ -64,9 +64,13 @@ class Usuario(models.Model):
 class Estado(models.Model):
     nome_estado = models.CharField(max_length=100)
     sigla_estado = models.CharField(max_length=2)
-
+    
     def __str__(self):
-        return self.sigla_estado
+        return f"{self.nome_estado} ({self.sigla_estado})"
+    
+    class Meta:
+        verbose_name = "Estado"
+        verbose_name_plural = "Estados"
 
 
 class Cidade(models.Model):
@@ -74,7 +78,11 @@ class Cidade(models.Model):
     estado_cidade = models.ForeignKey(Estado, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.nome_cidade
+        return f"{self.nome_cidade} - {self.estado_cidade.sigla_estado}"
+    class Meta:
+        verbose_name = "Cidade"
+        verbose_name_plural = "Cidades"
+
 
 class Hub(models.Model):
     nome_hub = models.CharField(max_length=100)
