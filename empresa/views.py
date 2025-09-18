@@ -112,4 +112,4 @@ def get_cidades(request):
         return JsonResponse({
             'cidades': [], 
             'error': 'Erro interno do servidor'
-    })
+        })  

@@ -145,11 +145,17 @@
       <button type="submit">Cadastrar</button>
     </div>
   </form>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
-  $(document).ready(function() {
+$(document).ready(function() {
+    console.log("Script de cidades carregado!");
+    
     $("#estado").on("change", function() {
         const estado_id = $(this).val();
         const cidadeSelect = $("#cidade");
+        
+        console.log("Estado selecionado ID:", estado_id);
         
         // Se nenhum estado selecionado, resetar cidades
         if (!estado_id) {
@@ -162,14 +168,13 @@
         
         // Requisição AJAX
         $.ajax({
-            url: '{% url "empresa:get_cidades" %}',
+            url: '/empresa/get_cidades/',
             method: 'GET',
-            data: {
-                'estado_id': estado_id
-            },
+            data: { 'estado_id': estado_id },
             success: function(response) {
-                console.log("Cidades recebidas:", response);
+                console.log("Cidades recebidas:", response.total, "cidades");
                 
+                // Limpar select
                 cidadeSelect.empty();
                 
                 // Opção padrão
@@ -177,13 +182,14 @@
                 
                 // Adicionar cidades
                 if (response.cidades && response.cidades.length > 0) {
-                    $.each(response.cidades, function(index, cidade) {
-                        cidadeSelect.append(`
-                            <option value="${cidade.id}" class="display-5 text-dark" style="font-size: 12pt;">
-                                ${cidade.nome}
-                            </option>
-                        `);
+                    response.cidades.forEach(function(cidade) {
+                        cidadeSelect.append(
+                            '<option value="' + cidade.id + '" class="display-5 text-dark" style="font-size: 12pt;">' + 
+                            cidade.nome + 
+                            '</option>'
+                        );
                     });
+                    console.log("Cidades adicionadas ao select com sucesso!");
                 } else {
                     cidadeSelect.append('<option value="" class="display-5 text-dark" style="font-size: 12pt;">Nenhuma cidade encontrada</option>');
                 }
@@ -194,6 +200,6 @@
             }
         });
     });
-  });
+});
 </script>
 {% endblock %}
