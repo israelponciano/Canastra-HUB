@@ -45,7 +45,7 @@
     }
   </style>
 
-  <form action="{% url 'empresa:criar_empresa' %}" method="POST">
+  <form action="{% url 'empresa:criar_empresa' %}" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="form-group">
       <label for="hub">HUB</label>
@@ -61,48 +61,52 @@
         </select>
     </div>
 
+    <div>
+      <label for="fileFoto">Imagem:</label>
+      <input type="file" id="fileFoto" name="fileFoto">
+    </div>
 
     <div class="radio-group">
       <label>Tipo da empresa:</label>
-      <input type="radio" name="tipo" value="empresa"> Empresa
-      <input type="radio" name="tipo" value="startap"> Startap
-      <input type="radio" name="tipo" value="pre_incubada"> Pré-incubada
-      <input type="radio" name="tipo" value="pos_incubada"> Pós-incubada
-      <input type="radio" name="tipo" value="incubada"> Incubada
+      <input type="radio" name="txtTipo" value="empresa"> Empresa
+      <input type="radio" name="txtTipo" value="startap"> Startap
+      <input type="radio" name="txtTipo" value="pre_incubada"> Pré-incubada
+      <input type="radio" name="txtTipo" value="pos_incubada"> Pós-incubada
+      <input type="radio" name="txtTipo" value="incubada"> Incubada
     </div>
 
     <label>Segmento</label>
-    <input type="text" name="segmento">
+    <input type="text" name="txtSegmento">
 
     <label>Nome fantasia</label>
-    <input type="text" name="nome_fantasia">
+    <input type="text" name="txtNome">
 
     <div class="row">
       <div>
         <label>Razão Social</label>
-        <input type="text" name="razao_social">
+        <input type="text" name="txtRazaoSocial">
       </div>
       <div>
         <label>CNPJ</label>
-        <input type="text" name="cnpj">
+        <input type="text" name="txtCnpj">
       </div>
     </div>
 
     <div class="row">
       <div>
         <label>E-mail</label>
-        <input type="email" name="email">
+        <input type="email" name="txtEmail">
       </div>
       <div>
         <label>Telefone</label>
-        <input type="tel" name="telefone">
+        <input type="tel" name="txtTelefone">
       </div>
     </div>
 
     <div class="row">
       <div>
         <label>Senha</label>
-        <input type="password" name="senha">
+        <input type="password" name="txtSenha">
       </div>
       <div>
         <label>Confirmar Senha</label>
@@ -115,15 +119,15 @@
     <div class="row">
       <div>
         <label>CEP</label>
-        <input type="text" name="cep">
+        <input type="text" name="txtCep">
       </div>
       <div>
         <label>Rua</label>
-        <input type="text" name="rua">
+        <input type="text" name="txtRua">
       </div>
       <div>
         <label>Número</label>
-        <input type="text" name="numero">
+        <input type="text" name="txtNumero">
       </div>
     </div>
       <div>
@@ -147,7 +151,7 @@
       
       <div>
         <label>Complemento</label>
-        <input type="text" name="complemento">
+        <input type="text" name="txtComplemento">
       </div>
     </div>
 

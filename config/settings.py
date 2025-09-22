@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "core", 
+    "core",
     "empresa",
     "sistema",
     "usuario",
@@ -59,17 +59,18 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "config.urls"
 
-#integra com o sistema de auth padrao do Django
-AUTH_USER_MODEL = 'core.UsuarioBase' 
+# integra com o sistema de auth padrao do Django
+AUTH_USER_MODEL = 'core.UsuarioBase'
 AUTHENTICATION_BACKENDS = [
-    'core.backends.EmailBackend',  #backend de autenticacao personalizado
-    #'django.contrib.auth.backends.ModelBackend',  #backend de autenticacao padrao
+    'core.backends.EmailBackend',  # backend de autenticacao personalizado
+    # 'django.contrib.auth.backends.ModelBackend',  #backend de autenticacao padrao
 ]
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, "resources")], #define o caminho da pasta que tera os recursos usados pelos templates
+        # define o caminho da pasta que tera os recursos usados pelos templates
+        "DIRS": [os.path.join(BASE_DIR, "resources")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -82,7 +83,7 @@ TEMPLATES = [
     },
 ]
 
-#URL de redirecionamento apos login
+# URL de redirecionamento apos login
 LOGIN_REDIRECT_URL = 'core:home'
 LOGOUT_REDIRECT_URL = 'core:login'
 LOGIN_URL = 'core:login'
@@ -98,7 +99,7 @@ DATABASES = {
         'NAME': 'db_canastra',
         'USER': 'postgres',
         'PASSWORD': 'root',
-        'HOST': 'localhost', 
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }
@@ -163,3 +164,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 NUMBER_GRID_PAGES = 20
 NUMBER_GRID_MODAL = 20
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
