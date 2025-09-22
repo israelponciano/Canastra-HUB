@@ -27,7 +27,7 @@ class Command(BaseCommand):
       )
       empresa = Empresa.objects.create(user=user2,
       nomefantasia = 'Roberta Cafés',
-      tipo_empresa = 'Cafeculura',
+      tipo_empresa = 'Cafecultura',
       razao_social = 'naoseioqeisso',
       cnpj = '236343',
       telefone = '44324334243',

@@ -47,8 +47,20 @@
 
   <form action="{% url 'empresa:criar_empresa' %}" method="POST">
     {% csrf_token %}
-    <label>HUB</label>
-    <input type="text" name="hub" placeholder="">
+    <div class="form-group">
+      <label for="hub">HUB</label>
+      <select id="hub" name="hub" class="form-control">
+          <option value="">Selecione o HUB (opcional)</option>
+          {% for hub in hubs %}
+            <option value="{{ hub.id }}" 
+              title="{{ hub.descricao|default:'' }}"
+              {% if dados_formulario.hub == hub.id|stringformat:"s" %}selected{% endif %}>
+              {{ hub.nome_hub }}
+            </option>
+          {% endfor %}
+        </select>
+    </div>
+
 
     <div class="radio-group">
       <label>Tipo da empresa:</label>
