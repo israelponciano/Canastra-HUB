@@ -44,14 +44,14 @@
       <div class="nav-content">
         <!-- Logo -->
         <div class="logo">
-          <div class="logo-icon">🌱</div>
-          <span class="logo-text">Hub Canastra</span>
+          <div >
+            <a href="/"><img src="{%static 'img/logoCanastra.jpeg' %}" alt="Logo Canastra" height="50px"></a>
+          </div>
         </div>
 
         <!-- Desktop Navigation -->
         <div class="nav-links">
           <a href="#home" class="nav-link">Home</a>
-          <a href="#noticias" class="nav-link">Notícias</a>
           <a href="#hub" class="nav-link">Hub</a>
           <a href="#parceiros" class="nav-link">Parceiros</a>
           <a href="#contato" class="nav-link">Contato</a>
@@ -60,7 +60,7 @@
 
         <!-- CTA Button & Mobile Menu -->
         <div class="nav-actions">
-          <a href="{% url 'empresa:cadastro_empresa' %}"><button  class="btn btn-primary desktop-only">Cadastre-se</button></a>
+          <a href="{% url 'core:login' %}"><button  class="btn btn-primary desktop-only">Login</button></a>
           <button id="mobile-menu-btn" class="mobile-menu-btn mobile-only">☰</button>
         </div>
       </div>
@@ -69,15 +69,15 @@
       <div id="mobile-menu" class="mobile-menu">
         <div class="mobile-nav-links">
           <a href="#home" class="nav-link">Home</a>
-          <a href="#noticias" class="nav-link">Notícias</a>
           <a href="#hub" class="nav-link">Hub</a>
           <a href="#parceiros" class="nav-link">Parceiros</a>
           <a href="#contato" class="nav-link">Contato</a>
-          <button  href="{% url 'empresa:cadastro_empresa' %}" class="btn btn-primary">Cadastre-se</button>
+          <button  href="{% url 'core:login' %}" class="btn btn-primary">Login</button>
           {% if request.session.email_atual %}
           <a class="nav-link">Usuário logado: {{ request.session.email_atual }}</p>
+          <a href="{% url 'core:logout' %} class="nav-link"">Sair</a>
           {% endif %}
-          <a href="{% url 'core:logout' %} class="nav-link"">Logout</a>
+          
         </div>
       </div>
     </div>
@@ -95,8 +95,7 @@
         <!-- Brand & Description -->
         <div class="footer-brand">
           <div class="footer-logo">
-            <div class="logo-icon">🌱</div>
-            <span class="logo-text">Hub Canastra</span>
+            <a href="/"><img src="{%static 'img/logoCanastra.jpeg' %}" alt="Logo Canastra" class="logo" height="50px"></a>
           </div>
           <p class="footer-description">
             Conectando produtores, especialistas e tecnologia para impulsionar
