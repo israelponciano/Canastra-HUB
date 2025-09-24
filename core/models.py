@@ -95,4 +95,4 @@ class Hub(models.Model):
                              default=None)
 
     def __str__(self):
-        return f"Usuário: {self.user.nome}"
+        return f"{self.nome_hub}"

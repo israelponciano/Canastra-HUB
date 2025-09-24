@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from core.models import *
 import json
-from empresa.models import Empresa, Segmento, EmpresaSegmento
+from empresa.models import Empresa
 
 # from usuario.models import Usuario
 
@@ -42,9 +42,6 @@ class Command(BaseCommand):
             descricao='Mel é melhor com o pessoal da canastra'
         )
 
-        segcafe = Segmento.objects.create(nome_segmento="Cafe")
-        segtecnologia = Segmento.objects.create(nome_segmento="Tecnologia")
-
         user = UsuarioBase.objects.create_user(
             email='usuario@teste',
             password='123',
@@ -73,12 +70,9 @@ class Command(BaseCommand):
                                          numero='443442',
                                          complemento='embaixo da casa 11',
                                          cidade_id=cidade.id,
-                                         estado_id=cidade.estado_cidade.id
+                                         estado_id=cidade.estado_cidade.id,
+                                         segmento="cafe"
                                          )
-        EmpresaSegmento.objects.create(empresa=empresa, segmento=segcafe)
-        EmpresaSegmento.objects.create(
-            empresa=empresa, segmento=segtecnologia)
-
         user3 = UsuarioBase.objects.create_superuser(
             email='admin@teste',
             password='123',
@@ -87,7 +81,7 @@ class Command(BaseCommand):
         )
 
         print("User-1", user.email, usuario.curso)
-        print("User-2", user2.email, empresa.segmentos)
+        print("User-2", user2.email, empresa.segmento)
         print("User-3", user3.email, user3.is_admin)
         print("hub1", hub1.nome_hub)
         print("hub2", hub2.nome_hub)

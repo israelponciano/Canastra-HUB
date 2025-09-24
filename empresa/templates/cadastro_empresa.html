@@ -47,19 +47,26 @@
 
   <form action="{% url 'empresa:criar_empresa' %}" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
-    <div class="form-group">
-      <label for="hub">HUB</label>
-      <select id="hub" name="hub" class="form-control">
-          <option value="">Selecione o HUB (opcional)</option>
-          {% for hub in hubs %}
-            <option value="{{ hub.id }}" 
-              title="{{ hub.descricao|default:'' }}"
-              {% if dados_formulario.hub == hub.id|stringformat:"s" %}selected{% endif %}>
-              {{ hub.nome_hub }}
-            </option>
-          {% endfor %}
-        </select>
+    <label for="hub">HUB</label>
+    <div id="container-hubs">
+    <div class="form-group hub-group">
+        <div class="input-group">
+            <select name="hubs[]" class="form-control">
+                <option value="">Selecione o HUB (opcional)</option>
+                {% for hub in hubs %}
+                    <option value="{{ hub.id }}"
+                            title="{{ hub.descricao|default:'' }}"
+                            {% if dados_formulario.hub == hub.id|stringformat:"s" %}selected{% endif %}>
+                        {{ hub.nome_hub }}
+                    </option>
+                {% endfor %}
+            </select>
+            </div>
     </div>
+</div>
+
+<button type="button" id="adicionar-hub" class="btn btn-primary">+</button>
+
 
     <div>
       <label for="fileFoto">Imagem:</label>
@@ -214,6 +221,110 @@ $(document).ready(function() {
             }
         });
     });
+});
+
+//script para botão de adicionar mais hubs
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('container-hubs');
+    const addButton = document.getElementById('adicionar-hub');
+
+    // Pega o número total de hubs disponíveis. 
+    // Certifique-se de que o seletor está correto para seu HTML.
+    const totalHubsDisponiveis = document.querySelectorAll('.hub-group select option:not([value=""])').length;
+
+    // Função para criar o botão de remover
+    function createRemoveButton() {
+        const removeButton = document.createElement('button');
+        removeButton.type = 'button';
+        removeButton.className = 'btn btn-danger btn-sm remover-hub';
+        removeButton.innerHTML = '-';
+        return removeButton;
+    }
+
+    // Função para atualizar as opções de todos os selects
+    function updateOptions() {
+        // Encontra todos os valores selecionados e os armazena em um Set para performance
+        const selectedValues = new Set();
+        container.querySelectorAll('select').forEach(select => {
+            if (select.value) {
+                selectedValues.add(select.value);
+            }
+        });
+
+        // Itera sobre todos os selects para habilitar/desabilitar opções
+        container.querySelectorAll('select').forEach(select => {
+            const currentSelectValue = select.value;
+            select.querySelectorAll('option').forEach(option => {
+                // Se a opção não estiver selecionada no select atual E
+                // se ela estiver na lista de valores já selecionados
+                if (option.value && option.value !== currentSelectValue && selectedValues.has(option.value)) {
+                    option.disabled = true;
+                } else {
+                    option.disabled = false;
+                }
+            });
+        });
+
+        // Após atualizar as opções, também verificamos se o botão de adicionar deve ser visível
+        const currentHubs = container.querySelectorAll('.hub-group').length;
+        if (currentHubs >= totalHubsDisponiveis) {
+            addButton.style.display = 'none';
+        } else {
+            addButton.style.display = 'inline-block';
+        }
+    }
+
+    // Evento para adicionar um novo hub
+    addButton.addEventListener('click', function() {
+        const model = container.querySelector('.hub-group');
+        const newGroup = model.cloneNode(true);
+        
+        // Limpa o valor selecionado no novo campo
+        newGroup.querySelector('select').value = "";
+        
+        // Adiciona o botão de remover no novo campo
+        const inputGroup = newGroup.querySelector('.input-group');
+        const removeButton = createRemoveButton();
+        
+        // O primeiro select não deve ter um botão de remover
+        if (container.querySelectorAll('.hub-group').length > 0) {
+            inputGroup.appendChild(removeButton);
+        }
+
+        container.appendChild(newGroup);
+        
+        // Atualiza a interface após adicionar um novo campo
+        updateOptions();
+    });
+
+    // Evento para remover um hub
+    container.addEventListener('click', function(event) {
+        if (event.target.classList.contains('remover-hub')) {
+            const groupToRemove = event.target.closest('.hub-group');
+            if (groupToRemove) {
+                container.removeChild(groupToRemove);
+                
+                // Atualiza a interface após remover
+                updateOptions();
+            }
+        }
+    });
+    
+    // Evento de mudança nos selects para gerenciar as opções desabilitadas
+    container.addEventListener('change', function(event) {
+        if (event.target.tagName === 'SELECT') {
+            updateOptions();
+        }
+    });
+
+    // Inicializa o estado dos botões e opções ao carregar a página
+    // Adiciona o botão de remover ao primeiro item caso já existam mais de 1
+    if (container.querySelectorAll('.hub-group').length > 1 && !container.querySelector('.hub-group .remover-hub')) {
+        const firstInputGroup = container.querySelector('.hub-group .input-group');
+        firstInputGroup.appendChild(createRemoveButton());
+    }
+
+    updateOptions();
 });
 </script>
 {% endblock %}

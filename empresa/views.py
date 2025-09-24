@@ -1,4 +1,6 @@
+from core.models import UsuarioBase, Estado, Cidade, Hub
 from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
 from empresa.models import *
@@ -31,35 +33,41 @@ def criar_empresa(request):
         nomefantasia = request.POST.get('txtNome')
         email = request.POST.get('txtEmail')
         senha = request.POST.get('txtSenha')
+        segmento = request.POST.get('txtSegmento')
         tipo_empresa = request.POST.get('txtTipo')
         telefone = request.POST.get('txtTelefone')
         rua = request.POST.get('txtRua')
         cep = request.POST.get('txtCep')
         numero = request.POST.get('txtNumero')
         complemento = request.POST.get('txtComplemento')
-        cidade = request.POST.get('cidade')
-        estado = request.POST.get('estado')
+        cidade_id = request.POST.get('cidade')
+        estado_id = request.POST.get('estado')
+
+        # CORREÇÃO: Pega a lista de hubs, não apenas um. O nome deve ser 'hubs'
+        hubs_selecionados_ids = request.POST.getlist('hubs[]')
+
+        print(f"hubs selecionados {hubs_selecionados_ids}")
+
+        foto_empresa = request.FILES.get('fileFoto')
         cnpj = request.POST.get('txtCnpj')
         razao_social = request.POST.get('txtRazaoSocial')
-        hub_selecionado = request.POST.get('hub')
-        foto_empresa = request.FILES.get('fileFoto')
 
         # Validar se estado e cidade existem
-        if not Estado.objects.filter(id=estado).exists():
+        if not Estado.objects.filter(id=estado_id).exists():
             messages.error(request, 'Estado inválido.')
             estados = Estado.objects.all().order_by('nome_estado')
             hubs = Hub.objects.all().order_by('nome_hub')
             return render(request, 'cadastro_empresa.html', {'estados': estados, 'hubs': hubs})
 
-        if not Cidade.objects.filter(id=cidade).exists():
+        if not Cidade.objects.filter(id=cidade_id).exists():
             messages.error(request, 'Cidade inválida.')
             estados = Estado.objects.all().order_by('nome_estado')
             hubs = Hub.objects.all().order_by('nome_hub')
             return render(request, 'cadastro_empresa.html', {'estados': estados, 'hubs': hubs})
 
         # Buscar os objetos Estado e Cidade no banco
-        estado = Estado.objects.get(id=estado)
-        cidade = Cidade.objects.get(id=cidade)
+        estado = Estado.objects.get(id=estado_id)
+        cidade = Cidade.objects.get(id=cidade_id)
 
         # Criar usuário
         user = UsuarioBase.objects.create_user(
@@ -85,13 +93,13 @@ def criar_empresa(request):
             numero=numero,
             complemento=complemento,
             cidade=cidade,
-            estado=estado
+            estado=estado,
+            segmento=segmento
         )
 
-        # Associar hub selecionado à empresa
-        if hub_selecionado and Hub.objects.filter(id=hub_selecionado).exists():
-            hub = Hub.objects.get(id=hub_selecionado)
-            EmpresaHub.objects.create(empresa=empresa, hub=hub)
+        # CORREÇÃO: Associa todos os hubs de uma só vez usando o método set()
+        if hubs_selecionados_ids:
+            empresa.hubs.set(hubs_selecionados_ids)
 
         messages.success(request, 'Empresa cadastrada com sucesso!')
         return redirect('core:login')
