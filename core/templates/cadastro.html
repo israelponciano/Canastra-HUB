@@ -1,0 +1,46 @@
+{% extends 'master.html' %}
+{% load static %}
+{% block conteudo %}
+  <style>
+    .rei {
+      display: grid;
+      place-items: center; /* centraliza em ambas direções */
+      height: 90vh;
+      background-color: #f8fdf9;
+      margin: 0;
+    }
+    .choice-card {
+      max-width: 500px;
+      width: 100%;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    .btn-green {
+      background-color: #22c55e;
+      color: #fff;
+      border: none;
+      padding: 1rem;
+      font-size: 1.1rem;
+      border-radius: 10px;
+      transition: background-color 0.3s ease;
+    }
+    .btn-green:hover {
+      background-color: #1a9e4b;
+      color: #fff;
+    }
+  </style>
+  <div class="rei">
+    <div class="choice-card">
+      <h2 class="mb-4 text-success">Como deseja se cadastrar?</h2>
+      <p class="text-muted mb-4">Escolha abaixo a opção que mais se encaixa em você:</p>
+
+      <div class="d-grid gap-3">
+        <a href="{% url 'empresa:cadastro_empresa' %}" class="btn btn-green">Sou uma empresa</a>
+        <a href="{% url 'core:cadastro_usuario' %}" class="btn btn-green">Sou uma pessoa</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}

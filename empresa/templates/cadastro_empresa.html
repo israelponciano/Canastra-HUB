@@ -1,173 +1,180 @@
 {% extends 'master.html' %}
 {% load static %}
 {% block conteudo %}
-    <style>
-    body {
-      font-family: Arial, sans-serif;
+  <style>
+    .form-container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
-    form {
-      max-width: 800px;
-      margin: auto;
+    .form-label{
+      color: #000000ff;
     }
-    label {
-      display: block;
-      margin-top: 10px;
-    }
-    input[type="text"],
-    input[type="email"],
-    input[type="password"],
-    input[type="tel"] {
-      width: 100%;
-      padding: 5px;
-      margin-top: 3px;
-    }
-    .row {
-      display: flex;
-      gap: 10px;
-    }
-    .row > div {
-      flex: 1;
-    }
-    .radio-group {
-      margin-top: 10px;
+    .form-container h2 {
+      margin-bottom: 1.5rem;
+      color: #22c55e;
+      font-weight: bold;
     }
     .submit-btn {
-      margin-top: 20px;
       text-align: right;
     }
     .submit-btn button {
-      background-color: limegreen;
-      color: white;
+      background-color: #22c55e;
+      color: #fff;
       font-size: 18px;
       padding: 10px 20px;
       border: none;
-      border-radius: 5px;
+      border-radius: 8px;
+    }
+    .submit-btn button:hover {
+      background-color: #1a9e4b;
     }
   </style>
 
-  <form action="{% url 'empresa:criar_empresa' %}" method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    <label for="hub">HUB</label>
-    <div id="container-hubs">
-    <div class="form-group hub-group">
-        <div class="input-group">
-            <select name="hubs[]" class="form-control">
-                <option value="">Selecione o HUB (opcional)</option>
-                {% for hub in hubs %}
-                    <option value="{{ hub.id }}"
-                            title="{{ hub.descricao|default:'' }}"
-                            {% if dados_formulario.hub == hub.id|stringformat:"s" %}selected{% endif %}>
-                        {{ hub.nome_hub }}
-                    </option>
-                {% endfor %}
+  <div class="form-container">
+    <h2 align="center">Cadastro de Empresa</h2>
+
+    <form action="{% url 'empresa:criar_empresa' %}" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <!-- HUB -->
+      <div class="mb-3">
+        <label class="form-label">HUB</label>
+        <div id="container-hubs">
+          <div class="hub-group">
+            <div class="input-group">
+            <select name="hubs[]" class="form-select">
+              <option value="">Selecione os HUBs de maior interesse</option>
+              {% for hub in hubs %}
+                <option value="{{ hub.id }}"
+                        title="{{ hub.descricao|default:'' }}"
+                        {% if dados_formulario.hub == hub.id|stringformat:"s" %}selected{% endif %}>
+                  {{ hub.nome_hub }}
+                </option>
+              {% endfor %}
             </select>
             </div>
-    </div>
-</div>
-
-<button type="button" id="adicionar-hub" class="btn btn-primary">+</button>
-
-
-    <div>
-      <label for="fileFoto">Imagem:</label>
-      <input type="file" id="fileFoto" name="fileFoto">
-    </div>
-
-    <div class="radio-group">
-      <label>Tipo da empresa:</label>
-      <input type="radio" name="txtTipo" value="empresa"> Empresa
-      <input type="radio" name="txtTipo" value="startap"> Startap
-      <input type="radio" name="txtTipo" value="pre_incubada"> Pré-incubada
-      <input type="radio" name="txtTipo" value="pos_incubada"> Pós-incubada
-      <input type="radio" name="txtTipo" value="incubada"> Incubada
-    </div>
-
-    <label>Segmento</label>
-    <input type="text" name="txtSegmento">
-
-    <label>Nome fantasia</label>
-    <input type="text" name="txtNome">
-
-    <div class="row">
-      <div>
-        <label>Razão Social</label>
-        <input type="text" name="txtRazaoSocial">
+          </div>
+        </div>
+        <button type="button" id="adicionar-hub" class="btn btn-outline-success btn-sm mt-2">+ Adicionar HUB</button>
       </div>
-      <div>
-        <label>CNPJ</label>
-        <input type="text" name="txtCnpj">
-      </div>
-    </div>
 
-    <div class="row">
-      <div>
-        <label>E-mail</label>
-        <input type="email" name="txtEmail">
+      <!-- Imagem -->
+      <div class="mb-3">
+        <label for="fileFoto" class="form-label">Imagem</label>
+        <input type="file" id="fileFoto" name="fileFoto" class="form-control">
       </div>
-      <div>
-        <label>Telefone</label>
-        <input type="tel" name="txtTelefone">
-      </div>
-    </div>
 
-    <div class="row">
-      <div>
-        <label>Senha</label>
-        <input type="password" name="txtSenha">
+      <!-- Tipo -->
+      <div class="mb-3">
+        <label class="form-label">Tipo da empresa</label>
+        <div class="d-flex flex-wrap gap-3">
+          <div><input type="radio" name="txtTipo" value="empresa"> Empresa</div>
+          <div><input type="radio" name="txtTipo" value="startap"> Startap</div>
+          <div><input type="radio" name="txtTipo" value="pre_incubada"> Pré-incubada</div>
+          <div><input type="radio" name="txtTipo" value="pos_incubada"> Pós-incubada</div>
+          <div><input type="radio" name="txtTipo" value="incubada"> Incubada</div>
+        </div>
       </div>
-      <div>
-        <label>Confirmar Senha</label>
-        <input type="password" name="confirmar_senha">
-      </div>
-    </div>
 
-    <label>Endereço</label>
+      <!-- Segmento + Nome fantasia -->
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label">Nome fantasia</label>
+          <input type="text" name="txtNome" class="form-control">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Segmento</label>
+          <input type="text" name="txtSegmento" class="form-control">
+        </div>
+      </div>
 
-    <div class="row">
-      <div>
-        <label>CEP</label>
-        <input type="text" name="txtCep">
+      <!-- Razão social + CNPJ -->
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label">Razão Social</label>
+          <input type="text" name="txtRazaoSocial" class="form-control">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">CNPJ</label>
+          <input type="text" name="txtCnpj" class="form-control">
+        </div>
       </div>
-      <div>
-        <label>Rua</label>
-        <input type="text" name="txtRua">
+
+      <!-- Email + Telefone -->
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label">E-mail</label>
+          <input type="email" name="txtEmail" class="form-control">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Telefone</label>
+          <input type="tel" name="txtTelefone" class="form-control">
+        </div>
       </div>
-      <div>
-        <label>Número</label>
-        <input type="text" name="txtNumero">
+
+      <!-- Senha + Confirmar -->
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label">Senha</label>
+          <input type="password" name="txtSenha" class="form-control">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Confirmar Senha</label>
+          <input type="password" name="confirmar_senha" class="form-control">
+        </div>
       </div>
-    </div>
-      <div>
-        <label>Estado</label>
-        <select id="estado" name="estado" class="form-control-sm form-control text-center bg-transparent shadow border-0 display-5 text-white" required>
-          <option value="" class="display-5 text-dark" style="font-size: 12pt;">Selecione o Estado</option>
-          {% for estado in estados %}
-            <option value="{{ estado.id }}" class="display-5 text-dark" style="font-size: 12pt;">{{ estado.nome_estado }} ({{ estado.sigla_estado }})</option>
-          {% endfor %}
+
+      <!-- Endereço -->
+      <h5 class="mt-4">Endereço</h5>
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <label class="form-label">CEP</label>
+          <input type="text" name="txtCep" class="form-control">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Rua</label>
+          <input type="text" name="txtRua" class="form-control">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Número</label>
+          <input type="text" name="txtNumero" class="form-control">
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label">Estado</label>
+          <select id="estado" name="estado" class="form-select" required>
+            <option value="">Selecione o Estado</option>
+            {% for estado in estados %}
+              <option value="{{ estado.id }}">{{ estado.nome_estado }} ({{ estado.sigla_estado }})</option>
+            {% endfor %}
           </select>
-          
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Cidade</label>
+          <select id="cidade" name="cidade" class="form-select" required>
+            <option value="">Primeiro selecione o Estado</option>
+          </select>
+        </div>
       </div>
 
-    <div class="row">
-      <div>
-        <div>
-          <label>Cidade</label>
-            <select id="cidade" name="cidade" class="form-control-sm form-control text-center bg-transparent shadow border-0 display-5 text-white" required>
-              <option value="" class="display-5 text-dark" style="font-size: 12pt;">Primeiro selecione o Estado</option>
-            </select>
-      
-      <div>
-        <label>Complemento</label>
-        <input type="text" name="txtComplemento">
+      <div class="mb-3">
+        <label class="form-label">Complemento</label>
+        <input type="text" name="txtComplemento" class="form-control">
       </div>
-    </div>
 
-    <div class="submit-btn">
-      <button type="submit">Cadastrar</button>
-    </div>
-  </form>
+      <!-- Botão -->
+      <div class="submit-btn">
+        <button type="submit">Cadastrar</button>
+      </div>
+    </form>
+  </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 <script>
 $(document).ready(function() {
     console.log("Script de cidades carregado!");

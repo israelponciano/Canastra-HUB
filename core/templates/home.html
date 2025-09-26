@@ -1,7 +1,6 @@
 {% extends 'master.html' %}
 {% load static %}
 {% block conteudo %}
-
   <main>
     <!-- Carousel Section -->
     <section id="home" class="carousel-section">
@@ -9,24 +8,19 @@
         <div class="carousel-slides">
           <!-- Slide 1 -->
           <div class="carousel-slide active">
-            <img
-              src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
-              alt="Tecnologia na Agricultura">
+            <img src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" alt="Tecnologia na Agricultura" />
             <div class="carousel-overlay"></div>
             <div class="carousel-content" style="margin-left: 4%;">
               <span class="carousel-category">Agro</span>
               <h2 class="carousel-title">Tecnologia na Agricultura</h2>
-              <p class="carousel-description">Descubra as últimas inovações que estão revolucionando o campo brasileiro.
-              </p>
+              <p class="carousel-description">Descubra as últimas inovações que estão revolucionando o campo brasileiro.</p>
               <button class="btn btn-secondary">Leia Mais</button>
             </div>
           </div>
 
           <!-- Slide 2 -->
           <div class="carousel-slide">
-            <img
-              src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
-              alt="Apicultura Sustentável">
+            <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" alt="Apicultura Sustentável" />
             <div class="carousel-overlay"></div>
             <div class="carousel-content" style="margin-left: 4%;">
               <span class="carousel-category">Apicultura</span>
@@ -38,9 +32,7 @@
 
           <!-- Slide 3 -->
           <div class="carousel-slide">
-            <img
-              src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
-              alt="Café de Qualidade">
+            <img src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" alt="Café de Qualidade" />
             <div class="carousel-overlay"></div>
             <div class="carousel-content" style="margin-left: 4%;">
               <span class="carousel-category">Café</span>
@@ -70,18 +62,9 @@
         <div class="hub-grid">
           <!-- Content -->
           <div class="hub-content">
-            <h2 class="hub-title">
-              Conheça o <span class="text-primary">Hub Canastra</span>
-            </h2>
-            <p class="hub-description">
-              Uma plataforma inovadora que conecta produtores, especialistas e tecnologia
-              para impulsionar a região. Descubra conteúdos exclusivos,
-              networking qualificado e oportunidades de crescimento em diversos setores.
-            </p>
-            <p class="hub-subtitle">
-              Junte-se à nossa comunidade e transforme sua experiência com
-              conhecimento especializado em agricultura, apicultura, cafeicultura e muito mais.
-            </p>
+            <h2 class="hub-title">Conheça o <span style="color:#22c55e">Hub Canastra</span></h2>
+            <p class="hub-description">Uma plataforma inovadora que conecta produtores, especialistas e tecnologia para impulsionar a região. Descubra conteúdos exclusivos, networking qualificado e oportunidades de crescimento em diversos setores.</p>
+            <p class="hub-subtitle">Junte-se à nossa comunidade e transforme sua experiência com conhecimento especializado em agricultura, apicultura, cafeicultura e muito mais.</p>
             <button class="btn btn-outline">
               Saiba Mais
               <span class="btn-arrow">→</span>
@@ -90,9 +73,7 @@
 
           <!-- Image -->
           <div class="hub-image">
-            <img
-              src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-              alt="Hub Canastra - Conectando o agronegócio">
+            <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Hub Canastra - Conectando o agronegócio" />
           </div>
         </div>
       </div>
@@ -104,26 +85,21 @@
       <div class="container">
         <div class="signup-content">
           <div class="signup-header">
-            <h2 class="signup-title">
-              Faça Parte da Revolução da <span class="text-accent">Canastra</span>
-            </h2>
-            <p class="signup-description">
-              Cadastre-se e receba conteúdos exclusivos, novidades e oportunidades
-              do Hub Canastra diretamente no seu e-mail.
-            </p>
+            <h2 class="signup-title">Faça Parte da Revolução da <span class="text-accent">Canastra</span></h2>
+            <p class="signup-description">Cadastre-se e receba conteúdos exclusivos, novidades e oportunidades do Hub Canastra diretamente no seu e-mail.</p>
           </div>
 
           {% comment %} <div class="signup-form-container">
             <form id="signup-form" class="signup-form">
               <div class="form-group">
                 <label for="name" class="form-label">Nome Completo</label>
-                <input type="text" id="name" class="form-input" placeholder="Seu nome completo" required>
+                <input type="text" id="name" class="form-input" placeholder="Seu nome completo" required />
                 <span class="form-error" id="name-error"></span>
               </div>
 
               <div class="form-group">
                 <label for="email" class="form-label">E-mail</label>
-                <input type="email" id="email" class="form-input" placeholder="seu@email.com" required>
+                <input type="email" id="email" class="form-input" placeholder="seu@email.com" required />
                 <span class="form-error" id="email-error"></span>
               </div> {% endcomment %}
 
@@ -145,13 +121,8 @@
     <section id="parceiros" class="partners-section">
       <div class="container">
         <div class="partners-header">
-          <h2 class="partners-title">
-            Nossos <span class="text-primary">Parceiros</span>
-          </h2>
-          <p class="partners-description">
-            Trabalhamos com as melhores empresas do setor para oferecer
-            soluções completas e inovadoras para a região.
-          </p>
+          <h2 class="partners-title">Nossos <span style="color:#22c55e">Parceiros</span></h2>
+          <p class="partners-description">Trabalhamos com as melhores empresas do setor para oferecer soluções completas e inovadoras para a região.</p>
         </div>
 
         <div class="partners-grid">

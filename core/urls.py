@@ -8,5 +8,7 @@ urlpatterns = [
     #path("main", views.main, name="main"),
     path("", views.home, name="home"),
     path("login/", views.login, name="login"),
+    path("cadastro/", views.cadastro, name="cadastro"),
+    path("cadastro_usuario/", views.cadastro_usuario, name="cadastro_usuario"),
     path("logout/", views.logout, name="logout"),
 ]

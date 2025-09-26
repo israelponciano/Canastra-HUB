@@ -12,6 +12,14 @@ def home(request):
     
     return render(request, 'home.html')
 
+def cadastro(request):
+    
+    return render(request, 'cadastro.html')
+
+def cadastro_usuario(request):
+    
+    return render(request, 'cadastro_usuario.html')
+
 def login(request):
     print("CHEGOU LOGIN")
     if request.method == 'POST':

@@ -41,6 +41,10 @@ class Command(BaseCommand):
             nome_hub='Mel',
             descricao='Mel é melhor com o pessoal da canastra'
         )
+        hub3 = Hub.objects.create(
+            nome_hub='Tecnologia',
+            descricao='Venha fazer um site com o pessoal da canastra'
+        )
 
         user = UsuarioBase.objects.create_user(
             email='usuario@teste',
