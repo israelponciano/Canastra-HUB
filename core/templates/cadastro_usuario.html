@@ -37,7 +37,7 @@
   <div class="form-container">
     <h2 align="center">Cadastro de Usuário</h2>
 
-    <form action="{% url 'empresa:criar_empresa' %}" method="POST" enctype="multipart/form-data">
+    <form action="{% url 'core:cadastro_usuario' %}" method="POST" enctype="multipart/form-data">
       {% csrf_token %}
       <!-- Nome + dataNasc + Gender -->
       <h5 class="mt-4">Informações Pessoais</h5>
@@ -185,7 +185,7 @@
           
           // Requisição AJAX
           $.ajax({
-              url:'core/get_cidades/',
+              url: "{% url 'core:get_cidades' %}",
               method: 'GET',
               data: { 'estado_id': estado_id },
               success: function(response) {

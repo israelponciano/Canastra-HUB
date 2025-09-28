@@ -18,8 +18,42 @@ def cadastro(request):
     return render(request, 'cadastro.html')
 
 def cadastro_usuario(request):
+    if request.user.is_authenticated:
+        messages.warning(
+            request, f'Você ja está logado, não é possivel realizar outro cadastro.')
+        return redirect('core:home')
+    if request.method == 'POST':
+        nomeUser = request.POST.get('txtNome')
+        nomeSocial = request.POST.get('txtNomeSocial')
+        dataNasc = request.POST.get('txtDataNasc')
+        genero = request.POST.get('genero')
+        estadoCivil = request.POST.get('estadoCivil')
+        nacionalidade = request.POST.get('txtNacionalidade')
+        email = request.POST.get('txtEmail')
+        telefone = request.POST.get('txtTelefone')
+        password = request.POST.get('txtSenha')
+        foto_user = request.FILES.get('fileFoto')
+        cep = request.POST.get('txtCep')
+        rua = request.POST.get('txtRua')
+        numero = request.POST.get('txtNumero')
+        bairro = request.POST.get('txtBairro')
+        
+        cidade_id = request.POST.get('cidade')
+        estado_id = request.POST.get('estado')
+
+        if not Estado.objects.filter(id=estado_id).exists():
+            messages.error(request, 'Estado inválido.')
+            estados = Estado.objects.all().order_by('nome_estado')
+            return render(request, 'cadastro_usuario.html', {'estados': estados})
+
+        if not Cidade.objects.filter(id=cidade_id).exists():
+            messages.error(request, 'Cidade inválida.')
+            estados = Estado.objects.all().order_by('nome_estado')
+            return render(request, 'cadastro_usuario.html', {'estados': estados})
     
-    return render(request, 'cadastro_usuario.html')
+    estados = Estado.objects.all().order_by('nome_estado')
+    return render(request, 'cadastro_usuario.html', {'estados': estados})
+    
 
 def login(request):
     print("CHEGOU LOGIN")
@@ -78,42 +112,6 @@ def logout(request):
     messages.success(request, 'Logout realizado com sucesso.')
     return redirect('core:home')
 
-def criar_usuario(request):
-    if request.user.is_authenticated:
-        messages.warning(
-            request, f'Você ja está logado, não é possivel realizar outro cadastro.')
-        return redirect('core:home')
-    if request.method == 'POST':
-        nomeUser = request.POST.get('txtNome')
-        nomeSocial = request.POST.get('txtNomeSocial')
-        dataNasc = request.POST.get('txtDataNasc')
-        genero = request.POST.get('genero')
-        estadoCivil = request.POST.get('estadoCivil')
-        nacionalidade = request.POST.get('txtNacionalidade')
-        email = request.POST.get('txtEmail')
-        telefone = request.POST.get('txtTelefone')
-        password = request.POST.get('txtSenha')
-        foto_user = request.FILES.get('fileFoto')
-        cep = request.POST.get('txtCep')
-        rua = request.POST.get('txtRua')
-        numero = request.POST.get('txtNumero')
-        bairro = request.POST.get('txtBairro')
-        
-        cidade_id = request.POST.get('cidade')
-        estado_id = request.POST.get('estado')
-
-        if not Estado.objects.filter(id=estado_id).exists():
-            messages.error(request, 'Estado inválido.')
-            estados = Estado.objects.all().order_by('nome_estado')
-            return render(request, 'cadastro_usuario.html', {'estados': estados})
-
-        if not Cidade.objects.filter(id=cidade_id).exists():
-            messages.error(request, 'Cidade inválida.')
-            estados = Estado.objects.all().order_by('nome_estado')
-            return render(request, 'cadastro_usuario.html', {'estados': estados})
-    
-    estados = Estado.objects.all().order_by('nome_estado')
-    return render(request, 'cadastro_usurio.html', {'estados': estados})
 
 
 @require_http_methods(["GET"])
