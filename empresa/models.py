@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, User
 from django.db.models.deletion import ProtectedError
-from core.models import UsuarioBase, Estado, Cidade, Hub
+from core.models import *
 # Create your models here.
 
 

@@ -2,10 +2,11 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
 from django.utils.crypto import get_random_string
 from django.contrib.auth.hashers import make_password
 from django.core.mail import send_mail
-from core.models import UsuarioBase
+from core.models import *
 
 # Create your views here.
 def home(request):
@@ -104,11 +105,47 @@ def criar_usuario(request):
         if not Estado.objects.filter(id=estado_id).exists():
             messages.error(request, 'Estado inválido.')
             estados = Estado.objects.all().order_by('nome_estado')
-            # return render(request, 'cadastro_usuario.html', {'estados': estados})
+            return render(request, 'cadastro_usuario.html', {'estados': estados})
 
         if not Cidade.objects.filter(id=cidade_id).exists():
             messages.error(request, 'Cidade inválida.')
             estados = Estado.objects.all().order_by('nome_estado')
-        #    return render(request, 'cadastro_usuario.html', {'estados': estados})
+            return render(request, 'cadastro_usuario.html', {'estados': estados})
+    
+    estados = Estado.objects.all().order_by('nome_estado')
+    return render(request, 'cadastro_usurio.html', {'estados': estados})
 
 
+@require_http_methods(["GET"])
+def get_cidades(request):
+    """View para retornar cidades via AJAX baseado no estado selecionado"""
+    estado_id = request.GET.get('estado_id')
+
+    # Validação básica do parâmetro
+    if not estado_id or not estado_id.isdigit():
+        return JsonResponse({
+            'cidades': [],
+            'error': 'ID do estado inválido'
+        })
+
+    # Verificar se o estado existe
+    if not Estado.objects.filter(id=estado_id).exists():
+        return JsonResponse({
+            'cidades': [],
+            'error': 'Estado não encontrado'
+        })
+
+    # Buscar cidades
+    cidades = Cidade.objects.filter(
+        estado_cidade_id=estado_id
+    ).order_by('nome_cidade').values('id', 'nome_cidade')
+
+    cidades_data = [
+        {'id': cidade['id'], 'nome': cidade['nome_cidade']}
+        for cidade in cidades
+    ]
+
+    return JsonResponse({
+        'cidades': cidades_data,
+        'total': len(cidades_data)
+    })

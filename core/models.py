@@ -149,16 +149,6 @@ class ExperienciaProfissional(models.Model):
     nome_empresa = models.CharField(max_length=255)
     cargo = models.CharField(max_length=255)
     
-    TIPO_CONTRATO = [
-        ('CLT', 'CLT'),
-        ('PJ', 'Pessoa Jurídica'),
-        ('EST', 'Estágio'),
-        ('AUT', 'Autônomo'),
-        ('TER', 'Terceirizado'),
-        ('OUT', 'Outro'),
-    ]
-    tipo_contrato = models.CharField(max_length=3, choices=TIPO_CONTRATO)
-    
     local_cidade_estado = models.CharField(max_length=255)
     descricao_atividades = models.TextField()
     data_inicio = models.DateField()
@@ -166,7 +156,7 @@ class ExperienciaProfissional(models.Model):
     emprego_atual = models.BooleanField(default=False)
     
     def __str__(self):
-        return fs"{self.cargo} - {self.nome_empresa}"
+        return f"{self.cargo} - {self.nome_empresa}"
     
     class Meta:
         ordering = ['-data_inicio']
@@ -187,18 +177,9 @@ class CursoExtraCurricular(models.Model):
 class Idioma(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='idiomas')
     idioma = models.CharField(max_length=100)
-    
-    NIVEL_CHOICES = [
-        ('BAS', 'Básico'),
-        ('INT', 'Intermediário'),
-        ('AVA', 'Avançado'),
-        ('FLU', 'Fluente'),
-        ('NAT', 'Nativo'),
-    ]
-    nivel_fluencia = models.CharField(max_length=3, choices=NIVEL_CHOICES)
-    
+
     def __str__(self):
-        return f"{self.idioma} - {self.get_nivel_fluencia_display()}"
+        return f"{self.idioma}"
 
 
 
