@@ -9,7 +9,7 @@
    /* Lighter green */
    --accent: 0 84% 60%;
    /* Red accent */
-   --accent-light: 0 84% 70%;
+   --accent-light: hsl(0 84% 70%);
    /* Lighter red */
 
    /* Neutral colors */
@@ -192,6 +192,14 @@ p {
 .btn:hover .btn-arrow,
 .partners-link:hover .link-arrow {
    transform: translateX(4px);
+}
+
+.profile-img {
+   width: 40px;
+   height: 40px;
+   border-radius: 50%;
+   object-fit: cover;
+   cursor: pointer;
 }
 
 /* Floating Triangles Background */
