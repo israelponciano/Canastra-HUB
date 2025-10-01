@@ -26,17 +26,18 @@ def cadastro_usuario(request):
         nomeUser = request.POST.get('txtNome')
         nomeSocial = request.POST.get('txtNomeSocial')
         dataNasc = request.POST.get('txtDataNasc')
-        genero = request.POST.get('genero')
-        estadoCivil = request.POST.get('estadoCivil')
+        genero = request.POST.get('txtGenero')
+        estadoCivil = request.POST.get('txtEstadoCivil')
         nacionalidade = request.POST.get('txtNacionalidade')
         email = request.POST.get('txtEmail')
         telefone = request.POST.get('txtTelefone')
-        password = request.POST.get('txtSenha')
+        senha = request.POST.get('txtSenha')
         foto_user = request.FILES.get('fileFoto')
         cep = request.POST.get('txtCep')
         rua = request.POST.get('txtRua')
         numero = request.POST.get('txtNumero')
         bairro = request.POST.get('txtBairro')
+        complemento = request.POST.get('txtComplemento')
         
         cidade_id = request.POST.get('cidade')
         estado_id = request.POST.get('estado')
@@ -50,6 +51,38 @@ def cadastro_usuario(request):
             messages.error(request, 'Cidade inválida.')
             estados = Estado.objects.all().order_by('nome_estado')
             return render(request, 'cadastro_usuario.html', {'estados': estados})
+        # Buscar os objetos Estado e Cidade no Banco
+        estado = Estado.objects.get(id = estado_id)
+        cidade = Cidade.objects.get(id = cidade_id)
+
+        # Criar usuário base
+        user = UsuarioBase.objects.create_user(
+            email=email,
+            password=senha,
+            nome=nomeUser,
+            tipo='usuario'
+        )
+        user.foto = foto_user
+        user.save()
+        #Cria usuario com os outros campos faltantes
+        usuario = Usuario.objects.create(
+            user=user,
+            nome_social = nomeSocial,
+            data_nascimento = dataNasc,
+            genero = genero,
+            estado_civil = estadoCivil,
+            nacionalidade = nacionalidade,
+            telefone = telefone,
+            cep = cep,
+            rua = rua,
+            numero = numero,
+            bairro = bairro,
+            estado = estado,
+            cidade = cidade,
+            complemento = complemento
+        )   
+        messages.success(request, 'Usuario cadastrado com sucesso!')
+        return redirect('core:login')
     
     estados = Estado.objects.all().order_by('nome_estado')
     return render(request, 'cadastro_usuario.html', {'estados': estados})

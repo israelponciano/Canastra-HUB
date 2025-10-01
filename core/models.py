@@ -77,15 +77,16 @@ class Cidade(models.Model):
 class Usuario(models.Model):
     user = models.OneToOneField(
         UsuarioBase, on_delete=models.CASCADE, primary_key=True)
-    curso = models.CharField(max_length=100)
+    curso = models.CharField(max_length=100, blank=True, null=True, default='')
     
-    #informação pessoal
-    nome = models.CharField(max_length=255)    
+    #informação pessoal 
     nome_social = models.CharField(max_length=255, blank=True, null=True)
     data_nascimento = models.DateField()
+    genero = models.CharField(max_length=255)
+    estado_civil = models.CharField(max_length=255)
     nacionalidade = models.CharField(max_length=255)
     telefone = models.CharField(max_length=20)
-    senha = models.CharField(max_length=255)
+
     
     #endereco
     cep = models.CharField(max_length=10)
@@ -99,30 +100,30 @@ class Usuario(models.Model):
     #obejtivo_profissional
     cargo_pretendido = models.CharField(max_length=255)
     area_interesse = models.CharField(max_length=255)
-    pretensao_salarial = models.DecimalField(max_digits=10, decimal_places=2)
+    pretensao_salarial = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
 
-    # FORMAÇÃO ACADÊMICA (campos básicos - considere modelo separado)
+    # formação academica
     curso_graduacao = models.CharField(max_length=255, blank=True, null=True)
     instituicao_graduacao = models.CharField(max_length=255, blank=True, null=True)
     
-    # REDES SOCIAIS E LINKS
+    # rede sociais e links
     linkedin = models.URLField(blank=True, null=True)
     github = models.URLField(blank=True, null=True)
     site_pessoal = models.URLField(blank=True, null=True)
     instagram = models.CharField(max_length=100, blank=True, null=True)  # apenas username
     facebook = models.URLField(blank=True, null=True)
     
-    # COMPETÊNCIAS (campos de texto livre - considere modelos separados)
+    # competencias
     competencias_tecnicas = models.TextField(blank=True, null=True)
     competencias_comportamentais = models.TextField(blank=True, null=True)
     
-    # INCLUSÃO E ACESSIBILIDADE
+    # inclusao e acessibilidade
     pessoa_com_deficiencia = models.BooleanField(default=False)
     tipo_deficiencia = models.CharField(max_length=255, blank=True, null=True)
     necessidade_adaptacao = models.TextField(blank=True, null=True)
     
-    # INFORMAÇÕES ADICIONAIS
+    # informações adicionais
     interesses_hobbies = models.TextField(blank=True, null=True)
     deseja_receber_vagas_email = models.BooleanField(default=True)
     
@@ -135,7 +136,7 @@ class Usuario(models.Model):
     atualizado_em = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return self.nome
+        return self.nome_social
     
     class Meta:
         verbose_name = 'Usuário'
