@@ -74,7 +74,7 @@
         </div>
         <div class="col-md-6">
           <label class="form-label">Grau Escolaridade</label>
-          <select id="escolaridade" name="escolaridade" required>
+          <select id="escolaridade" name="escolaridade" class="form-select">
             <option value="">Selecione...</option>
             <option value="analfabeto">Analfabeto</option>
             <option value="fundamental-incompleto">Ensino Fundamental Incompleto</option>
@@ -122,9 +122,9 @@
           <label class="form-label">Cargo</label>
           <input type="text" name="txtCargo" class="form-control" />
         </div>
-        <div class="form-group">
-          <label for="tipoContrato">Tipo de Contrato:</label>
-          <select id="tipoContrato" name="tipoContrato" required>
+        <div class="col-md-6">
+          <label class="form-label">Tipo de Contrato:</label>
+          <select id="tipoContrato" name="tipoContrato" class="form-select">
               <option value="">-- Selecione um tipo --</option>
               <option value="clt">CLT - Contrato por Tempo Indeterminado</option>
               <option value="temporario">Contrato de Trabalho Temporário</option>
@@ -238,12 +238,126 @@
         <input type="text" name="txtComplemento" class="form-control">
       </div>
 
+      <!-- Idiomas -->
+      <h5 class="mt-4">Idiomas</h5>
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label">Idioma</label>
+          <input type="text" name="txtIdioma" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Nivel de Fluência</label>
+          <select id="fluencia" name="txtFluencia" class="form-select">
+            <option value="">Nivel de Fluência</option>
+            <option value="basico">Básico</option>
+            <option value="intermediario">Intermediario</option>
+            <option value="Avancado">Avançado</option>
+            <option value="fluente">Fluente/Nativo</option>
+          </select>
+        </div>
+      </div>
+      <!-- Competências -->
+      <h5 class="mt-4">Competências</h5>
+      <div>
+        <div class="col-md-6">
+          <label class="form-label">Competencia Tecnicas(Hard Skils)</label>
+          <input type="text" name="txtHardSkil" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Competencia Comportamentais(Soft Skils)</label>
+          <input type="text" name="txtSoftSkil" class="form-control" />
+        </div>
+      </div>  
+      <!-- Acessibilidade -->
+      <h5 class="mt-4">Inclusão</h5>
+      <!-- Pessoa com deficiência (PCD) -->
+        <div class="mb-3">
+            <label class="form-label">Pessoa com deficiência (PCD)</label>
+            <div class="d-flex flex-wrap gap-3">
+                <div>
+                    <input type="radio" id="pcd-sim" name="pcd" value="sim" onchange="togglePcdFields()">
+                    <label for="pcd-sim">Sim</label>
+                </div>
+                <div>
+                    <input type="radio" id="pcd-nao" name="pcd" value="nao" checked onchange="togglePcdFields()">
+                    <label for="pcd-nao">Não</label>
+                </div>
+            </div>
+        </div>
+        <!-- Campos que aparecem quando PCD = Sim -->
+        <div id="pcdFields" style="display: none;">
+            <div class="row">
+                <!-- Tipo de deficiência -->
+                <div class="col-md-6 mb-3">
+                    <label for="tipoDeficiencia" class="form-label">Tipo de deficiência</label>
+                    <select id="tipoDeficiencia" name="tipoDeficiencia" class="form-select">
+                        <option value="">Selecione...</option>
+                        <option value="fisica">Física</option>
+                        <option value="auditiva">Auditiva</option>
+                        <option value="visual">Visual</option>
+                        <option value="intelectual">Intelectual</option>
+                        <option value="psicossocial">Psicossocial</option>
+                        <option value="multipla">Múltipla</option>
+                        <option value="reabilitado">Reabilitado</option>
+                        <option value="outra">Outra</option>
+                    </select>
+                </div>
+
+                <!-- CID -->
+                <div class="col-md-6 mb-3">
+                    <label for="cid" class="form-label">CID (Código Internacional de Doenças)</label>
+                    <input type="text" id="cid" name="cid" class="form-control" placeholder="Ex: M54.5">
+                </div>
+            </div>
+
+            <!-- Necessidade de adaptação -->
+            <div class="mb-3">
+                <label for="necessidadeAdaptacao" class="form-label">Necessidade de adaptação no ambiente de trabalho</label>
+                <textarea id="necessidadeAdaptacao" name="necessidadeAdaptacao" class="form-control" rows="3" placeholder="Descreva as adaptações necessárias (ex: rampa de acesso, software leitor de tela, mesa adaptada, etc.)"></textarea>
+            </div>
+        </div>
+
+      <div class="col-md-6">
+        <h5 class="mt-4">Informações Adicionais</h5>
+        <div class="col-md-10">
+          <label class="form-label">Disponibilidade para trabalho Remoto</label>
+            <div class="d-flex flex-wrap gap-3">
+                <div>
+                    <input type="radio" id="remotoSim" name="remotoSim" value="sim">
+                    <label for="remotoSIm">Sim</label>
+                </div>
+                <div>
+                    <input type="radio" id="remotoNao" name="remotoNao" value="nao">
+                    <label for="remotoNao">Não</label>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Interesses ou Hobbies</label>
+          <input type="text" name="txtHobbie" class="form-control"/>
+        </div>
+      </div>
+      <div>
+        <h5 class="mt-4">Anexos</h5>
+        <div class="row mb-3">
+          <div class="col-md-6 mb-3">
+            <label for="curriculoPdf" class="form-label">Currículo em PDF</label>
+            <input type="file" id="curriculoPdf" name="curriculoPdf" class="form-control" accept=".pdf">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="cartaApresentacao" class="form-label">Carta de apresentação</label>
+            <input type="file" id="cartaApresentacao" name="cartaApresentacao" class="form-control" accept=".pdf,.doc,.docx">
+          </div>
+        </div>
+      </div>
       <!-- Botão -->
       <div class="submit-btn">
         <button type="submit">Cadastrar</button>
       </div>
     </form>
+    </div>
   </div>
+    
   
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
@@ -300,5 +414,35 @@
           });
       });
   });
+        function togglePcdFields() {
+            const pcdSim = document.getElementById('pcd-sim');
+            const pcdFields = document.getElementById('pcdFields');
+            const tipoDeficiencia = document.getElementById('tipoDeficiencia');
+            
+            if (pcdSim.checked) {
+                pcdFields.style.display = 'block';
+                tipoDeficiencia.required = true;
+            } else {
+                pcdFields.style.display = 'none';
+                tipoDeficiencia.required = false;
+                // Limpar campos quando desmarcado
+                document.getElementById('tipoDeficiencia').value = '';
+                document.getElementById('cid').value = '';
+                document.getElementById('necessidadeAdaptacao').value = '';
+            }
+        }
+
+        document.getElementById('formInclusao').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const dados = Object.fromEntries(formData);
+            
+            console.log('Dados do formulário:', dados);
+            alert('Formulário enviado! Veja os dados no console.');
+        });
+
+        // Inicializar estado dos campos
+        togglePcdFields();
   </script>
 {% endblock %}
