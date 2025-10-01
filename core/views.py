@@ -9,13 +9,17 @@ from django.core.mail import send_mail
 from core.models import *
 
 # Create your views here.
+
+
 def home(request):
-    
+
     return render(request, 'home.html')
 
+
 def cadastro(request):
-    
+
     return render(request, 'cadastro.html')
+
 
 def cadastro_usuario(request):
     if request.user.is_authenticated:
@@ -38,7 +42,7 @@ def cadastro_usuario(request):
         numero = request.POST.get('txtNumero')
         bairro = request.POST.get('txtBairro')
         complemento = request.POST.get('txtComplemento')
-        
+
         cidade_id = request.POST.get('cidade')
         estado_id = request.POST.get('estado')
 
@@ -52,8 +56,8 @@ def cadastro_usuario(request):
             estados = Estado.objects.all().order_by('nome_estado')
             return render(request, 'cadastro_usuario.html', {'estados': estados})
         # Buscar os objetos Estado e Cidade no Banco
-        estado = Estado.objects.get(id = estado_id)
-        cidade = Cidade.objects.get(id = cidade_id)
+        estado = Estado.objects.get(id=estado_id)
+        cidade = Cidade.objects.get(id=cidade_id)
 
         # Criar usuário base
         user = UsuarioBase.objects.create_user(
@@ -64,29 +68,34 @@ def cadastro_usuario(request):
         )
         user.foto = foto_user
         user.save()
-        #Cria usuario com os outros campos faltantes
+        # Cria usuario com os outros campos faltantes
         usuario = Usuario.objects.create(
             user=user,
-            nome_social = nomeSocial,
-            data_nascimento = dataNasc,
-            genero = genero,
-            estado_civil = estadoCivil,
-            nacionalidade = nacionalidade,
-            telefone = telefone,
-            cep = cep,
-            rua = rua,
-            numero = numero,
-            bairro = bairro,
-            estado = estado,
-            cidade = cidade,
-            complemento = complemento
-        )   
+            nome_social=nomeSocial,
+            data_nascimento=dataNasc,
+            genero=genero,
+            estado_civil=estadoCivil,
+            nacionalidade=nacionalidade,
+            telefone=telefone,
+            cep=cep,
+            rua=rua,
+            numero=numero,
+            bairro=bairro,
+            estado=estado,
+            cidade=cidade,
+            complemento=complemento
+        )
         messages.success(request, 'Usuario cadastrado com sucesso!')
         return redirect('core:login')
-    
+
     estados = Estado.objects.all().order_by('nome_estado')
     return render(request, 'cadastro_usuario.html', {'estados': estados})
-    
+
+
+def cadastro_completo(request):
+
+    return render(request, 'cadastro_usuario_completo.html')
+
 
 def login(request):
     print("CHEGOU LOGIN")
@@ -104,47 +113,47 @@ def login(request):
         if usuario is not None:
             # perfis_usuario = usuario.perfis.filter(id=perfil_id)
             # if perfis_usuario.exists():
-                #limpa as sessoes do usuario
-                request.session.flush()
-                #cria a sessao do usuario
-                auth_login(request, usuario)
-                
-                request.session['is_login'] = False
-                if usuario.is_admin:
-                    request.session['is_admin'] = usuario.is_admin
-                # print(request.session['is_admin'])
-                request.session['perfil'] = usuario.tipo
-                request.session['id_atual'] = usuario.id
-                request.session['email_atual'] = usuario.email                    
-                # request.session['perfil_atual'] = perfis_usuario.first().nome                
-                # request.session['perfis'] = list(usuario.perfis.values_list('nome', flat=True))
-                # print(request.session['perfis'])
-                
-                #configura sessao para expirar em 4 horas
-                request.session.set_expiry(14400)
-                
-                messages.success(request, 'Login realizado com sucesso!')
-                
-                #no futuro iremos separar em diferentes paginas
-                # if request.session.get('perfil_atual') in {'Administrador', 'Funcionario'}:
-                return redirect('core:home')
-                
+            # limpa as sessoes do usuario
+            request.session.flush()
+            # cria a sessao do usuario
+            auth_login(request, usuario)
+
+            request.session['is_login'] = False
+            if usuario.is_admin:
+                request.session['is_admin'] = usuario.is_admin
+            # print(request.session['is_admin'])
+            request.session['perfil'] = usuario.tipo
+            request.session['id_atual'] = usuario.id
+            request.session['email_atual'] = usuario.email
+            # request.session['perfil_atual'] = perfis_usuario.first().nome
+            # request.session['perfis'] = list(usuario.perfis.values_list('nome', flat=True))
+            # print(request.session['perfis'])
+
+            # configura sessao para expirar em 4 horas
+            request.session.set_expiry(14400)
+
+            messages.success(request, 'Login realizado com sucesso!')
+
+            # no futuro iremos separar em diferentes paginas
+            # if request.session.get('perfil_atual') in {'Administrador', 'Funcionario'}:
+            return redirect('core:home')
+
             # else:
             #     messages.error(request, 'Perfil inválido para este usuário.')
         else:
             print("Usuario ou senha invalidos")
             messages.error(request, 'Usuário ou senha inválidos.')
-            
+
     return render(request, 'login.html')
 
+
 def logout(request):
-    #limpa a sessao ao deslogar
+    # limpa a sessao ao deslogar
     request.session.flush()
     auth_logout(request)
-    
+
     messages.success(request, 'Logout realizado com sucesso.')
     return redirect('core:home')
-
 
 
 @require_http_methods(["GET"])

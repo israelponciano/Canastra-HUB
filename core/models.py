@@ -74,12 +74,13 @@ class Cidade(models.Model):
 
 # USUARIO DO SISTEMA
 
+
 class Usuario(models.Model):
     user = models.OneToOneField(
         UsuarioBase, on_delete=models.CASCADE, primary_key=True)
     curso = models.CharField(max_length=100, blank=True, null=True, default='')
-    
-    #informação pessoal 
+
+    # informação pessoal
     nome_social = models.CharField(max_length=255, blank=True, null=True)
     data_nascimento = models.DateField()
     genero = models.CharField(max_length=255)
@@ -87,8 +88,7 @@ class Usuario(models.Model):
     nacionalidade = models.CharField(max_length=255)
     telefone = models.CharField(max_length=20)
 
-    
-    #endereco
+    # endereco
     cep = models.CharField(max_length=10)
     rua = models.CharField(max_length=255)
     bairro = models.CharField(max_length=255)
@@ -96,48 +96,52 @@ class Usuario(models.Model):
     complemento = models.CharField(max_length=255, blank=True, null=True)
     cidade = models.ForeignKey(Cidade, on_delete=models.PROTECT)
     estado = models.ForeignKey(Estado, on_delete=models.PROTECT)
-    
-    #obejtivo_profissional
+
+    # obejtivo_profissional
     cargo_pretendido = models.CharField(max_length=255)
     area_interesse = models.CharField(max_length=255)
-    pretensao_salarial = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-
+    pretensao_salarial = models.DecimalField(
+        max_digits=10, decimal_places=2, blank=True, null=True)
 
     # formação academica
     curso_graduacao = models.CharField(max_length=255, blank=True, null=True)
-    instituicao_graduacao = models.CharField(max_length=255, blank=True, null=True)
-    
+    instituicao_graduacao = models.CharField(
+        max_length=255, blank=True, null=True)
+
     # rede sociais e links
     linkedin = models.URLField(blank=True, null=True)
     github = models.URLField(blank=True, null=True)
     site_pessoal = models.URLField(blank=True, null=True)
-    instagram = models.CharField(max_length=100, blank=True, null=True)  # apenas username
+    instagram = models.CharField(
+        max_length=100, blank=True, null=True)  # apenas username
     facebook = models.URLField(blank=True, null=True)
-    
+
     # competencias
     competencias_tecnicas = models.TextField(blank=True, null=True)
     competencias_comportamentais = models.TextField(blank=True, null=True)
-    
+
     # inclusao e acessibilidade
     pessoa_com_deficiencia = models.BooleanField(default=False)
     tipo_deficiencia = models.CharField(max_length=255, blank=True, null=True)
     necessidade_adaptacao = models.TextField(blank=True, null=True)
-    
+
     # informações adicionais
     interesses_hobbies = models.TextField(blank=True, null=True)
     deseja_receber_vagas_email = models.BooleanField(default=True)
-    
+
     # ANEXOS (considere modelo separado para múltiplos arquivos)
-    curriculo_pdf = models.FileField(upload_to='curriculos/', blank=True, null=True)
-    carta_apresentacao = models.FileField(upload_to='cartas/', blank=True, null=True)
-    
+    curriculo_pdf = models.FileField(
+        upload_to='curriculos/', blank=True, null=True)
+    carta_apresentacao = models.FileField(
+        upload_to='cartas/', blank=True, null=True)
+
     # METADADOS
     criado_em = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
-    
+
     def __str__(self):
         return self.nome_social
-    
+
     class Meta:
         verbose_name = 'Usuário'
         verbose_name_plural = 'Usuários'
@@ -146,42 +150,44 @@ class Usuario(models.Model):
 # MODELOS SEPARADOS RECOMENDADOS (para melhor normalização)
 
 class ExperienciaProfissional(models.Model):
-    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='experiencias')
+    usuario = models.ForeignKey(
+        Usuario, on_delete=models.CASCADE, related_name='experiencias')
     nome_empresa = models.CharField(max_length=255)
     cargo = models.CharField(max_length=255)
-    
+
     local_cidade_estado = models.CharField(max_length=255)
     descricao_atividades = models.TextField()
     data_inicio = models.DateField()
     data_fim = models.DateField(blank=True, null=True)  # null = emprego atual
     emprego_atual = models.BooleanField(default=False)
-    
+
     def __str__(self):
         return f"{self.cargo} - {self.nome_empresa}"
-    
+
     class Meta:
         ordering = ['-data_inicio']
 
 
 class CursoExtraCurricular(models.Model):
-    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='cursos_extras')
+    usuario = models.ForeignKey(
+        Usuario, on_delete=models.CASCADE, related_name='cursos_extras')
     nome_curso = models.CharField(max_length=255)
     instituicao = models.CharField(max_length=255)
     carga_horaria = models.PositiveIntegerField(blank=True, null=True)
     data_conclusao = models.DateField(blank=True, null=True)
     link_certificado = models.URLField(blank=True, null=True)
-    
+
     def __str__(self):
         return self.nome_curso
 
 
 class Idioma(models.Model):
-    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='idiomas')
+    usuario = models.ForeignKey(
+        Usuario, on_delete=models.CASCADE, related_name='idiomas')
     idioma = models.CharField(max_length=100)
 
     def __str__(self):
         return f"{self.idioma}"
-
 
 
 class Hub(models.Model):

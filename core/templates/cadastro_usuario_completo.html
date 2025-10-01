@@ -1,0 +1,304 @@
+{% extends 'master.html' %}
+{% load static %}
+{% block conteudo %}
+  <style>
+    .form-container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    .form-label {
+      color: #000000ff;
+    }
+    .form-container h2 {
+      margin-bottom: 1.5rem;
+      color: #22c55e;
+      font-weight: bold;
+    }
+    .submit-btn {
+      text-align: right;
+    }
+    .submit-btn button {
+      background-color: #22c55e;
+      color: #fff;
+      font-size: 18px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+    }
+    .submit-btn button:hover {
+      background-color: #1a9e4b;
+    }
+  </style>
+
+  <div class="form-container">
+    <h2 align="center">Cadastro de Usuário</h2>
+
+    <form action="{% url 'core:cadastro_completo' %}" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <!-- Objetivo Profissional -->
+      <h5 class="mt-4">Objetivo Profissional</h5>
+      <div class="row mb-3">
+        <div class="col-md-6">  
+          <label class="form-label">Cargo Pretendido</label>
+          <input type="text" name="txtCargoPretendido" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Áreas de Interesse</label>
+          <input type="text" name="txtAreaInteresse" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Pretensão Salarial</label>
+          <input type="text" name="decPretensaoSalarial" class="form-control" />
+        </div>
+        <div class="mb-3">
+        <label class="form-label">Disponibilidade</label>
+        <div class="d-flex flex-wrap gap-3">
+          <div><input type="radio" name="txtTipo" value="manha">Manhã</div>
+          <div><input type="radio" name="txtTipo" value="tarde"> Tarde</div>
+          <div><input type="radio" name="txtTipo" value="noite"> Noite</div>
+          <div><input type="radio" name="txtTipo" value="periodoIntegral">Periodo Integral</div>
+        </div>
+      </div>
+
+      </div>
+      <!-- Formação Academica -->
+      <h5 class="mt-4">Formação Acadêmica</h5>
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label">Nome da Instituição</label>
+          <input type="text" name="txtNomeInstituicao" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Grau Escolaridade</label>
+          <select id="escolaridade" name="escolaridade" required>
+            <option value="">Selecione...</option>
+            <option value="analfabeto">Analfabeto</option>
+            <option value="fundamental-incompleto">Ensino Fundamental Incompleto</option>
+            <option value="fundamental-completo">Ensino Fundamental Completo</option>
+            <option value="medio-incompleto">Ensino Médio Incompleto</option>
+            <option value="medio-completo">Ensino Médio Completo</option>
+            <option value="tecnico-incompleto">Ensino Técnico Incompleto</option>
+            <option value="tecnico-completo">Ensino Técnico Completo</option>
+            <option value="superior-incompleto">Ensino Superior Incompleto</option>
+            <option value="superior-completo">Ensino Superior Completo</option>
+            <option value="pos-graduacao-incompleta">Pós-Graduação Incompleta</option>
+            <option value="pos-graduacao-completa">Pós-Graduação Completa</option>
+            <option value="mestrado-incompleto">Mestrado Incompleto</option>
+            <option value="mestrado-completo">Mestrado Completo</option>
+            <option value="doutorado-incompleto">Doutorado Incompleto</option>
+            <option value="doutorado-completo">Doutorado Completo</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Curso</label>
+          <input type="text" name="txtCurso" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Situação</label>
+          <input type="text" name="txtSituacao" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Data Início</label>
+          <input type="date" name="txtDataInicio" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Data de Conclusão</label>
+          <input type="date" name="txtDataConclusao" class="form-control" />
+        </div>
+      </div>
+
+      <!-- Experiencia Profissional -->
+      <h5 class="mt-4">Experiencia Profissional</h5>
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label">Nome da Empresa</label>
+          <input type="text" name="txtNomeEmpresa" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Cargo</label>
+          <input type="text" name="txtCargo" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label for="tipoContrato">Tipo de Contrato:</label>
+          <select id="tipoContrato" name="tipoContrato" required>
+              <option value="">-- Selecione um tipo --</option>
+              <option value="clt">CLT - Contrato por Tempo Indeterminado</option>
+              <option value="temporario">Contrato de Trabalho Temporário</option>
+              <option value="determinado">Contrato por Tempo Determinado</option>
+              <option value="estagio">Contrato de Estágio</option>
+              <option value="aprendiz">Contrato de Aprendizagem</option>
+              <option value="intermitente">Contrato de Trabalho Intermitente</option>
+              <option value="autonomo">Contrato de Trabalho Autônomo</option>
+              <option value="pj">Contrato PJ (Pessoa Jurídica)</option>
+              <option value="cooperado">Contrato de Trabalho Cooperado</option>
+              <option value="avulso">Contrato de Trabalho Avulso</option>
+              <option value="domestico">Contrato de Trabalho Doméstico</option>
+              <option value="rural">Contrato de Trabalho Rural</option>
+              <option value="home-office">Contrato de Teletrabalho/Home Office</option>
+              <option value="parcial">Contrato de Trabalho em Tempo Parcial</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Estado</label>
+          <select id="estado" name="estado" class="form-select" >
+            <option value="">Selecione o Estado</option>
+            {% for estado in estados %}
+              <option value="{{ estado.id }}">{{ estado.nome_estado }} ({{ estado.sigla_estado }})</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Cidade</label>
+          <select id="cidade" name="cidade" class="form-select" >
+            <option value="">Primeiro selecione o Estado</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Descrição</label>
+          <input type="text" name="txtDescricao" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Periodo (Início)</label>
+          <input type="date" name="txtDataInicio" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Periodo (Fim)</label>
+          <input type="date" name="txtDataConclusao" class="form-control" />
+        </div>
+      </div>
+
+      <!-- Redes Sociais e Links Profissionais -->
+      <h5 class="mt-4">Redes Sociais e Links Profissionais</h5>
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label">Linkedin</label>
+          <input type="url" name="txtLinkedin" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Github</label>
+          <input type="url" name="txtGithub" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Instagram</label>
+          <input type="url" name="txtInstagram" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Facebook</label>
+          <input type="url" name="txtFacebook" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Site Pessoal</label>
+          <input type="url" name="txtSitePessoal" class="form-control" />
+        </div>
+
+      <!-- Endereço -->
+      <h5 class="mt-4">Curso Extracurriculares/ Certificações</h5>
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <label class="form-label">Nome do Curso</label>
+          <input type="text" name="txtNomeCurso" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Instituição</label>
+          <input type="text" name="txtNomeInstituicao" class="form-control" />
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Carga Horaria</label>
+          <input type="text" name="txtNumero" class="form-control">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Data Conclusão</label>
+          <input type="date" name="txtDataFim" class="form-control" />
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label">Estado</label>
+          <select id="estado" name="estado" class="form-select" >
+            <option value="">Selecione o Estado</option>
+            {% for estado in estados %}
+              <option value="{{ estado.id }}">{{ estado.nome_estado }} ({{ estado.sigla_estado }})</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Cidade</label>
+          <select id="cidade" name="cidade" class="form-select" >
+            <option value="">Primeiro selecione o Estado</option>
+          </select>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Complemento</label>
+        <input type="text" name="txtComplemento" class="form-control">
+      </div>
+
+      <!-- Botão -->
+      <div class="submit-btn">
+        <button type="submit">Cadastrar</button>
+      </div>
+    </form>
+  </div>
+  
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+  $(document).ready(function() {
+      console.log("Script de cidades carregado!");
+      
+      $("#estado").on("change", function() {
+          const estado_id = $(this).val();
+          const cidadeSelect = $("#cidade");
+          
+          console.log("Estado selecionado ID:", estado_id);
+          
+          // Se nenhum estado selecionado, resetar cidades
+          if (!estado_id) {
+              cidadeSelect.html('<option value="" class="display-5 text-dark" style="font-size: 12pt;">Primeiro selecione o Estado</option>');
+              return;
+          }
+          
+          // Mostrar loading
+          cidadeSelect.html('<option value="" class="display-5 text-dark" style="font-size: 12pt;">Carregando...</option>');
+          
+          // Requisição AJAX
+          $.ajax({
+              url: "{% url 'core:get_cidades' %}",
+              method: 'GET',
+              data: { 'estado_id': estado_id },
+              success: function(response) {
+                  console.log("Cidades recebidas:", response.total, "cidades");
+                  
+                  // Limpar select
+                  cidadeSelect.empty();
+                  
+                  // Opção padrão
+                  cidadeSelect.append('<option value="" class="display-5 text-dark" style="font-size: 12pt;">Selecione a Cidade</option>');
+                  
+                  // Adicionar cidades
+                  if (response.cidades && response.cidades.length > 0) {
+                      response.cidades.forEach(function(cidade) {
+                          cidadeSelect.append(
+                              '<option value="' + cidade.id + '" class="display-5 text-dark" style="font-size: 12pt;">' + 
+                              cidade.nome + 
+                              '</option>'
+                          );
+                      });
+                      console.log("Cidades adicionadas ao select com sucesso!");
+                  } else {
+                      cidadeSelect.append('<option value="" class="display-5 text-dark" style="font-size: 12pt;">Nenhuma cidade encontrada</option>');
+                  }
+              },
+              error: function(xhr, status, error) {
+                  console.error("Erro ao carregar cidades:", error);
+                  cidadeSelect.html('<option value="" class="display-5 text-dark" style="font-size: 12pt;">Erro ao carregar cidades</option>');
+              }
+          });
+      });
+  });
+  </script>
+{% endblock %}
