@@ -170,12 +170,14 @@ p {
 }
 
 .btn-accent {
-   background: var(--gradient-accent);
+   background: var(--accent-light);
    color: white;
 }
 
 .btn-accent:hover {
    transform: translateY(-2px) scale(1.02);
+   background-color: var(--accent-light);
+   color: #fff;
    box-shadow: var(--shadow-lg);
 }
 
@@ -194,13 +196,71 @@ p {
    transform: translateX(4px);
 }
 
+/*----- CONFIGS DO USUÁRIO LINKS PARA AS OUTRAS PAGS APÓS O LOGIN -----*/
+.profile-dropdown {
+   position: relative;
+   display: inline-block;
+   cursor: pointer;
+}
+
 .profile-img {
+   width: 50px;
+   height: 50px;
+   border-radius: 50%;
+   object-fit: cover;
+   border: 2px solid #ccc;
+   transition: border 0.3s ease;
+}
+
+.profile-img:hover {
+   border-color: #555;
+}
+
+.dropdown-content {
+   position: absolute;
+   right: 0;
+   background-color: #fff;
+   min-width: 150px;
+   box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+   z-index: 1000;
+   border-radius: 6px;
+   overflow: hidden;
+
+   /* para animação */
+   opacity: 0;
+   transform: translateY(15px);
+   pointer-events: none;
+   transition: opacity 0.1s ease, transform 0.3s ease;
+}
+
+.profile-dropdown:hover .dropdown-content {
+   display: block;
+   /* mantém estrutura */
+   opacity: 1;
+   transform: translateY(0);
+   pointer-events: auto;
+}
+
+.dropdown-content a {
+   display: block;
+   padding: 10px 15px;
+   text-decoration: none;
+   color: #333;
+   background-color: white;
+}
+
+.dropdown-content a:hover {
+   background-color: #45abfe33;
+   color: #333;
+}
+
+/* .profile-img {
    width: 40px;
    height: 40px;
    border-radius: 50%;
    object-fit: cover;
-   cursor: pointer;
-}
+   cursor: pointer; */
+/* } */
 
 /* Floating Triangles Background */
 #floating-triangles {
@@ -384,8 +444,8 @@ p {
 
 /* Carousel Section */
 .carousel-section {
-   margin: 2rem 1rem;
-   border-radius: 1rem;
+   margin: 2rem 0rem;
+   /* border-radius: 1rem; */
    overflow: hidden;
    box-shadow: var(--shadow-lg);
 }
@@ -482,6 +542,12 @@ p {
 
 .carousel-btn:hover {
    background: rgba(255, 255, 255, 0.3);
+}
+
+.carousel-btn .chev {
+   display: inline-block;
+   transform: translateY(-4px);
+   /* ajuste fino: use -2px / -0.5px conforme necessário */
 }
 
 .carousel-prev {
