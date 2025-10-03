@@ -85,7 +85,8 @@ def cadastro_usuario(request):
             cidade=cidade,
             complemento=complemento
         )
-        messages.success(request, 'Usuario cadastrado com sucesso!')
+
+        messages.success(request, 'Cadastro inicial realizado! Complete seu perfil profissional!')
         return redirect('core:login')
 
     estados = Estado.objects.all().order_by('nome_estado')
@@ -93,7 +94,84 @@ def cadastro_usuario(request):
 
 
 def cadastro_completo(request):
+    usuario_email = request.session('email_atual')
 
+    if not usuario_email:
+        messages.error(request, 'Você deve realizar o cadastro inicial primeiro!')
+        return redirect('core:cadastro_usuario')
+
+    usuario = Usuario.objects.filter(email=usuario_email).first()
+    
+    if not usuario:
+        messages.error(request, 'Usuário não encontrado.')
+        return redirect('core:cadastro_usuario')
+
+    if request.method == 'POST':
+        #Objetivo Profissional
+        cargo_pretendido = request.POST.get('txtCargoPretendido')
+        area_interesse = request.POST.get('txtAreaInteresse')
+        pretensao_salarial = request.POST.get('decPretensaoSalarial')
+        disponibilidade = request.POST.get('txtDisponibilidade')
+
+        #Formacao Academica
+        instituição_nome = request.POST.get('txtNomeInstituicao')
+        grau_escolaridade = request.POST.get('escolaridade')
+        curso_graduacao = request.POST.get('txtCurso')
+        situacao_academica = request.POST.get('txtSituacao')
+        data_acad_inicio = request.POST.get('txtDataInicio')
+        data_acad_fim = request.POST.get('txtDataConclusao')
+
+        #Experiencia professional
+        nome_empresa = request.POST.get('txtNomeEmpresa')
+        cargo = request.POST.get('txtCargo')
+        tipo_contrato = request.POST.get('tipoContrato')
+        empresa_cidade = request.POST.get('cidade')
+        empresa_estado = request.POST.get('estado')
+        descricao_atividades = request.POST.get('txtDescricao')
+        data_inicio = request.POST.get('txtDataInicio')
+        data_fim = request.POST.get('txtDataFim')
+
+        #Rede sociais e links
+        linkedin = request.POST.get('txtLinkedin')
+        github = request.POST.get('txtGithub')
+        instagram = request.POST.get('txtInstagram')
+        facebook = request.POST.get('txtFacebook')
+        site_pessoal = request.POST.get('txtSitePessoal')
+
+        #Curso Extracurriculares
+        nome_curso = request.POST.get('txtNomeCurso')
+        instituicao = request.POST.get('txtNomeInstituicao')
+        carga_horaria = request.POST.get('txtCargaHoras')
+        data_conclusao = request.POST.get('txtDataFimCurso')
+        link_certificado = request.POST.get('txtLinkCertificado')
+        
+        #Idiomas 
+        idioma = request.POST.get('txtIdioma')
+        nivel_fluencia = request.POST.get('fluencia')
+
+        #Competencias
+        competencias_tecnicas = request.POST.get('txtHardSkil')
+        competencias_comportamentais = request.POST.get('txtSoftSkil')
+
+        #Acessibilidade 
+        pessoa_com_deficiencia = request.POST.get('pcd')
+        tipo_deficiencia = request.POST.get('tipoDeficiencia')
+        necessidade_adaptacao = request.POST.get('necessidadeAdaptacao')
+
+        #Informações Adicionais
+        remoto = request.POST.get('remoto')
+        interesses_hobbies = request.POST.get('txtHobbie')
+
+        #Anexos
+        curriculo_pdf = request.FILES.get('curriculoPdf')
+        carta_apresentacao = request.FILES.get('cartaApresentacao')
+
+
+        
+        del request.session['usuario_email']
+        
+        return redirect('core:login')
+    
     return render(request, 'cadastro_usuario_completo.html')
 
 

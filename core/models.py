@@ -98,23 +98,28 @@ class Usuario(models.Model):
     estado = models.ForeignKey(Estado, on_delete=models.PROTECT)
 
     # obejtivo_profissional
-    cargo_pretendido = models.CharField(max_length=255)
-    area_interesse = models.CharField(max_length=255)
+    cargo_pretendido = models.CharField(max_length=255, blank=True, null=True )
+    area_interesse = models.CharField(max_length=255, blank=True, null=True)
     pretensao_salarial = models.DecimalField(
         max_digits=10, decimal_places=2, blank=True, null=True)
+    disponibilidade =  models.CharField(max_length=255)
 
     # formação academica
-    curso_graduacao = models.CharField(max_length=255, blank=True, null=True)
-    instituicao_graduacao = models.CharField(
+    instituicao_nome = models.CharField(
         max_length=255, blank=True, null=True)
+    grau_escolaridade = models.CharField(max_length=255, blank=True, null=True)
+    curso_graduacao = models.CharField(max_length=255, blank=True, null=True)
+    situacao_academica = models.CharField(max_length=255, blank=True, null=True)
+    data_acad_inicio = models.DateField()
+    data_acad_fim = models.DateField()
 
     # rede sociais e links
     linkedin = models.URLField(blank=True, null=True)
     github = models.URLField(blank=True, null=True)
-    site_pessoal = models.URLField(blank=True, null=True)
     instagram = models.CharField(
         max_length=100, blank=True, null=True)  # apenas username
     facebook = models.URLField(blank=True, null=True)
+    site_pessoal = models.URLField(blank=True, null=True)
 
     # competencias
     competencias_tecnicas = models.TextField(blank=True, null=True)
@@ -126,8 +131,8 @@ class Usuario(models.Model):
     necessidade_adaptacao = models.TextField(blank=True, null=True)
 
     # informações adicionais
+    remoto = models.BooleanField(default=False)
     interesses_hobbies = models.TextField(blank=True, null=True)
-    deseja_receber_vagas_email = models.BooleanField(default=True)
 
     # ANEXOS (considere modelo separado para múltiplos arquivos)
     curriculo_pdf = models.FileField(
@@ -148,17 +153,18 @@ class Usuario(models.Model):
 
 
 # MODELOS SEPARADOS RECOMENDADOS (para melhor normalização)
-
 class ExperienciaProfissional(models.Model):
     usuario = models.ForeignKey(
         Usuario, on_delete=models.CASCADE, related_name='experiencias')
     nome_empresa = models.CharField(max_length=255)
     cargo = models.CharField(max_length=255)
 
-    local_cidade_estado = models.CharField(max_length=255)
+    empresa_cidade = models.ForeignKey(Cidade, on_delete=models.PROTECT)
+    empresa_estado = models.ForeignKey(Estado, on_delete=models.PROTECT)
+    tipo_contrato = models.CharField(max_length=255, blank=True, null=True)
     descricao_atividades = models.TextField()
     data_inicio = models.DateField()
-    data_fim = models.DateField(blank=True, null=True)  # null = emprego atual
+    data_fim = models.DateField(blank=True, null=True)  
     emprego_atual = models.BooleanField(default=False)
 
     def __str__(self):
@@ -171,8 +177,8 @@ class ExperienciaProfissional(models.Model):
 class CursoExtraCurricular(models.Model):
     usuario = models.ForeignKey(
         Usuario, on_delete=models.CASCADE, related_name='cursos_extras')
-    nome_curso = models.CharField(max_length=255)
-    instituicao = models.CharField(max_length=255)
+    nome_curso = models.CharField(max_length=255, blank=True, null=True)
+    instituicao = models.CharField(max_length=255, blank=True, null=True)
     carga_horaria = models.PositiveIntegerField(blank=True, null=True)
     data_conclusao = models.DateField(blank=True, null=True)
     link_certificado = models.URLField(blank=True, null=True)
@@ -184,7 +190,8 @@ class CursoExtraCurricular(models.Model):
 class Idioma(models.Model):
     usuario = models.ForeignKey(
         Usuario, on_delete=models.CASCADE, related_name='idiomas')
-    idioma = models.CharField(max_length=100)
+    idioma = models.CharField(max_length=100, blank=True, null=True)
+    nivel_fluencia = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         return f"{self.idioma}"

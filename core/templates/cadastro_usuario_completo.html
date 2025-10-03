@@ -48,7 +48,8 @@
         </div>
         <div class="col-md-6">
           <label class="form-label">Áreas de Interesse</label>
-          <input type="text" name="txtAreaInteresse" class="form-control" />
+          <input type="text" name="txtAreaInteresse"
+          class="form-control" />
         </div>
         <div class="col-md-6">
           <label class="form-label">Pretensão Salarial</label>
@@ -57,10 +58,10 @@
         <div class="mb-3">
         <label class="form-label">Disponibilidade</label>
         <div class="d-flex flex-wrap gap-3">
-          <div><input type="radio" name="txtTipo" value="manha">Manhã</div>
-          <div><input type="radio" name="txtTipo" value="tarde"> Tarde</div>
-          <div><input type="radio" name="txtTipo" value="noite"> Noite</div>
-          <div><input type="radio" name="txtTipo" value="periodoIntegral">Periodo Integral</div>
+          <div><input type="radio" name="txtDisponibilidade" value="manha">Manhã</div>
+          <div><input type="radio" name="txtDisponibilidade" value="tarde"> Tarde</div>
+          <div><input type="radio" name="txtDisponibilidade" value="noite"> Noite</div>
+          <div><input type="radio" name="txtDisponibilidade" value="periodoIntegral">Periodo Integral</div>
         </div>
       </div>
 
@@ -167,7 +168,7 @@
         </div>
         <div class="col-md-6">
           <label class="form-label">Periodo (Fim)</label>
-          <input type="date" name="txtDataConclusao" class="form-control" />
+          <input type="date" name="txtDataFim" class="form-control" />
         </div>
       </div>
 
@@ -195,7 +196,7 @@
           <input type="url" name="txtSitePessoal" class="form-control" />
         </div>
 
-      <!-- Endereço -->
+      <!-- Curso Extracurriculares -->
       <h5 class="mt-4">Curso Extracurriculares/ Certificações</h5>
       <div class="row mb-3">
         <div class="col-md-4">
@@ -208,34 +209,16 @@
         </div>
         <div class="col-md-2">
           <label class="form-label">Carga Horaria</label>
-          <input type="text" name="txtNumero" class="form-control">
+          <input type="text" name="txtCargaHoras" class="form-control">
         </div>
         <div class="col-md-6">
           <label class="form-label">Data Conclusão</label>
-          <input type="date" name="txtDataFim" class="form-control" />
-        </div>
-      </div>
-
-      <div class="row mb-3">
-        <div class="col-md-6">
-          <label class="form-label">Estado</label>
-          <select id="estado" name="estado" class="form-select" >
-            <option value="">Selecione o Estado</option>
-            {% for estado in estados %}
-              <option value="{{ estado.id }}">{{ estado.nome_estado }} ({{ estado.sigla_estado }})</option>
-            {% endfor %}
-          </select>
+          <input type="date" name="txtDataFimCurso" class="form-control" />
         </div>
         <div class="col-md-6">
-          <label class="form-label">Cidade</label>
-          <select id="cidade" name="cidade" class="form-select" >
-            <option value="">Primeiro selecione o Estado</option>
-          </select>
+          <label class="form-label">Link Para Certificado</label>
+          <input type="url" name="txtLinkCertificado" class="form-control" />
         </div>
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Complemento</label>
-        <input type="text" name="txtComplemento" class="form-control">
       </div>
 
       <!-- Idiomas -->
@@ -256,6 +239,7 @@
           </select>
         </div>
       </div>
+      
       <!-- Competências -->
       <h5 class="mt-4">Competências</h5>
       <div>
@@ -267,7 +251,8 @@
           <label class="form-label">Competencia Comportamentais(Soft Skils)</label>
           <input type="text" name="txtSoftSkil" class="form-control" />
         </div>
-      </div>  
+      </div> 
+
       <!-- Acessibilidade -->
       <h5 class="mt-4">Inclusão</h5>
       <!-- Pessoa com deficiência (PCD) -->
@@ -303,13 +288,6 @@
                     </select>
                 </div>
 
-                <!-- CID -->
-                <div class="col-md-6 mb-3">
-                    <label for="cid" class="form-label">CID (Código Internacional de Doenças)</label>
-                    <input type="text" id="cid" name="cid" class="form-control" placeholder="Ex: M54.5">
-                </div>
-            </div>
-
             <!-- Necessidade de adaptação -->
             <div class="mb-3">
                 <label for="necessidadeAdaptacao" class="form-label">Necessidade de adaptação no ambiente de trabalho</label>
@@ -317,17 +295,18 @@
             </div>
         </div>
 
+      <!-- Informações Adicionais -->
       <div class="col-md-6">
         <h5 class="mt-4">Informações Adicionais</h5>
         <div class="col-md-10">
           <label class="form-label">Disponibilidade para trabalho Remoto</label>
             <div class="d-flex flex-wrap gap-3">
                 <div>
-                    <input type="radio" id="remotoSim" name="remotoSim" value="sim">
+                    <input type="radio" id="remotoSim" name="remoto" value="sim">
                     <label for="remotoSIm">Sim</label>
                 </div>
                 <div>
-                    <input type="radio" id="remotoNao" name="remotoNao" value="nao">
+                    <input type="radio" id="remotoNao" name="remoto" value="nao">
                     <label for="remotoNao">Não</label>
                 </div>
             </div>
@@ -337,6 +316,8 @@
           <input type="text" name="txtHobbie" class="form-control"/>
         </div>
       </div>
+
+      <!-- Anexos -->
       <div>
         <h5 class="mt-4">Anexos</h5>
         <div class="row mb-3">
