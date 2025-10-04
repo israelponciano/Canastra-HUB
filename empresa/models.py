@@ -21,7 +21,7 @@ class Empresa(models.Model):
     estado = models.ForeignKey(Estado, on_delete=models.PROTECT)
     segmento = models.CharField(max_length=100, default=False)
 
-    hubs = models.ManyToManyField(Hub, through='EmpresaHub')
+    hubs = models.ManyToManyField(Hub, through='EmpresaHub', blank=True, null= True)
 
     def __str__(self):
         return f"Empresa: {self.user.nome}, {self.nomefantasia}, {self.tipo_empresa}"
@@ -29,7 +29,7 @@ class Empresa(models.Model):
 
 class EmpresaHub(models.Model):
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
-    hub = models.ForeignKey(Hub, on_delete=models.CASCADE)
+    hub = models.ForeignKey(Hub, on_delete=models.CASCADE, blank=True, null= True)
 
     def __str__(self):
         return f"{self.empresa.user.nome} - {self.hub.nome_hub}"
