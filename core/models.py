@@ -100,24 +100,21 @@ class Usuario(models.Model):
     # obejtivo_profissional
     cargo_pretendido = models.CharField(max_length=255, blank=True, null=True )
     area_interesse = models.CharField(max_length=255, blank=True, null=True)
-    pretensao_salarial = models.DecimalField(
-        max_digits=10, decimal_places=2, blank=True, null=True)
-    disponibilidade =  models.CharField(max_length=255)
+    pretensao_salarial = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    disponibilidade =  models.CharField(max_length=255, blank=True, null=True)
 
     # formação academica
-    instituicao_nome = models.CharField(
-        max_length=255, blank=True, null=True)
+    instituicao_nome = models.CharField(max_length=255, blank=True, null=True)
     grau_escolaridade = models.CharField(max_length=255, blank=True, null=True)
     curso_graduacao = models.CharField(max_length=255, blank=True, null=True)
     situacao_academica = models.CharField(max_length=255, blank=True, null=True)
-    data_acad_inicio = models.DateField()
-    data_acad_fim = models.DateField()
+    data_acad_inicio = models.DateField(blank=True, null=True)
+    data_acad_fim = models.DateField(blank=True, null=True)
 
     # rede sociais e links
     linkedin = models.URLField(blank=True, null=True)
     github = models.URLField(blank=True, null=True)
-    instagram = models.CharField(
-        max_length=100, blank=True, null=True)  # apenas username
+    instagram = models.CharField(max_length=100, blank=True, null=True)  # apenas username
     facebook = models.URLField(blank=True, null=True)
     site_pessoal = models.URLField(blank=True, null=True)
 
@@ -137,8 +134,7 @@ class Usuario(models.Model):
     # ANEXOS (considere modelo separado para múltiplos arquivos)
     curriculo_pdf = models.FileField(
         upload_to='curriculos/', blank=True, null=True)
-    carta_apresentacao = models.FileField(
-        upload_to='cartas/', blank=True, null=True)
+    carta_apresentacao = models.FileField(upload_to='cartas/', blank=True, null=True)
 
     # METADADOS
     criado_em = models.DateTimeField(auto_now_add=True)
@@ -154,16 +150,15 @@ class Usuario(models.Model):
 
 # MODELOS SEPARADOS RECOMENDADOS (para melhor normalização)
 class ExperienciaProfissional(models.Model):
-    usuario = models.ForeignKey(
-        Usuario, on_delete=models.CASCADE, related_name='experiencias')
-    nome_empresa = models.CharField(max_length=255)
-    cargo = models.CharField(max_length=255)
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='experiencias')
+    nome_empresa = models.CharField(max_length=255, blank=True, null=True)
+    cargo = models.CharField(max_length=255, blank=True, null=True)
 
-    empresa_cidade = models.ForeignKey(Cidade, on_delete=models.PROTECT)
-    empresa_estado = models.ForeignKey(Estado, on_delete=models.PROTECT)
+    empresa_cidade = models.ForeignKey(Cidade, on_delete=models.PROTECT, blank=True, null=True)
+    empresa_estado = models.ForeignKey(Estado, on_delete=models.PROTECT, blank=True, null=True)
     tipo_contrato = models.CharField(max_length=255, blank=True, null=True)
-    descricao_atividades = models.TextField()
-    data_inicio = models.DateField()
+    descricao_atividades = models.TextField(blank=True, null=True)
+    data_inicio = models.DateField(blank=True, null=True)
     data_fim = models.DateField(blank=True, null=True)  
     emprego_atual = models.BooleanField(default=False)
 

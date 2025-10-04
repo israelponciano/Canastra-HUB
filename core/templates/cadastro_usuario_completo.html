@@ -104,11 +104,11 @@
         </div>
         <div class="col-md-6">
           <label class="form-label">Data Início</label>
-          <input type="date" name="txtDataInicio" class="form-control" />
+          <input type="date" name="txtDataAcad" class="form-control" />
         </div>
         <div class="col-md-6">
           <label class="form-label">Data de Conclusão</label>
-          <input type="date" name="txtDataConclusao" class="form-control" />
+          <input type="date" name="txtDataFimAcad" class="form-control" />
         </div>
       </div>
 
@@ -145,7 +145,7 @@
         </div>
         <div class="col-md-6">
           <label class="form-label">Estado</label>
-          <select id="estado" name="estado" class="form-select" >
+          <select id="estadoEmpresa" name="estadoEmpresa" class="form-select" >
             <option value="">Selecione o Estado</option>
             {% for estado in estados %}
               <option value="{{ estado.id }}">{{ estado.nome_estado }} ({{ estado.sigla_estado }})</option>
@@ -154,7 +154,7 @@
         </div>
         <div class="col-md-6">
           <label class="form-label">Cidade</label>
-          <select id="cidade" name="cidade" class="form-select" >
+          <select id="cidadeEmpresa" name="cidadeEmpresa" class="form-select" >
             <option value="">Primeiro selecione o Estado</option>
           </select>
         </div>
@@ -164,11 +164,11 @@
         </div>
         <div class="col-md-6">
           <label class="form-label">Periodo (Início)</label>
-          <input type="date" name="txtDataInicio" class="form-control" />
+          <input type="date" name="txtDataProf" class="form-control" />
         </div>
         <div class="col-md-6">
           <label class="form-label">Periodo (Fim)</label>
-          <input type="date" name="txtDataFim" class="form-control" />
+          <input type="date" name="txtDataFimProf" class="form-control" />
         </div>
       </div>
 
@@ -205,7 +205,7 @@
         </div>
         <div class="col-md-6">
           <label class="form-label">Instituição</label>
-          <input type="text" name="txtNomeInstituicao" class="form-control" />
+          <input type="text" name="txtInstituicao" class="form-control" />
         </div>
         <div class="col-md-2">
           <label class="form-label">Carga Horaria</label>
@@ -338,63 +338,56 @@
     </form>
     </div>
   </div>
+  </div>
     
   
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
   $(document).ready(function() {
-      console.log("Script de cidades carregado!");
-      
-      $("#estado").on("change", function() {
-          const estado_id = $(this).val();
-          const cidadeSelect = $("#cidade");
-          
-          console.log("Estado selecionado ID:", estado_id);
-          
-          // Se nenhum estado selecionado, resetar cidades
-          if (!estado_id) {
-              cidadeSelect.html('<option value="" class="display-5 text-dark" style="font-size: 12pt;">Primeiro selecione o Estado</option>');
-              return;
-          }
-          
-          // Mostrar loading
-          cidadeSelect.html('<option value="" class="display-5 text-dark" style="font-size: 12pt;">Carregando...</option>');
-          
-          // Requisição AJAX
-          $.ajax({
-              url: "{% url 'core:get_cidades' %}",
-              method: 'GET',
-              data: { 'estado_id': estado_id },
-              success: function(response) {
-                  console.log("Cidades recebidas:", response.total, "cidades");
-                  
-                  // Limpar select
-                  cidadeSelect.empty();
-                  
-                  // Opção padrão
-                  cidadeSelect.append('<option value="" class="display-5 text-dark" style="font-size: 12pt;">Selecione a Cidade</option>');
-                  
-                  // Adicionar cidades
-                  if (response.cidades && response.cidades.length > 0) {
-                      response.cidades.forEach(function(cidade) {
-                          cidadeSelect.append(
-                              '<option value="' + cidade.id + '" class="display-5 text-dark" style="font-size: 12pt;">' + 
-                              cidade.nome + 
-                              '</option>'
-                          );
-                      });
-                      console.log("Cidades adicionadas ao select com sucesso!");
-                  } else {
-                      cidadeSelect.append('<option value="" class="display-5 text-dark" style="font-size: 12pt;">Nenhuma cidade encontrada</option>');
-                  }
-              },
-              error: function(xhr, status, error) {
-                  console.error("Erro ao carregar cidades:", error);
-                  cidadeSelect.html('<option value="" class="display-5 text-dark" style="font-size: 12pt;">Erro ao carregar cidades</option>');
-              }
-          });
-      });
-  });
+    console.log("Script de cidades da empresa carregado!");
+    
+    // Para o dropdown de EXPERIÊNCIA PROFISSIONAL
+    $("select[name='estadoEmpresa']").on("change", function() {
+        const estado_id = $(this).val();
+        const cidadeSelect = $("select[name='cidadeEmpresa']");
+        
+        console.log("Estado da empresa selecionado ID:", estado_id);
+        
+        if (!estado_id) {
+            cidadeSelect.html('<option value="">Primeiro selecione o Estado</option>');
+            return;
+        }
+        
+        cidadeSelect.html('<option value="">Carregando...</option>');
+        
+        $.ajax({
+            url: "{% url 'core:get_cidades' %}",
+            method: 'GET',
+            data: { 'estado_id': estado_id },
+            success: function(response) {
+                console.log("Cidades da empresa recebidas:", response.total, "cidades");
+                
+                cidadeSelect.empty();
+                cidadeSelect.append('<option value="">Selecione a Cidade</option>');
+                
+                if (response.cidades && response.cidades.length > 0) {
+                    response.cidades.forEach(function(cidade) {
+                        cidadeSelect.append(
+                            '<option value="' + cidade.id + '">' + cidade.nome + '</option>'
+                        );
+                    });
+                    console.log("Cidades da empresa adicionadas ao select!");
+                } else {
+                    cidadeSelect.append('<option value="">Nenhuma cidade encontrada</option>');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Erro ao carregar cidades da empresa:", error);
+                cidadeSelect.html('<option value="">Erro ao carregar cidades</option>');
+            }
+        });
+    });
+});
         function togglePcdFields() {
             const pcdSim = document.getElementById('pcd-sim');
             const pcdFields = document.getElementById('pcdFields');
