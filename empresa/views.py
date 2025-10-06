@@ -19,9 +19,6 @@ def cadastro_empresa(request):
     estados = Estado.objects.all().order_by('nome_estado')
     hubs = Hub.objects.all().order_by('nome_hub')
 
-    if request.method == 'POST':
-        pass
-
     return render(request, 'cadastro_empresa.html', {
         'estados': estados,
         'hubs': hubs
@@ -102,7 +99,7 @@ def criar_empresa(request):
         )
 
         # CORREÇÃO: Associa todos os hubs de uma só vez usando o método set()
-        if hubs_selecionados_ids:
+        if hubs_selecionados_ids == '' or hubs_selecionados_ids is None:
             empresa.hubs.set(hubs_selecionados_ids)
 
         messages.success(request, 'Empresa cadastrada com sucesso!')
