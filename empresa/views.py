@@ -8,7 +8,12 @@ from core.models import *
 from django.contrib import messages
 from django.http import JsonResponse
 
-# Create your views here.
+import re
+
+
+def limpar_numeros(valor):
+    # Remove tudo que não for dígito
+    return re.sub(r'\D', '', valor)
 
 
 def cadastro_empresa(request):
@@ -35,9 +40,9 @@ def criar_empresa(request):
         senha = request.POST.get('txtSenha')
         segmento = request.POST.get('txtSegmento')
         tipo_empresa = request.POST.get('txtTipo')
-        telefone = request.POST.get('txtTelefone')
+        telefone = limpar_numeros(request.POST.get('txtTelefone'))
         rua = request.POST.get('txtRua')
-        cep = request.POST.get('txtCep')
+        cep = limpar_numeros(request.POST.get('txtCep'))
         numero = request.POST.get('txtNumero')
         complemento = request.POST.get('txtComplemento')
         cidade_id = request.POST.get('cidade')
@@ -49,7 +54,7 @@ def criar_empresa(request):
         print(f"hubs selecionados {hubs_selecionados_ids}")
 
         foto_empresa = request.FILES.get('fileFoto')
-        cnpj = request.POST.get('txtCnpj')
+        cnpj = limpar_numeros(request.POST.get('txtCnpj'))
         razao_social = request.POST.get('txtRazaoSocial')
 
         # Validar se estado e cidade existem
