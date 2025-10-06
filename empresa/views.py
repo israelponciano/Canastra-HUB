@@ -1,4 +1,3 @@
-from core.models import UsuarioBase, Estado, Cidade, Hub
 from django.shortcuts import render, redirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_http_methods

@@ -1,0 +1,422 @@
+{% extends 'master.html' %}
+{% load static %}
+{% block conteudo %}
+  <style>
+    .form-container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    .form-label {
+      color: #000000ff;
+    }
+    .form-container h2 {
+      margin-bottom: 1.5rem;
+      color: #22c55e;
+      font-weight: bold;
+    }
+    .submit-btn {
+      text-align: right;
+    }
+    .submit-btn button {
+      background-color: #22c55e;
+      color: #fff;
+      font-size: 18px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+    }
+    .submit-btn button:hover {
+      background-color: #1a9e4b;
+    }
+  </style>
+
+  <div class="form-container">
+    <h2 align="center">Cadastro de Usuário</h2>
+
+    <form action="{% url 'core:cadastro_completo' %}" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <!-- Objetivo Profissional -->
+      <h5 class="mt-4">Objetivo Profissional</h5>
+      <div class="row mb-3">
+        <div class="col-md-6">  
+          <label class="form-label">Cargo Pretendido</label>
+          <input type="text" name="txtCargoPretendido" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Áreas de Interesse</label>
+          <input type="text" name="txtAreaInteresse"
+          class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Pretensão Salarial</label>
+          <input type="text" name="decPretensaoSalarial" class="form-control" />
+        </div>
+        <div class="mb-3">
+        <label class="form-label">Disponibilidade</label>
+        <div class="d-flex flex-wrap gap-3">
+          <div><input type="radio" name="txtDisponibilidade" value="manha">Manhã</div>
+          <div><input type="radio" name="txtDisponibilidade" value="tarde"> Tarde</div>
+          <div><input type="radio" name="txtDisponibilidade" value="noite"> Noite</div>
+          <div><input type="radio" name="txtDisponibilidade" value="periodoIntegral">Periodo Integral</div>
+        </div>
+      </div>
+
+      </div>
+      <!-- Formação Academica -->
+      <h5 class="mt-4">Formação Acadêmica</h5>
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label">Nome da Instituição</label>
+          <input type="text" name="txtNomeInstituicao" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Grau Escolaridade</label>
+          <select id="escolaridade" name="escolaridade" class="form-select">
+            <option value="">Selecione...</option>
+            <option value="analfabeto">Analfabeto</option>
+            <option value="fundamental-incompleto">Ensino Fundamental Incompleto</option>
+            <option value="fundamental-completo">Ensino Fundamental Completo</option>
+            <option value="medio-incompleto">Ensino Médio Incompleto</option>
+            <option value="medio-completo">Ensino Médio Completo</option>
+            <option value="tecnico-incompleto">Ensino Técnico Incompleto</option>
+            <option value="tecnico-completo">Ensino Técnico Completo</option>
+            <option value="superior-incompleto">Ensino Superior Incompleto</option>
+            <option value="superior-completo">Ensino Superior Completo</option>
+            <option value="pos-graduacao-incompleta">Pós-Graduação Incompleta</option>
+            <option value="pos-graduacao-completa">Pós-Graduação Completa</option>
+            <option value="mestrado-incompleto">Mestrado Incompleto</option>
+            <option value="mestrado-completo">Mestrado Completo</option>
+            <option value="doutorado-incompleto">Doutorado Incompleto</option>
+            <option value="doutorado-completo">Doutorado Completo</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Curso</label>
+          <input type="text" name="txtCurso" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Situação</label>
+          <input type="text" name="txtSituacao" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Data Início</label>
+          <input type="date" name="txtDataAcad" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Data de Conclusão</label>
+          <input type="date" name="txtDataFimAcad" class="form-control" />
+        </div>
+      </div>
+
+      <!-- Experiencia Profissional -->
+      <h5 class="mt-4">Experiencia Profissional</h5>
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label">Nome da Empresa</label>
+          <input type="text" name="txtNomeEmpresa" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Cargo</label>
+          <input type="text" name="txtCargo" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Tipo de Contrato:</label>
+          <select id="tipoContrato" name="tipoContrato" class="form-select">
+              <option value="">-- Selecione um tipo --</option>
+              <option value="clt">CLT - Contrato por Tempo Indeterminado</option>
+              <option value="temporario">Contrato de Trabalho Temporário</option>
+              <option value="determinado">Contrato por Tempo Determinado</option>
+              <option value="estagio">Contrato de Estágio</option>
+              <option value="aprendiz">Contrato de Aprendizagem</option>
+              <option value="intermitente">Contrato de Trabalho Intermitente</option>
+              <option value="autonomo">Contrato de Trabalho Autônomo</option>
+              <option value="pj">Contrato PJ (Pessoa Jurídica)</option>
+              <option value="cooperado">Contrato de Trabalho Cooperado</option>
+              <option value="avulso">Contrato de Trabalho Avulso</option>
+              <option value="domestico">Contrato de Trabalho Doméstico</option>
+              <option value="rural">Contrato de Trabalho Rural</option>
+              <option value="home-office">Contrato de Teletrabalho/Home Office</option>
+              <option value="parcial">Contrato de Trabalho em Tempo Parcial</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Estado</label>
+          <select id="estadoEmpresa" name="estadoEmpresa" class="form-select" >
+            <option value="">Selecione o Estado</option>
+            {% for estado in estados %}
+              <option value="{{ estado.id }}">{{ estado.nome_estado }} ({{ estado.sigla_estado }})</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Cidade</label>
+          <select id="cidadeEmpresa" name="cidadeEmpresa" class="form-select" >
+            <option value="">Primeiro selecione o Estado</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Descrição</label>
+          <input type="text" name="txtDescricao" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Periodo (Início)</label>
+          <input type="date" name="txtDataProf" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Periodo (Fim)</label>
+          <input type="date" name="txtDataFimProf" class="form-control" />
+        </div>
+      </div>
+
+      <!-- Redes Sociais e Links Profissionais -->
+      <h5 class="mt-4">Redes Sociais e Links Profissionais</h5>
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label">Linkedin</label>
+          <input type="url" name="txtLinkedin" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Github</label>
+          <input type="url" name="txtGithub" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Instagram</label>
+          <input type="url" name="txtInstagram" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Facebook</label>
+          <input type="url" name="txtFacebook" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Site Pessoal</label>
+          <input type="url" name="txtSitePessoal" class="form-control" />
+        </div>
+
+      <!-- Curso Extracurriculares -->
+      <h5 class="mt-4">Curso Extracurriculares/ Certificações</h5>
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <label class="form-label">Nome do Curso</label>
+          <input type="text" name="txtNomeCurso" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Instituição</label>
+          <input type="text" name="txtInstituicao" class="form-control" />
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Carga Horaria</label>
+          <input type="text" name="txtCargaHoras" class="form-control">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Data Conclusão</label>
+          <input type="date" name="txtDataFimCurso" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Link Para Certificado</label>
+          <input type="url" name="txtLinkCertificado" class="form-control" />
+        </div>
+      </div>
+
+      <!-- Idiomas -->
+      <h5 class="mt-4">Idiomas</h5>
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label">Idioma</label>
+          <input type="text" name="txtIdioma" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Nivel de Fluência</label>
+          <select id="fluencia" name="txtFluencia" class="form-select">
+            <option value="">Nivel de Fluência</option>
+            <option value="basico">Básico</option>
+            <option value="intermediario">Intermediario</option>
+            <option value="Avancado">Avançado</option>
+            <option value="fluente">Fluente/Nativo</option>
+          </select>
+        </div>
+      </div>
+      
+      <!-- Competências -->
+      <h5 class="mt-4">Competências</h5>
+      <div>
+        <div class="col-md-6">
+          <label class="form-label">Competencia Tecnicas(Hard Skils)</label>
+          <input type="text" name="txtHardSkil" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Competencia Comportamentais(Soft Skils)</label>
+          <input type="text" name="txtSoftSkil" class="form-control" />
+        </div>
+      </div> 
+
+      <!-- Acessibilidade -->
+      <h5 class="mt-4">Inclusão</h5>
+      <!-- Pessoa com deficiência (PCD) -->
+        <div class="mb-3">
+            <label class="form-label">Pessoa com deficiência (PCD)</label>
+            <div class="d-flex flex-wrap gap-3">
+                <div>
+                    <input type="radio" id="pcd-sim" name="pcd" value="sim" onchange="togglePcdFields()">
+                    <label for="pcd-sim">Sim</label>
+                </div>
+                <div>
+                    <input type="radio" id="pcd-nao" name="pcd" value="nao" checked onchange="togglePcdFields()">
+                    <label for="pcd-nao">Não</label>
+                </div>
+            </div>
+        </div>
+        <!-- Campos que aparecem quando PCD = Sim -->
+        <div id="pcdFields" style="display: none;">
+            <div class="row">
+                <!-- Tipo de deficiência -->
+                <div class="col-md-6 mb-3">
+                    <label for="tipoDeficiencia" class="form-label">Tipo de deficiência</label>
+                    <select id="tipoDeficiencia" name="tipoDeficiencia" class="form-select">
+                        <option value="">Selecione...</option>
+                        <option value="fisica">Física</option>
+                        <option value="auditiva">Auditiva</option>
+                        <option value="visual">Visual</option>
+                        <option value="intelectual">Intelectual</option>
+                        <option value="psicossocial">Psicossocial</option>
+                        <option value="multipla">Múltipla</option>
+                        <option value="reabilitado">Reabilitado</option>
+                        <option value="outra">Outra</option>
+                    </select>
+                </div>
+
+            <!-- Necessidade de adaptação -->
+            <div class="mb-3">
+                <label for="necessidadeAdaptacao" class="form-label">Necessidade de adaptação no ambiente de trabalho</label>
+                <textarea id="necessidadeAdaptacao" name="necessidadeAdaptacao" class="form-control" rows="3" placeholder="Descreva as adaptações necessárias (ex: rampa de acesso, software leitor de tela, mesa adaptada, etc.)"></textarea>
+            </div>
+        </div>
+      </div>
+      <!-- Informações Adicionais -->
+      <div class="col-md-6">
+        <h5 class="mt-4">Informações Adicionais</h5>
+        <div class="col-md-10">
+          <label class="form-label">Disponibilidade para trabalho Remoto</label>
+            <div class="d-flex flex-wrap gap-3">
+                <div>
+                    <input type="radio" id="remotoSim" name="remoto" value="sim">
+                    <label for="remotoSIm">Sim</label>
+                </div>
+                <div>
+                    <input type="radio" id="remotoNao" name="remoto" value="nao">
+                    <label for="remotoNao">Não</label>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Interesses ou Hobbies</label>
+          <input type="text" name="txtHobbie" class="form-control"/>
+        </div>
+      </div>
+
+      <!-- Anexos -->
+      <div>
+        <h5 class="mt-4">Anexos</h5>
+        <div class="row mb-3">
+          <div class="col-md-6 mb-3">
+            <label for="curriculoPdf" class="form-label">Currículo em PDF</label>
+            <input type="file" id="curriculoPdf" name="curriculoPdf" class="form-control" accept=".pdf">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="cartaApresentacao" class="form-label">Carta de apresentação</label>
+            <input type="file" id="cartaApresentacao" name="cartaApresentacao" class="form-control" accept=".pdf,.doc,.docx">
+          </div>
+        </div>
+      </div>
+      <!-- Botão -->
+      <div class="submit-btn">
+        <button type="submit">Cadastrar</button>
+      </div>
+    </form>
+    </div>
+  </div>
+  </div>
+    
+  
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+  $(document).ready(function() {
+    console.log("Script de cidades da empresa carregado!");
+    
+    // Para o dropdown de EXPERIÊNCIA PROFISSIONAL
+    $("select[name='estadoEmpresa']").on("change", function() {
+        const estado_id = $(this).val();
+        const cidadeSelect = $("select[name='cidadeEmpresa']");
+        
+        console.log("Estado da empresa selecionado ID:", estado_id);
+        
+        if (!estado_id) {
+            cidadeSelect.html('<option value="">Primeiro selecione o Estado</option>');
+            return;
+        }
+        
+        cidadeSelect.html('<option value="">Carregando...</option>');
+        
+        $.ajax({
+            url: "{% url 'core:get_cidades' %}",
+            method: 'GET',
+            data: { 'estado_id': estado_id },
+            success: function(response) {
+                console.log("Cidades da empresa recebidas:", response.total, "cidades");
+                
+                cidadeSelect.empty();
+                cidadeSelect.append('<option value="">Selecione a Cidade</option>');
+                
+                if (response.cidades && response.cidades.length > 0) {
+                    response.cidades.forEach(function(cidade) {
+                        cidadeSelect.append(
+                            '<option value="' + cidade.id + '">' + cidade.nome + '</option>'
+                        );
+                    });
+                    console.log("Cidades da empresa adicionadas ao select!");
+                } else {
+                    cidadeSelect.append('<option value="">Nenhuma cidade encontrada</option>');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Erro ao carregar cidades da empresa:", error);
+                cidadeSelect.html('<option value="">Erro ao carregar cidades</option>');
+            }
+        });
+    });
+});
+        function togglePcdFields() {
+            const pcdSim = document.getElementById('pcd-sim');
+            const pcdFields = document.getElementById('pcdFields');
+            const tipoDeficiencia = document.getElementById('tipoDeficiencia');
+            
+            if (pcdSim.checked) {
+                pcdFields.style.display = 'block';
+                tipoDeficiencia.required = true;
+            } else {
+                pcdFields.style.display = 'none';
+                tipoDeficiencia.required = false;
+                // Limpar campos quando desmarcado
+                document.getElementById('tipoDeficiencia').value = '';
+                document.getElementById('cid').value = '';
+                document.getElementById('necessidadeAdaptacao').value = '';
+            }
+        }
+
+        document.getElementById('formInclusao').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const dados = Object.fromEntries(formData);
+            
+            console.log('Dados do formulário:', dados);
+            alert('Formulário enviado! Veja os dados no console.');
+        });
+
+        // Inicializar estado dos campos
+        togglePcdFields();
+  </script>
+{% endblock %}

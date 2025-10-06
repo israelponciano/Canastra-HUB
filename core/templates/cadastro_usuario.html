@@ -37,27 +37,51 @@
   <div class="form-container">
     <h2 align="center">Cadastro de Usuário</h2>
 
-    <form action="{% url 'empresa:criar_empresa' %}" method="POST" enctype="multipart/form-data">
+    <form action="{% url 'core:cadastro_usuario' %}" method="POST" enctype="multipart/form-data">
       {% csrf_token %}
+      <!-- Nome + dataNasc + Gender -->
+      <h5 class="mt-4">Informações Pessoais</h5>
       <div class="row mb-3">
-        <div class="col-md-6">
-          <label class="form-label">Faz ai cesar</label>
+        <div class="col-md-6">  
+          <label class="form-label">Nome</label>
           <input type="text" name="txtNome" class="form-control" />
         </div>
         <div class="col-md-6">
-          <label class="form-label">Usa esse modelin</label>
-          <input type="text" name="txtSegmento" class="form-control" />
+          <label class="form-label">Nome Social</label>
+          <input type="text" name="txtNomeSocial" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Data Nascimento</label>
+          <input type="date" name="txtDataNasc" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Gênero</label>
+          <select id="genero" name="txtGenero" class="form-select" required>
+            <option value="">Selecione seu gênero</option>
+            <option value="feminino">Feminino</option>
+            <option value="masculino">Masculino</option>
+            <option value="nonbinary">Não Binario</option>
+            <option value="prefiro-nao-dizer">Prefiro não Dizer</option>
+            <option value="outro">Outro</option>
+          </select>
         </div>
       </div>
-      <!-- Razão social + CNPJ -->
+      <!-- Estado Civil + Nacionalidade -->
       <div class="row mb-3">
         <div class="col-md-6">
-          <label class="form-label">Razão Social</label>
-          <input type="text" name="txtRazaoSocial" class="form-control" />
+          <label class="form-label">Estado Civil</label>
+          <select id="txtEstadoCivil" name="txtEstadoCivil" class="form-select">
+            <option value="">Estado Civil</option>
+            <option value="solteiro">Solteiro</option>
+            <option value="casado">Casado</option>
+            <option value="divorciado">Divorciado</option>
+            <option value="viuvo">Viúvo</option>
+            <option value="uniaoEstavel">União Estavel</option>
+          </select>
         </div>
         <div class="col-md-6">
-          <label class="form-label">CNPJ</label>
-          <input type="text" name="txtCnpj" class="form-control" />
+          <label class="form-label">Nacionalidade</label>
+          <input type="text" name="txtNacionalidade" class="form-control" />
         </div>
       </div>
 
@@ -73,7 +97,7 @@
         </div>
       </div>
 
-      <!-- Senha + Confirmar -->
+      <!-- Senha + Confirmar + Foto -->
       <div class="row mb-3">
         <div class="col-md-6">
           <label class="form-label">Senha</label>
@@ -83,6 +107,10 @@
           <label class="form-label">Confirmar Senha</label>
           <input type="password" name="confirmar_senha" class="form-control" />
         </div>
+      </div>
+      <div class="mb-3">
+        <label for="fileFoto" class="form-label">Imagem</label>
+        <input type="file" id="fileFoto" name="fileFoto" class="form-control">
       </div>
 
       <!-- Endereço -->
@@ -98,14 +126,18 @@
         </div>
         <div class="col-md-2">
           <label class="form-label">Número</label>
-          <input type="text" name="txtNumero" class="form-control" />
+          <input type="text" name="txtNumero" class="form-control">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Bairro</label>
+          <input type="text" name="txtBairro" class="form-control" />
         </div>
       </div>
 
       <div class="row mb-3">
         <div class="col-md-6">
           <label class="form-label">Estado</label>
-          <select id="estado" name="estado" class="form-select" required>
+          <select id="estado" name="estado" class="form-select" >
             <option value="">Selecione o Estado</option>
             {% for estado in estados %}
               <option value="{{ estado.id }}">{{ estado.nome_estado }} ({{ estado.sigla_estado }})</option>
@@ -114,15 +146,14 @@
         </div>
         <div class="col-md-6">
           <label class="form-label">Cidade</label>
-          <select id="cidade" name="cidade" class="form-select" required>
+          <select id="cidade" name="cidade" class="form-select" >
             <option value="">Primeiro selecione o Estado</option>
           </select>
         </div>
       </div>
-
       <div class="mb-3">
         <label class="form-label">Complemento</label>
-        <input type="text" name="txtComplemento" class="form-control" />
+        <input type="text" name="txtComplemento" class="form-control">
       </div>
 
       <!-- Botão -->
@@ -131,160 +162,61 @@
       </div>
     </form>
   </div>
+  
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
-    $(document).ready(function () {
-      console.log('Script de cidades carregado!')
-    
-      $('#estado').on('change', function () {
-        const estado_id = $(this).val()
-        const cidadeSelect = $('#cidade')
-    
-        console.log('Estado selecionado ID:', estado_id)
-    
-        // Se nenhum estado selecionado, resetar cidades
-        if (!estado_id) {
-          cidadeSelect.html('<option value="" class="display-5 text-dark" style="font-size: 12pt;">Primeiro selecione o Estado</option>')
-          return
-        }
-    
-        // Mostrar loading
-        cidadeSelect.html('<option value="" class="display-5 text-dark" style="font-size: 12pt;">Carregando...</option>')
-    
-        // Requisição AJAX
-        $.ajax({
-          url: '/empresa/get_cidades/',
-          method: 'GET',
-          data: { estado_id: estado_id },
-          success: function (response) {
-            console.log('Cidades recebidas:', response.total, 'cidades')
-    
-            // Limpar select
-            cidadeSelect.empty()
-    
-            // Opção padrão
-            cidadeSelect.append('<option value="" class="display-5 text-dark" style="font-size: 12pt;">Selecione a Cidade</option>')
-    
-            // Adicionar cidades
-            if (response.cidades && response.cidades.length > 0) {
-              response.cidades.forEach(function (cidade) {
-                cidadeSelect.append('<option value="' + cidade.id + '" class="display-5 text-dark" style="font-size: 12pt;">' + cidade.nome + '</option>')
-              })
-              console.log('Cidades adicionadas ao select com sucesso!')
-            } else {
-              cidadeSelect.append('<option value="" class="display-5 text-dark" style="font-size: 12pt;">Nenhuma cidade encontrada</option>')
-            }
-          },
-          error: function (xhr, status, error) {
-            console.error('Erro ao carregar cidades:', error)
-            cidadeSelect.html('<option value="" class="display-5 text-dark" style="font-size: 12pt;">Erro ao carregar cidades</option>')
+  $(document).ready(function() {
+      console.log("Script de cidades carregado!");
+      
+      $("#estado").on("change", function() {
+          const estado_id = $(this).val();
+          const cidadeSelect = $("#cidade");
+          
+          console.log("Estado selecionado ID:", estado_id);
+          
+          // Se nenhum estado selecionado, resetar cidades
+          if (!estado_id) {
+              cidadeSelect.html('<option value="" class="display-5 text-dark" style="font-size: 12pt;">Primeiro selecione o Estado</option>');
+              return;
           }
-        })
-      })
-    })
-    
-    //script para botão de adicionar mais hubs
-    document.addEventListener('DOMContentLoaded', function () {
-      const container = document.getElementById('container-hubs')
-      const addButton = document.getElementById('adicionar-hub')
-    
-      // Pega o número total de hubs disponíveis.
-      // Certifique-se de que o seletor está correto para seu HTML.
-      const totalHubsDisponiveis = document.querySelectorAll('.hub-group select option:not([value=""])').length
-    
-      // Função para criar o botão de remover
-      function createRemoveButton() {
-        const removeButton = document.createElement('button')
-        removeButton.type = 'button'
-        removeButton.className = 'btn btn-danger btn-sm remover-hub'
-        removeButton.innerHTML = '-'
-        return removeButton
-      }
-    
-      // Função para atualizar as opções de todos os selects
-      function updateOptions() {
-        // Encontra todos os valores selecionados e os armazena em um Set para performance
-        const selectedValues = new Set()
-        container.querySelectorAll('select').forEach((select) => {
-          if (select.value) {
-            selectedValues.add(select.value)
-          }
-        })
-    
-        // Itera sobre todos os selects para habilitar/desabilitar opções
-        container.querySelectorAll('select').forEach((select) => {
-          const currentSelectValue = select.value
-          select.querySelectorAll('option').forEach((option) => {
-            // Se a opção não estiver selecionada no select atual E
-            // se ela estiver na lista de valores já selecionados
-            if (option.value && option.value !== currentSelectValue && selectedValues.has(option.value)) {
-              option.disabled = true
-            } else {
-              option.disabled = false
-            }
-          })
-        })
-    
-        // Após atualizar as opções, também verificamos se o botão de adicionar deve ser visível
-        const currentHubs = container.querySelectorAll('.hub-group').length
-        if (currentHubs >= totalHubsDisponiveis) {
-          addButton.style.display = 'none'
-        } else {
-          addButton.style.display = 'inline-block'
-        }
-      }
-    
-      // Evento para adicionar um novo hub
-      addButton.addEventListener('click', function () {
-        const model = container.querySelector('.hub-group')
-        const newGroup = model.cloneNode(true)
-    
-        // Limpa o valor selecionado no novo campo
-        newGroup.querySelector('select').value = ''
-    
-        // Adiciona o botão de remover no novo campo
-        const inputGroup = newGroup.querySelector('.input-group')
-        const removeButton = createRemoveButton()
-    
-        // O primeiro select não deve ter um botão de remover
-        if (container.querySelectorAll('.hub-group').length > 0) {
-          inputGroup.appendChild(removeButton)
-        }
-    
-        container.appendChild(newGroup)
-    
-        // Atualiza a interface após adicionar um novo campo
-        updateOptions()
-      })
-    
-      // Evento para remover um hub
-      container.addEventListener('click', function (event) {
-        if (event.target.classList.contains('remover-hub')) {
-          const groupToRemove = event.target.closest('.hub-group')
-          if (groupToRemove) {
-            container.removeChild(groupToRemove)
-    
-            // Atualiza a interface após remover
-            updateOptions()
-          }
-        }
-      })
-    
-      // Evento de mudança nos selects para gerenciar as opções desabilitadas
-      container.addEventListener('change', function (event) {
-        if (event.target.tagName === 'SELECT') {
-          updateOptions()
-        }
-      })
-    
-      // Inicializa o estado dos botões e opções ao carregar a página
-      // Adiciona o botão de remover ao primeiro item caso já existam mais de 1
-      if (container.querySelectorAll('.hub-group').length > 1 && !container.querySelector('.hub-group .remover-hub')) {
-        const firstInputGroup = container.querySelector('.hub-group .input-group')
-        firstInputGroup.appendChild(createRemoveButton())
-      }
-    
-      updateOptions()
-    })
+          
+          // Mostrar loading
+          cidadeSelect.html('<option value="" class="display-5 text-dark" style="font-size: 12pt;">Carregando...</option>');
+          
+          // Requisição AJAX
+          $.ajax({
+              url: "{% url 'core:get_cidades' %}",
+              method: 'GET',
+              data: { 'estado_id': estado_id },
+              success: function(response) {
+                  console.log("Cidades recebidas:", response.total, "cidades");
+                  
+                  // Limpar select
+                  cidadeSelect.empty();
+                  
+                  // Opção padrão
+                  cidadeSelect.append('<option value="" class="display-5 text-dark" style="font-size: 12pt;">Selecione a Cidade</option>');
+                  
+                  // Adicionar cidades
+                  if (response.cidades && response.cidades.length > 0) {
+                      response.cidades.forEach(function(cidade) {
+                          cidadeSelect.append(
+                              '<option value="' + cidade.id + '" class="display-5 text-dark" style="font-size: 12pt;">' + 
+                              cidade.nome + 
+                              '</option>'
+                          );
+                      });
+                      console.log("Cidades adicionadas ao select com sucesso!");
+                  } else {
+                      cidadeSelect.append('<option value="" class="display-5 text-dark" style="font-size: 12pt;">Nenhuma cidade encontrada</option>');
+                  }
+              },
+              error: function(xhr, status, error) {
+                  console.error("Erro ao carregar cidades:", error);
+                  cidadeSelect.html('<option value="" class="display-5 text-dark" style="font-size: 12pt;">Erro ao carregar cidades</option>');
+              }
+          });
+      });
+  });
   </script>
 {% endblock %}
