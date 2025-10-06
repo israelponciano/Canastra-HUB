@@ -61,7 +61,7 @@
           </div>
 
           <!-- CTA Button & Mobile Menu -->
-          <div class="nav-actions">
+          <div class="nav-actions-pc">
             {% if not user.is_authenticated %}
               <a href="{% url 'core:login' %}"><button class="btn btn-primary desktop-only">Acessar</button></a>
             {% endif %}
@@ -75,15 +75,14 @@
                   {% if not request.path == '/perfil/' %}
                     <a class="nav-link-home-dropdown" href="#">Perfil</a>
                   {% endif %}
-                  {% if not request.path == '/' %}
-                    <a href="/" class="nav-link-home-dropdown">Home</a>
-                  {% endif %}
+
                   <a class="nav-link-home-dropdown" href="{% url 'core:logout' %}">Sair</a>
                 </div>
               </div>
               <!-- <a href="{% url 'core:login' %}" class="nav-link-home">Login</a> -->
             {% endif %}
-
+          </div>
+          <div class="nav-actions-mobile">
             <button id="mobile-menu-btn" class="mobile-menu-btn mobile-only">☰</button>
           </div>
         </div>
@@ -96,10 +95,12 @@
             <a href="#vagas" class="nav-link">Vagas</a>
             <a href="#parceiros" class="nav-link">Parceiros</a>
             <a href="#contato" class="nav-link">Contato</a>
-            <button href="{% url 'core:login' %}" class="btn btn-primary">Login</button>
-            {% if request.session.email_atual %}
-              <a class="nav-link">Usuário logado: {{ request.session.email_atual }}</a>
+            {% if user.is_authenticated %}
+              <a href="#perfil" class="nav-link">Perfil</a>
               <a href="{% url 'core:logout' %}" class="nav-link">Sair</a>
+            {% endif %}
+            {% if not user.is_authenticated %}
+              <button href="{% url 'core:login' %}" class="btn btn-primary">Acessar</button>
             {% endif %}
           </div>
         </div>

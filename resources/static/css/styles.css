@@ -212,6 +212,13 @@ p {
    transition: border 0.3s ease;
 }
 
+/* garantia: sempre esconder a imagem de perfil em telas pequenas */
+@media (max-width: 767px) {
+   .profile-img {
+      display: none;
+   }
+}
+
 .profile-img:hover {
    border-color: #555;
 }
@@ -389,11 +396,39 @@ p {
    width: 100%;
 }
 
-.nav-actions {
+/* mobile-first: por padrão escondemos a área de desktop e mostramos a área mobile */
+.nav-actions-pc {
+   display: none;
+}
+
+.nav-actions-mobile {
    display: flex;
    align-items: center;
    gap: 1rem;
 }
+
+/* estiliza a imagem (opcional) */
+.profile-img {
+   width: 40px;
+   height: 40px;
+   border-radius: 50%;
+   object-fit: cover;
+   cursor: pointer;
+}
+
+/* em telas >= 768px mostramos a área de desktop e escondemos a mobile */
+@media (min-width: 768px) {
+   .nav-actions-pc {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+   }
+
+   .nav-actions-mobile {
+      display: none;
+   }
+}
+
 
 .mobile-menu-btn {
    background: none;
