@@ -75,9 +75,6 @@
                   {% if not request.path == '/perfil/' %}
                     <a class="nav-link-home-dropdown" href="#">Perfil</a>
                   {% endif %}
-                  {% if not request.path == '/' %}
-                    <a href="/" class="nav-link-home-dropdown">Home</a>
-                  {% endif %}
                   <a class="nav-link-home-dropdown" href="{% url 'core:logout' %}">Sair</a>
                 </div>
               </div>
