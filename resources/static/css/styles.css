@@ -596,7 +596,7 @@ p {
 .carousel-indicators {
    position: absolute;
    bottom: 1rem;
-   left: 50%;
+   left: 36%;
    transform: translateX(-50%);
    display: flex;
    gap: 0.5rem;
