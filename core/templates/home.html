@@ -14,7 +14,7 @@
               <span class="carousel-category">Agro</span>
               <h2 class="carousel-title">Tecnologia na Agricultura</h2>
               <p class="carousel-description">Descubra as últimas inovações que estão revolucionando o campo brasileiro.</p>
-              <button class="btn btn-secondary">Leia Mais</button>
+              {% comment %} <button class="btn btn-secondary">Leia Mais</button> {% endcomment %}
             </div>
           </div>
 
@@ -26,7 +26,7 @@
               <span class="carousel-category">Apicultura</span>
               <h2 class="carousel-title">Apicultura Sustentável</h2>
               <p class="carousel-description">Práticas modernas para uma produção de mel responsável e produtiva.</p>
-              <button class="btn btn-secondary">Leia Mais</button>
+              {% comment %} <button class="btn btn-secondary">Leia Mais</button> {% endcomment %}
             </div>
           </div>
 
@@ -38,14 +38,14 @@
               <span class="carousel-category">Café</span>
               <h2 class="carousel-title">Café de Qualidade</h2>
               <p class="carousel-description">Do grão à xícara: técnicas para produzir o melhor café especial.</p>
-              <button class="btn btn-secondary">Leia Mais</button>
+              {% comment %} <button class="btn btn-secondary">Leia Mais</button> {% endcomment %}
             </div>
           </div>
         </div>
 
         <!-- Carousel Navigation -->
-        <button class="carousel-btn carousel-prev" aria-label="Slide anterior">‹</button>
-        <button class="carousel-btn carousel-next" aria-label="Próximo slide">›</button>
+        <button class="carousel-btn carousel-prev" aria-label="Slide anterior"><span class="chev">‹</span></button>
+        <button class="carousel-btn carousel-next" aria-label="Próximo slide"><span class="chev">›</span></button>
 
         <!-- Carousel Indicators -->
         <div class="carousel-indicators">
@@ -103,7 +103,7 @@
                 <span class="form-error" id="email-error"></span>
               </div> {% endcomment %}
 
-              <button type="submit" class="btn btn-accent btn-lg">Cadastrar Agora</button>
+              <button type="submit" class="btn btn-accent btn-lg" onclick="window.location.href='{% url 'core:cadastro' %}'">Cadastrar Agora</button>
             </form>
 
             <!-- Success Message -->

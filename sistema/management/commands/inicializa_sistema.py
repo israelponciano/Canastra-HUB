@@ -52,7 +52,24 @@ class Command(BaseCommand):
             nome='Cleiton',
             tipo='usuario'
         )
-        usuario = Usuario.objects.create(user=user, curso='Engenharia',)
+        cidade = Cidade.objects.get(nome_cidade="Arcos")
+        usuario = Usuario.objects.create(
+            user=user, 
+            nome_social = 'Cesa',
+            data_nascimento = '2002-07-11',
+            genero = 'masculino',
+            estado_civil = 'solteiro',
+            nacionalidade = 'brasileiro',
+            telefone = '(37) 99838-1976', 
+            cep = '398000000',
+            rua = 'rua teste',
+            numero = '981',
+            bairro = 'teste',
+            cidade_id = cidade.id,
+            estado_id = cidade.estado_cidade.id,
+            complemento = 'complemtento blablabla',
+            pretensao_salarial = 15.00
+            )
 
         user2 = UsuarioBase.objects.create_user(
             email='empresa@teste',
@@ -60,9 +77,7 @@ class Command(BaseCommand):
             nome='Roberta Cafes',
             tipo='empresa'
         )
-        cidade = Cidade.objects.get(nome_cidade="Arcos")
-        print("cidade", cidade.id)
-        print("estado", cidade.estado_cidade.id)
+
         empresa = Empresa.objects.create(user=user2,
                                          nomefantasia='Roberta Cafés',
                                          tipo_empresa='Cafecultura',
@@ -84,7 +99,7 @@ class Command(BaseCommand):
             tipo='admin'
         )
 
-        print("User-1", user.email, usuario.curso)
+        print("User-1", user.email, usuario)
         print("User-2", user2.email, empresa.segmento)
         print("User-3", user3.email, user3.is_admin)
         print("hub1", hub1.nome_hub)
