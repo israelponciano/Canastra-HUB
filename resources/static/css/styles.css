@@ -477,6 +477,80 @@ p {
    }
 }
 
+/* Espaçamento entre as imagens */
+.imagemgrande-section {
+   margin: 2rem 0;
+   overflow: hidden;
+   box-shadow: var(--shadow-lg);
+}
+
+/* Remove sublinhado e faz toda a imagem ser clicável */
+.imagemgrande-link {
+   text-decoration: none;
+   color: inherit;
+   display: block;
+}
+
+/* Container da imagem */
+.imagemgrande-container {
+   position: relative;
+   height: 50vh;
+   min-height: 300px;
+   background-size: cover;
+   background-position: center;
+   background-repeat: no-repeat;
+
+   display: flex;
+   justify-content: center;
+   /* Centraliza horizontalmente */
+   align-items: center;
+   /* Centraliza verticalmente */
+
+   transition: transform 0.4s ease, filter 0.4s ease;
+}
+
+/* Efeito de hover para indicar que é clicável */
+.imagemgrande-container:hover {
+   transform: scale(1.02);
+   filter: brightness(0.85);
+   cursor: pointer;
+}
+
+.imagemgrande-content {
+   text-align: center;
+   background: rgba(77, 77, 77, 0.45);
+   width: 100000px;
+   backdrop-filter: blur(5px);
+   padding: 2rem;
+   border-radius: 0.5rem;
+   max-width: 600px;
+   color: white;
+}
+
+.imagemgrande-content h1 {
+   margin: 0 0 0.5rem 0;
+   font-size: 2.5rem;
+}
+
+.imagemgrande-content p {
+   margin: 0;
+   font-size: 1.2rem;
+}
+
+@media (max-width: 768px) {
+   .imagemgrande-container {
+      height: 60vh;
+   }
+
+   .imagemgrande-content h1 {
+      font-size: 2rem;
+   }
+
+   .imagemgrande-content p {
+      font-size: 1rem;
+   }
+}
+
 /* Carousel Section */
 .carousel-section {
    margin: 0rem 0rem;

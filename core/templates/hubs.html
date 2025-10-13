@@ -1,0 +1,41 @@
+{% extends 'master.html' %}
+{% load static %}
+{% block conteudo %}
+  <main>
+    <!-- Carousel Section -->
+
+    <section class="imagemgrande-section">
+      <a href="natureza.html" class="imagemgrande-link">
+        <div class="imagemgrande-container" style="background-image: url('{% static 'img/milho.jpg' %}');">
+          <div class="imagemgrande-content">
+            <h1>Agro</h1>
+          </div>
+        </div>
+      </a>
+    </section>
+
+    <section class="imagemgrande-section">
+      <a href="cidade.html" class="imagemgrande-link">
+        <div class="imagemgrande-container" style="background-image: url('{% static 'img/milho.jpg' %}');">
+          <div class="imagemgrande-content">
+            <h1>Cidade</h1>
+            <p>A energia urbana em cada esquina.</p>
+          </div>
+        </div>
+      </a>
+    </section>
+
+    <section class="imagemgrande-section">
+      <a href="espaco.html" class="imagemgrande-link">
+        <div class="imagemgrande-container" style="background-image: url('{% static 'img/milho.jpg' %}');">
+          <div class="imagemgrande-content">
+            <h1>Espaço</h1>
+            <p>Olhe para as estrelas e sonhe alto.</p>
+          </div>
+        </div>
+      </a>
+    </section>
+  </main>
+
+  <script src="{% static 'js/scripts.js' %}"></script>
+{% endblock %}

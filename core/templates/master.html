@@ -28,7 +28,7 @@
           <!-- Desktop Navigation -->
           <div class="nav-links">
             <a href="/" class="nav-link">Home</a>
-            <a href="#hub" class="nav-link">Hub</a>
+            <a href="{% url 'core:hubs' %}" class="nav-link">Hub</a>
             {% if request.session.perfil == 'usuario' %}
               <a href="#vagas" class="nav-link">Vagas</a>
             {% endif %}
@@ -71,7 +71,7 @@
         <div id="mobile-menu" class="mobile-menu">
           <div class="mobile-nav-links">
             <a href="/" class="nav-link">Home</a>
-            <a href="#hub" class="nav-link">Hub</a>
+            <a href="{% url 'core:hubs' %}" class="nav-link">Hub</a>
             <a href="#vagas" class="nav-link">Vagas</a>
             <a href="#parceiros" class="nav-link">Parceiros</a>
             {% comment %} <a href="#contato" class="nav-link">Contato</a> {% endcomment %}

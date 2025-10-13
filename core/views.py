@@ -15,6 +15,9 @@ def home(request):
 
     return render(request, 'home.html')
 
+def hubs(request):
+
+    return render(request, 'hubs.html')
 
 def cadastro(request):
 
