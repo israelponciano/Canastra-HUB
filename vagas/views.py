@@ -20,56 +20,43 @@ def cadastro_vagas(request):
     return render(request, 'cadastro_vagas.html', {'estados': estados})
 
 def criar_vagas(request):
-    
+    usuario_email = request.session.get('email_atual')
+
     if request.method == 'POST':
-        nomeEmpresa = request.POST.get('txtNomeEmpresa')
-        cnpjEmpresa = limpar_numeros(request.POST.get('txtCnpjEmpresa'))
-        cargo_vaga = request.POST.get('txtCargoVaga')
+        titulo = request.POST.get('txtTitulo')
         descricao_vaga = request.POST.get('txtDescricao')
-        cidade_id = request.POST.get('cidade')
-        estado_id = request.POST.get('estado')
-        requisito_vaga =request.POST.get('txtRequisito')
-        curso = request.POST.get('txtCurso')
+        local = request.POST.get('txtLocal')
+        requisito_vaga = request.POST.get('txtRequisito')
+        cursos = request.POST.getlist('txtCursos[]') 
 
-        # Validar se estado e cidade existem
-        if not Estado.objects.filter(id=estado_id).exists():
-            messages.error(request, 'Estado inválido.')
-            estados = Estado.objects.all().order_by('nome_estado')
-            return render(request, 'cadastro_vagas.html', {'estados': estados})
+        usuario = UsuarioBase.objects.get(email = usuario_email)  
+        empresa = usuario.empresa
 
-        if not Cidade.objects.filter(id=cidade_id).exists():
-            messages.error(request, 'Cidade inválida.')
-            estados = Estado.objects.all().order_by('nome_estado')
-            return render(request, 'cadastro_vagas.html', {'estados': estados})
-
-        # Buscar os objetos Estado e Cidade no banco
-        estado = Estado.objects.get(id=estado_id)
-        cidade = Cidade.objects.get(id=cidade_id)
-        
-        empresa = Empresa.objects.filter(nomefantasia=nomeEmpresa, cnpj=cnpjEmpresa).first()
-        
-        if not empresa:
-            messages.error(request, f'Empresa "{nomeEmpresa}" com CNPJ {cnpjEmpresa} não encontrada.')
-            estados = Estado.objects.all().order_by('nome_estado')
-            return render(request, 'cadastro_vagas.html', {'estados': estados})
-        
-        # Criar empresa
-        vagas = Vagas.objects.create(
-            cargo_vaga=cargo_vaga,
+        # Criar Vaga
+        vaga = Vagas.objects.create(
+            cargo_vaga=titulo,
+            local = local,
             descricao_vaga=descricao_vaga,
             requisito_vaga=requisito_vaga,
-            curso=curso,
-            empresa=empresa, 
+
+            empresa=empresa,
         )
+
+        for curso in cursos:
+                CursoVaga.objects.create(
+                    vaga=vaga,
+                    curso=curso
+                )
+
         messages.success(request, 'Vaga cadastrada com sucesso!')
         return redirect('core:home')
 
-    # GET request - carregar página com dados do banco
     estados = Estado.objects.all().order_by('nome_estado')
     empresas = Empresa.objects.all().order_by('nome_empresa')
     return render(request, 'cadastro_vagas.html', {
-            'estados': estados,
-            'empresas': empresas})
+        'estados': estados,
+        # 'empresas': empresas
+    })
 
 @require_http_methods(["GET"])
 def get_cidades(request):
@@ -92,7 +79,6 @@ def get_cidades(request):
             'error': 'Estado não encontrado'
         })
 
-    # ✅ ForeignKey é 'estado_cidade'
     cidades = Cidade.objects.filter(estado_cidade_id=estado_id).order_by('nome_cidade')
     
     print(f"DEBUG: {cidades.count()} cidades encontradas")
