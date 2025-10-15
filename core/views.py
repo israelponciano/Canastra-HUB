@@ -19,6 +19,10 @@ def hubs(request):
 
     return render(request, 'hubs.html')
 
+def agro(request):
+
+    return render(request, 'agro.html')
+
 def cadastro(request):
 
     return render(request, 'cadastro.html')
