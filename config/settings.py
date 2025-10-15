@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "empresa",
     "sistema",
     "usuario",
+    "vagas",
 ]
 
 MIDDLEWARE = [

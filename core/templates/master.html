@@ -33,7 +33,7 @@
               <a href="#vagas" class="nav-link">Vagas</a>
             {% endif %}
             {% if request.session.perfil == 'empresa' %}
-              <a href="#cadastro vagas" class="nav-link">Cadastro de Vagas</a>
+              <a href="vagas/cadastro_vagas/" class="nav-link">Cadastro de Vagas</a>
             {% endif %}
             <a href="#parceiros" class="nav-link">Parceiros</a>
             {% comment %} <a href="#contato" class="nav-link">Contato</a> {% endcomment %}
@@ -55,7 +55,6 @@
                   {% if not request.path == '/perfil/' %}
                     <a class="nav-link-home-dropdown" href="#">Perfil</a>
                   {% endif %}
-
                   <a class="nav-link-home-dropdown" href="{% url 'core:logout' %}">Sair</a>
                 </div>
               </div>

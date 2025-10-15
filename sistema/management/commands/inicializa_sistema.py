@@ -82,7 +82,7 @@ class Command(BaseCommand):
                                          nomefantasia='Roberta Cafés',
                                          tipo_empresa='Cafecultura',
                                          razao_social='naoseioqeisso',
-                                         cnpj='236343',
+                                         cnpj='11111111111111',
                                          telefone='44324334243',
                                          rua='Rua jose da silva',
                                          cep='3232132132',
