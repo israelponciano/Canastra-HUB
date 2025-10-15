@@ -21,19 +21,19 @@
           <!-- Logo -->
           <div class="logo">
             <div>
-              <a href="/"><img src="{% static 'img/logoCanastra.jpeg' %}" alt="Logo Canastra" height="50px" /></a>
+              <a href="{% url 'core:home' %}"><img src="{% static 'img/logoCanastra.jpeg' %}" alt="Logo Canastra" height="50px" /></a>
             </div>
           </div>
 
           <!-- Desktop Navigation -->
           <div class="nav-links">
-            <a href="/" class="nav-link">Home</a>
+            <a href="{% url 'core:home' %}" class="nav-link">Home</a>
             <a href="{% url 'core:hubs' %}" class="nav-link">Hub</a>
             {% if request.session.perfil == 'usuario' %}
               <a href="#vagas" class="nav-link">Vagas</a>
             {% endif %}
             {% if request.session.perfil == 'empresa' %}
-              <a href="vagas/cadastro_vagas/" class="nav-link">Cadastro de Vagas</a>
+              <a href="{% url 'vagas:cadastro_vagas' %}" class="nav-link">Cadastro de Vagas</a>
             {% endif %}
             <a href="#parceiros" class="nav-link">Parceiros</a>
             {% comment %} <a href="#contato" class="nav-link">Contato</a> {% endcomment %}
@@ -69,9 +69,14 @@
         <!-- Mobile Navigation -->
         <div id="mobile-menu" class="mobile-menu">
           <div class="mobile-nav-links">
-            <a href="/" class="nav-link">Home</a>
+            <a href="{% url 'core:home' %}" class="nav-link">Home</a>
             <a href="{% url 'core:hubs' %}" class="nav-link">Hub</a>
-            <a href="#vagas" class="nav-link">Vagas</a>
+            {% if request.session.perfil == 'usuario' %}
+              <a href="#vagas" class="nav-link">Vagas</a>
+            {% endif %}
+            {% if request.session.perfil == 'empresa' %}
+              <a href="{% url 'vagas:cadastro_vagas' %}" class="nav-link">Cadastro de Vagas</a>
+            {% endif %}
             <a href="#parceiros" class="nav-link">Parceiros</a>
             {% comment %} <a href="#contato" class="nav-link">Contato</a> {% endcomment %}
             <a href="#sobre" class="nav-link">Sobre</a>
