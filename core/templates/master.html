@@ -29,12 +29,11 @@
           <div class="nav-links">
             <a href="{% url 'core:home' %}" class="nav-link">Home</a>
             <a href="{% url 'core:hubs' %}" class="nav-link">Hub</a>
-            {% if request.session.perfil == 'usuario' %}
-              <a href="#vagas" class="nav-link">Vagas</a>
-            {% endif %}
+            <a href="#vagas" class="nav-link">Vagas</a>
             {% if request.session.perfil == 'empresa' %}
               <a href="{% url 'vagas:cadastro_vagas' %}" class="nav-link">Cadastro de Vagas</a>
             {% endif %}
+            <a href="#espacoshub" class="nav-link">Espaços Hub</a>
             <a href="#parceiros" class="nav-link">Parceiros</a>
             {% comment %} <a href="#contato" class="nav-link">Contato</a> {% endcomment %}
             <a href="#sobre" class="nav-link">Sobre</a>
@@ -71,9 +70,9 @@
           <div class="mobile-nav-links">
             <a href="{% url 'core:home' %}" class="nav-link">Home</a>
             <a href="{% url 'core:hubs' %}" class="nav-link">Hub</a>
-            {% if request.session.perfil == 'usuario' %}
-              <a href="#vagas" class="nav-link">Vagas</a>
-            {% endif %}
+
+            <a href="#vagas" class="nav-link">Vagas</a>
+
             {% if request.session.perfil == 'empresa' %}
               <a href="{% url 'vagas:cadastro_vagas' %}" class="nav-link">Cadastro de Vagas</a>
             {% endif %}
