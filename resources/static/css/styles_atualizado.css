@@ -720,8 +720,7 @@ p {
 
 /* Hub Section */
 .hub-section {
-   padding: 5rem 0;
-   background: hsl(var(--muted) / 0.3);
+   padding: 3rem 0;
 }
 
 .hub-grid {
@@ -1304,9 +1303,7 @@ p {
 /* estiliza a imagem (opcional) */
 
 /* em telas >= 768px mostramos a área de desktop e escondemos a mobile */
-@media (min-width: 768px) {
-
-}
+@media (min-width: 768px) {}
 
 
 
@@ -1360,12 +1357,20 @@ p {
 
 /* Main Content */
 .hub-main {
-   margin-top: 80px;
-   padding-bottom: 3rem;
+   background: hsl(var(--muted) / 0.3);
 }
 
 .hub-section {
-   padding: 4rem 0;
+   padding: 3rem 0;
+}
+
+.section-bigTitle {
+   font-size: 3.5rem;
+   font-weight: 600;
+   color: var(--text-dark);
+   padding-top: 3rem;
+   text-align: center;
+   position: relative;
 }
 
 .section-title {
