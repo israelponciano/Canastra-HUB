@@ -1,6 +1,14 @@
 {% extends 'master.html' %}
 {% load static %}
 {% block conteudo %}
+  {% if request.session.incompleto %}
+    <div id="alert-bar" class="alert-bar">
+      <div class="alert-content">
+        <span>Seu cadastro ainda não foi finalizado. <a href="{% url 'core:cadastro_completo' %}" class="alert-link">Clique aqui para completa-lo</a>.</span>
+        <button class="close-btn" onclick="closeAlert()">×</button>
+      </div>
+    </div>
+  {% endif %}
   <main>
     <!-- Carousel Section -->
     <section id="home" class="carousel-section">
@@ -178,6 +186,62 @@
       </div>
     </section>
   </main>
+  <style>
+    .alert-bar {
+      background-color: #ffe16aff;
+      color: #303030ff;
+      position: sticky;
+      top: 4rem;
+      z-index: 999;
+      width: 100%;
+    }
+    
+    .alert-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center; /* centraliza verticalmente tudo */
+      padding: 0.75rem 1rem; /* dá espaço interno consistente */
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    
+    .alert-link {
+      color: #5c87fcff;
+      /* azul */
+      font-weight: bold;
+      text-decoration: underline;
+    }
+    
+    .alert-link:hover {
+      text-decoration: none;
+    }
+    
+    .close-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.5rem; /* tamanho proporcional ao texto */
+      line-height: 1; /* evita descentrar verticalmente */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 4px;
+      height: 100%; /* ocupa toda a altura da faixa */
+      padding: 0;
+      cursor: pointer;
+      color: #000;
+    }
+    
+    .close-btn:hover {
+      color: #444;
+    }
+  </style>
 
+  <!-- Script -->
+  <script>
+    function closeAlert() {
+      const alertBar = document.getElementById('alert-bar')
+      alertBar.style.display = 'none'
+    }
+  </script>
   <script src="{% static 'js/scripts.js' %}"></script>
 {% endblock %}

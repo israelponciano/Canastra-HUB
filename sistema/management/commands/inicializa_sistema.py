@@ -49,13 +49,13 @@ class Command(BaseCommand):
         user = UsuarioBase.objects.create_user(
             email='usuario@teste',
             password='123',
-            nome='Cleiton',
+            nome='Cleiton Romario Santos',
             tipo='usuario'
         )
         cidade = Cidade.objects.get(nome_cidade="Arcos")
         usuario = Usuario.objects.create(
             user=user, 
-            nome_social = 'Cesa',
+            nome_social = 'Cleiton',
             data_nascimento = '2002-07-11',
             genero = 'masculino',
             estado_civil = 'solteiro',
