@@ -23,6 +23,10 @@ def agro(request):
 
     return render(request, 'agro.html')
 
+def sobre(request):
+
+    return render(request, 'sobre.html')
+
 def cadastro(request):
 
     return render(request, 'cadastro.html')
