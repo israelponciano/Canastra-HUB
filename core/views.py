@@ -15,6 +15,17 @@ def home(request):
 
     return render(request, 'home.html')
 
+def hubs(request):
+
+    return render(request, 'hubs.html')
+
+def agro(request):
+
+    return render(request, 'agro.html')
+
+def sobre(request):
+
+    return render(request, 'sobre.html')
 
 def cadastro(request):
 
@@ -256,8 +267,14 @@ def login(request):
             request.session['nome'] = usuario.nome
             request.session['foto'] = foto
             request.session['perfil'] = usuario.tipo
+            if usuario.tipo == "usuario":
+                tblusuario = Usuario.objects.get(user = usuario)
+                if tblusuario.curso == None or tblusuario.grau_escolaridade == None:
+                    request.session['incompleto'] = True 
+                    
             request.session['id_atual'] = usuario.id
             request.session['email_atual'] = usuario.email
+            
             
             #configura sessao para expirar em 4 horas
             request.session.set_expiry(14400)

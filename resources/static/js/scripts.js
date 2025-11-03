@@ -223,6 +223,7 @@ function initSmoothScroll() {
 // ===== SIGNUP FORM =====
 function initSignupForm() {
    const form = document.getElementById('signup-form');
+   if (!form) return; // ← impede erro se o form não existir
    const successMessage = document.getElementById('success-message');
    const nameInput = document.getElementById('name');
    const emailInput = document.getElementById('email');

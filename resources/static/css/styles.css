@@ -212,6 +212,13 @@ p {
    transition: border 0.3s ease;
 }
 
+/* garantia: sempre esconder a imagem de perfil em telas pequenas */
+@media (max-width: 767px) {
+   .profile-img {
+      display: none;
+   }
+}
+
 .profile-img:hover {
    border-color: #555;
 }
@@ -389,11 +396,39 @@ p {
    width: 100%;
 }
 
-.nav-actions {
+/* mobile-first: por padrão escondemos a área de desktop e mostramos a área mobile */
+.nav-actions-pc {
+   display: none;
+}
+
+.nav-actions-mobile {
    display: flex;
    align-items: center;
    gap: 1rem;
 }
+
+/* estiliza a imagem (opcional) */
+.profile-img {
+   width: 40px;
+   height: 40px;
+   border-radius: 50%;
+   object-fit: cover;
+   cursor: pointer;
+}
+
+/* em telas >= 768px mostramos a área de desktop e escondemos a mobile */
+@media (min-width: 768px) {
+   .nav-actions-pc {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+   }
+
+   .nav-actions-mobile {
+      display: none;
+   }
+}
+
 
 .mobile-menu-btn {
    background: none;
@@ -442,9 +477,95 @@ p {
    }
 }
 
+/* Espaçamento entre as imagens */
+.imagemgrande-section {
+   margin: 2rem 0;
+   overflow: hidden;
+   box-shadow: var(--shadow-lg);
+}
+
+/* Remove sublinhado e faz toda a imagem ser clicável */
+.imagemgrande-link {
+   text-decoration: none;
+   color: inherit;
+   display: block;
+}
+
+/* Container da imagem */
+.imagemgrande-container {
+   position: relative;
+   height: 50vh;
+   min-height: 300px;
+   background-size: cover;
+   background-position: center;
+   background-repeat: no-repeat;
+
+   display: flex;
+   justify-content: center;
+   /* Centraliza horizontalmente */
+   align-items: center;
+   /* Centraliza verticalmente */
+
+   transition: transform 0.4s ease, filter 0.4s ease;
+}
+
+/* Efeito de hover para indicar que é clicável */
+.imagemgrande-container:hover {
+   transform: scale(1.02);
+   filter: brightness(0.85);
+   cursor: pointer;
+}
+
+.imagemgrande-content {
+   width: 100%;
+   /* 🔸 ocupa toda a largura da tela */
+   min-height: 100px;
+   text-align: center;
+   background: rgba(146, 146, 146, 0.45);
+   backdrop-filter: blur(5px);
+   padding: 2rem 1rem;
+   position: absolute;
+   top: 50%;
+   transform: translateY(-50%);
+   /* se quiser ela no rodapé da imagem */
+   left: 0;
+   right: 0;
+
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+}
+
+.imagemgrande-content h1 {
+   margin: 0 0 0.5rem 0;
+   font-size: 2.5rem;
+   color: white;
+   text-shadow: 2px 2px 12px black;
+}
+
+.imagemgrande-content p {
+   margin: 0;
+   font-size: 1.2rem;
+}
+
+@media (max-width: 768px) {
+   .imagemgrande-container {
+      height: 60vh;
+   }
+
+   .imagemgrande-content h1 {
+      font-size: 2rem;
+   }
+
+   .imagemgrande-content p {
+      font-size: 1rem;
+   }
+}
+
 /* Carousel Section */
 .carousel-section {
-   margin: 2rem 0rem;
+   margin: 0rem 0rem;
    /* border-radius: 1rem; */
    overflow: hidden;
    box-shadow: var(--shadow-lg);
@@ -452,7 +573,7 @@ p {
 
 .carousel-container {
    position: relative;
-   height: 70vh;
+   height: 90vh;
    min-height: 500px;
 }
 
@@ -487,7 +608,7 @@ p {
    left: 0;
    width: 100%;
    height: 100%;
-   background: rgba(0, 0, 0, 0.4);
+   background: rgba(0, 0, 0, 0.15);
 }
 
 .carousel-content {
@@ -514,6 +635,7 @@ p {
    font-size: 3rem;
    font-weight: 700;
    margin-bottom: 1rem;
+   text-shadow: 2px 2px 12px black;
    animation: slideUp 0.8s ease-out;
 }
 
@@ -522,6 +644,7 @@ p {
    margin-bottom: 2rem;
    color: rgba(255, 255, 255, 0.9);
    animation: slideUp 0.8s ease-out 0.2s both;
+   text-shadow: 2px 2px 12px black;
 }
 
 .carousel-btn {
@@ -561,7 +684,7 @@ p {
 .carousel-indicators {
    position: absolute;
    bottom: 1rem;
-   left: 50%;
+   left: 36%;
    transform: translateX(-50%);
    display: flex;
    gap: 0.5rem;
@@ -1082,7 +1205,7 @@ p {
 
    /* Carousel */
    .carousel-section {
-      margin: 1rem 0.5rem;
+      width: 100vw;
    }
 
    .carousel-content {

@@ -1,0 +1,251 @@
+{% extends 'master.html' %}
+{% load static %}
+{% block conteudo %}
+  <main class="hub-main">
+    <!-- Notícias Section -->
+    <h1 class="section-bigTitle">Agro</h1>
+    <section id="noticias" class="hub-section">
+      <div class="container">
+        <h2 class="section-title">Notícias</h2>
+        <div class="carousel-wrapper">
+          <button class="carousel-control prev" aria-label="Notícia anterior">‹</button>
+          <div class="news-carousel">
+            <div class="news-track">
+              <!-- Notícia 1 -->
+              <div class="news-card">
+                <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=600&h=400&fit=crop" alt="Tecnologia no campo" />
+                <div class="news-content">
+                  <span class="news-author">Por João Silva</span>
+                  <h3>Tecnologia revoluciona a agricultura brasileira</h3>
+                  <p>Novas ferramentas digitais estão transformando a forma como os produtores gerenciam suas propriedades, aumentando a produtividade e sustentabilidade.</p>
+                </div>
+              </div>
+
+              <!-- Notícia 2 -->
+              <div class="news-card">
+                <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=400&fit=crop" alt="Apicultura" />
+                <div class="news-content">
+                  <span class="news-author">Por Maria Santos</span>
+                  <h3>Produção de mel cresce 30% na região</h3>
+                  <p>Apicultores locais relatam aumento significativo na produção graças a técnicas sustentáveis e manejo adequado das colmeias.</p>
+                </div>
+              </div>
+
+              <!-- Notícia 3 -->
+              <div class="news-card">
+                <img src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=600&h=400&fit=crop" alt="Café especial" />
+                <div class="news-content">
+                  <span class="news-author">Por Carlos Oliveira</span>
+                  <h3>Café da Serra ganha prêmio internacional</h3>
+                  <p>Cafés especiais produzidos na região conquistam reconhecimento mundial pela qualidade excepcional e práticas sustentáveis.</p>
+                </div>
+              </div>
+
+              <!-- Notícia 4 -->
+              <div class="news-card">
+                <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=600&h=400&fit=crop" alt="Agronegócio sustentável" />
+                <div class="news-content">
+                  <span class="news-author">Por Ana Paula</span>
+                  <h3>Investimentos em agricultura sustentável</h3>
+                  <p>Novos recursos financeiros estão disponíveis para produtores que adotam práticas sustentáveis e preservação ambiental.</p>
+                </div>
+              </div>
+
+              <!-- Notícia 5 -->
+              <div class="news-card">
+                <img src="https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=600&h=400&fit=crop" alt="Mercado agrícola" />
+                <div class="news-content">
+                  <span class="news-author">Por Pedro Costa</span>
+                  <h3>Mercado agro bate recorde de exportações</h3>
+                  <p>Setor agrícola brasileiro alcança números históricos nas vendas externas, consolidando posição de liderança global.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button class="carousel-control next" aria-label="Próxima notícia">›</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Demandas Section -->
+    <section id="demandas" class="hub-section">
+      <div class="container">
+        <h2 class="section-title">Demandas</h2>
+        <div class="demands-grid">
+          <!-- Demanda 1 -->
+          <div class="demand-card">
+            <img src="https://images.unsplash.com/photo-1560493676-04071c5f467b?w=100&h=100&fit=crop" alt="AgroTech Solutions" class="company-logo" />
+            <h3>Insumos Agrícolas Orgânicos</h3>
+            <span class="price">R$ 5.000 - R$ 15.000</span>
+            <p>Buscamos fornecedores de insumos orgânicos certificados para grande escala. Prioridade para produtores locais.</p>
+          </div>
+
+          <!-- Demanda 2 -->
+          <div class="demand-card">
+            <img src="https://images.unsplash.com/photo-1549923746-c502d488b3ea?w=100&h=100&fit=crop" alt="Mel Premium" class="company-logo" />
+            <h3>Mel Puro de Abelhas Nativas</h3>
+            <span class="price">R$ 80 - R$ 120/kg</span>
+            <p>Demanda constante de mel puro de abelhas nativas da região. Pagamento à vista com certificação de qualidade.</p>
+          </div>
+
+          <!-- Demanda 3 -->
+          <div class="demand-card">
+            <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=100&h=100&fit=crop" alt="Coffee Export" class="company-logo" />
+            <h3>Café Especial Arábica</h3>
+            <span class="price">R$ 25 - R$ 45/kg</span>
+            <p>Exportadora busca café especial com pontuação acima de 85 pontos. Contrato anual com pagamento garantido.</p>
+          </div>
+
+          <!-- Demanda 4 -->
+          <div class="demand-card">
+            <img src="https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?w=100&h=100&fit=crop" alt="Tech Farm" class="company-logo" />
+            <h3>Consultoria em Agricultura de Precisão</h3>
+            <span class="price">R$ 8.000 - R$ 20.000</span>
+            <p>Procuramos especialistas em agricultura de precisão para implementação de sistemas em fazendas parceiras.</p>
+          </div>
+
+          <!-- Demanda 5 -->
+          <div class="demand-card">
+            <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=100&h=100&fit=crop" alt="Green Market" class="company-logo" />
+            <h3>Produtos Orgânicos Variados</h3>
+            <span class="price">Valores a negociar</span>
+            <p>Rede de supermercados busca fornecedores de produtos orgânicos certificados para abastecimento regional.</p>
+          </div>
+
+          <!-- Demanda 6 -->
+          <div class="demand-card">
+            <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=100&h=100&fit=crop" alt="Rural Connect" class="company-logo" />
+            <h3>Sistema de Irrigação Inteligente</h3>
+            <span class="price">R$ 50.000 - R$ 150.000</span>
+            <p>Projeto de implantação de irrigação inteligente em propriedades. Buscamos fornecedores e instaladores.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Empresas Section -->
+    <section id="empresas" class="hub-section">
+      <div class="container">
+        <h2 class="section-title">Empresas Parceiras</h2>
+        <div class="companies-grid">
+          <!-- Empresa 1 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1560493676-04071c5f467b?w=200&h=150&fit=crop" alt="AgroTech Solutions" />
+            </div>
+            <h3>AgroTech Solutions</h3>
+            <p>Líder em tecnologia agrícola com soluções inovadoras para aumentar produtividade e sustentabilidade no campo.</p>
+          </div>
+
+          <!-- Empresa 2 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1549923746-c502d488b3ea?w=200&h=150&fit=crop" alt="BeeLab Brasil" />
+            </div>
+            <h3>BeeLab Brasil</h3>
+            <p>Especialistas em apicultura moderna com foco em produção sustentável e preservação de abelhas nativas.</p>
+          </div>
+
+          <!-- Empresa 3 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=200&h=150&fit=crop" alt="Coffee Excellence" />
+            </div>
+            <h3>Coffee Excellence</h3>
+            <p>Exportadora premium de cafés especiais com certificação internacional e compromisso com produtores locais.</p>
+          </div>
+
+          <!-- Empresa 4 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?w=200&h=150&fit=crop" alt="Rural Finance" />
+            </div>
+            <h3>Rural Finance</h3>
+            <p>Soluções financeiras especializadas para o agronegócio com taxas competitivas e processos simplificados.</p>
+          </div>
+
+          <!-- Empresa 5 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=200&h=150&fit=crop" alt="Green Logistics" />
+            </div>
+            <h3>Green Logistics</h3>
+            <p>Transporte e logística especializada em produtos agrícolas com rastreamento em tempo real.</p>
+          </div>
+
+          <!-- Empresa 6 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=200&h=150&fit=crop" alt="Smart Irrigation" />
+            </div>
+            <h3>Smart Irrigation</h3>
+            <p>Sistemas de irrigação inteligente com economia de água e aumento de produtividade comprovados.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Treinamentos Section -->
+    <section id="treinamentos" class="hub-section">
+      <div class="container">
+        <h2 class="section-title">Treinamentos</h2>
+        <div class="training-grid">
+          <!-- Treinamento 1 -->
+          <div class="training-card">
+            <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&h=250&fit=crop" alt="Agricultura de Precisão" />
+            <div class="training-content">
+              <h3>Agricultura de Precisão</h3>
+              <p>Aprenda a utilizar tecnologias de ponta para otimizar recursos, reduzir custos e aumentar a produtividade da sua propriedade rural.</p>
+            </div>
+          </div>
+
+          <!-- Treinamento 2 -->
+          <div class="training-card">
+            <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=250&fit=crop" alt="Apicultura Moderna" />
+            <div class="training-content">
+              <h3>Apicultura Moderna e Sustentável</h3>
+              <p>Técnicas atualizadas de manejo de colmeias, produção de mel de qualidade e preservação de abelhas nativas brasileiras.</p>
+            </div>
+          </div>
+
+          <!-- Treinamento 3 -->
+          <div class="training-card">
+            <img src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=400&h=250&fit=crop" alt="Café Especial" />
+            <div class="training-content">
+              <h3>Produção de Café Especial</h3>
+              <p>Do plantio à colheita: aprenda todos os segredos para produzir cafés com alta pontuação e conquistar mercados premium.</p>
+            </div>
+          </div>
+
+          <!-- Treinamento 4 -->
+          <div class="training-card">
+            <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=400&h=250&fit=crop" alt="Gestão Rural" />
+            <div class="training-content">
+              <h3>Gestão e Administração Rural</h3>
+              <p>Ferramentas de gestão financeira, planejamento estratégico e controle de custos para maximizar resultados no campo.</p>
+            </div>
+          </div>
+
+          <!-- Treinamento 5 -->
+          <div class="training-card">
+            <img src="https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=400&h=250&fit=crop" alt="Marketing Rural" />
+            <div class="training-content">
+              <h3>Marketing e Vendas para Produtores</h3>
+              <p>Estratégias de marketing digital, branding e vendas diretas para agregar valor aos seus produtos rurais.</p>
+            </div>
+          </div>
+
+          <!-- Treinamento 6 -->
+          <div class="training-card">
+            <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400&h=250&fit=crop" alt="Sustentabilidade" />
+            <div class="training-content">
+              <h3>Agricultura Sustentável e Orgânica</h3>
+              <p>Práticas sustentáveis, certificação orgânica e técnicas de conservação do solo para uma agricultura responsável.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="{% static 'js/hub.js' %}"></script>
+{% endblock %}

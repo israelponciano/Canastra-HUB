@@ -1,0 +1,189 @@
+{% extends 'master.html' %}
+{% load static %}
+{% block conteudo %}
+  <style>
+    .form-container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .form-label{
+      color: #000000ff;
+    }
+    .form-container h2 {
+      margin-bottom: 1.5rem;
+      color: #22c55e;
+      font-weight: bold;
+    }
+    .submit-btn {
+      text-align: right;
+    }
+    .submit-btn button {
+      background-color: #22c55e;
+      color: #fff;
+      font-size: 18px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+    }
+    .submit-btn button:hover {
+      background-color: #1a9e4b;
+    }
+  </style>
+
+  <div class="form-container">
+    <h2 align="center">Cadastro de Vagas</h2>
+
+    <form action="{% url 'vagas:criar_vagas' %}" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="row mb-3">
+        <div class="md-3">
+          <label class="form-label">Título</label>
+          <input type="text" id="txtTitulo" name="txtTitulo" class="form-control" required>
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="md-3">
+          <label class="form-label">Local</label>
+          <input type="text" id="txtLocal" name="txtLocal" class="form-control">
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Descrição da Vaga</label>
+        <textarea type="text" name="txtDescricao" class="form-control"></textarea>
+      </div>
+      <div class="mb-3">
+         <label class="form-label">Requisito</label>
+         <div class="flex-wrap gap-3">
+            <div><input type="radio" name="txtRequisito" value="fundamental">Ensino Fundamental</div>
+            <div><input type="radio" name="txtRequisito" value="medio">Ensino Médio</div>
+            <div><input type="radio" name="txtRequisito" value="superior">Superior</div>
+         </div>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Cursos Indicados</label>
+        <div id="container-cursos">
+          <div class="curso-group">
+            <div class="input-group">
+              <input 
+                type="text" 
+                name="txtCursos[]" 
+                class="form-control" 
+                placeholder="Digite o nome do curso"
+              >
+            </div>
+          </div>
+        </div>
+        <button type="button" id="adicionar-curso" class="btn btn-outline-success btn-sm mt-2">
+          + 
+        </button>
+      </div>
+      <!-- Botão -->
+      <div class="submit-btn">
+        <button type="submit">Cadastrar</button>
+      </div>
+    </form>
+  </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const containerCursos = document.getElementById('container-cursos');
+    const addButtonCurso = document.getElementById('adicionar-curso');
+
+    // Função para criar o botão de remover
+    function createRemoveButton() {
+        const removeButton = document.createElement('button');
+        removeButton.type = 'button';
+        removeButton.className = 'btn btn-danger btn-sm remover-curso';
+        removeButton.innerHTML = '-';
+        return removeButton;
+    }
+
+    // Função para atualizar visibilidade do botão adicionar
+    function updateAddButton() {
+        // Você pode adicionar lógica aqui se quiser limitar o número de cursos
+        // Por enquanto, o botão sempre fica visível
+        addButtonCurso.style.display = 'inline-block';
+    }
+
+    // Evento para adicionar um novo campo de curso
+    addButtonCurso.addEventListener('click', function() {
+        const model = containerCursos.querySelector('.curso-group');
+        const newGroup = model.cloneNode(true);
+        
+        // Limpa o valor do novo campo
+        newGroup.querySelector('input[type="text"]').value = "";
+        
+        // Adiciona o botão de remover no novo campo
+        const inputGroup = newGroup.querySelector('.input-group');
+        const removeButton = createRemoveButton();
+        
+        inputGroup.appendChild(removeButton);
+
+        containerCursos.appendChild(newGroup);
+        
+        updateAddButton();
+    });
+
+    // Evento para remover um curso
+    containerCursos.addEventListener('click', function(event) {
+        if (event.target.classList.contains('remover-curso')) {
+            const groupToRemove = event.target.closest('.curso-group');
+            if (groupToRemove) {
+                // Não permite remover o último campo
+                if (containerCursos.querySelectorAll('.curso-group').length > 1) {
+                    containerCursos.removeChild(groupToRemove);
+                    updateAddButton();
+                }
+            }
+        }
+    });
+
+    // Inicializa o estado dos botões ao carregar a página
+    updateAddButton();
+
+  function formatarTelefone(input) {
+    let valor = input.value.replace(/\D/g, "");
+    valor = valor.substring(0, 11);
+    let formatado = '';
+
+    if (valor.length > 0) formatado += '(' + valor.substring(0, 2);
+    if (valor.length > 2) formatado += ') ' + valor.substring(2, 7);
+    if (valor.length > 7) valor.length === 11 ? formatado = '(' + valor.substring(0, 2) + ') ' + valor.substring(2, 7) + '-' + valor.substring(7, 11) : formatado = '(' + valor.substring(0, 2) + ') ' + valor.substring(2, 6) + '-' + valor.substring(6, 10);
+
+    input.value = formatado;
+  }
+
+  function formatarCNPJ(input) {
+    let valor = input.value.toUpperCase().replace(/[^0-9A-Z]/g, "");
+    valor = valor.substring(0, 14);
+    let formatado = '';
+
+    if (valor.length > 0) formatado += valor.substring(0, 2);
+    if (valor.length > 2) formatado += '.' + valor.substring(2, 5);
+    if (valor.length > 5) formatado += '.' + valor.substring(5, 8);
+    if (valor.length > 8) formatado += '/' + valor.substring(8, 12);
+    if (valor.length > 12) formatado += '-' + valor.substring(12, 14);
+
+    input.value = formatado;
+  }
+
+  function formatarCEP(input) {
+    let valor = input.value.replace(/\D/g, "");
+    valor = valor.substring(0, 8);
+    let formatado = valor;
+
+    if (valor.length > 5) formatado = valor.substring(0, 5) + '-' + valor.substring(5, 8);
+
+    input.value = formatado;
+  }
+})
+</script>
+{% endblock %}

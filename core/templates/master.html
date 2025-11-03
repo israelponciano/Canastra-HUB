@@ -6,29 +6,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hub Canastra - Conectando o Agronegócio Sustentável</title>
-    <meta name="description" content="Hub Canastra - Plataforma inovadora que conecta produtores, especialistas e tecnologia para impulsionar o agronegócio sustentável. Conteúdos sobre agricultura, apicultura e café." />
-    <meta name="keywords" content="agronegócio, agricultura, apicultura, café, sustentabilidade, tecnologia rural, produtores rurais, Hub Canastra" />
-    <meta name="author" content="Hub Canastra" />
-
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="Hub Canastra - Conectando o Agronegócio Sustentável" />
-    <meta property="og:description" content="Plataforma inovadora que conecta produtores, especialistas e tecnologia para impulsionar o agronegócio sustentável." />
-    <meta property="og:url" content="https://hubcanastra.com.br" />
-    <meta property="og:site_name" content="Hub Canastra" />
-
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Hub Canastra - Conectando o Agronegócio Sustentável" />
-    <meta name="twitter:description" content="Plataforma inovadora que conecta produtores, especialistas e tecnologia para impulsionar o agronegócio sustentável." />
-
-    <!-- Additional SEO -->
-    <link rel="canonical" href="https://hubcanastra.com.br" />
-    <meta name="robots" content="index, follow" />
-    <meta name="theme-color" content="#22c55e" />
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/styles_atualizado.css' %}" />
   </head>
 
   <body>
@@ -42,26 +21,26 @@
           <!-- Logo -->
           <div class="logo">
             <div>
-              <a href="/"><img src="{% static 'img/logoCanastra.jpeg' %}" alt="Logo Canastra" height="50px" /></a>
+              <a href="{% url 'core:home' %}"><img src="{% static 'img/logoCanastra.jpeg' %}" alt="Logo Canastra" height="50px" /></a>
             </div>
           </div>
 
           <!-- Desktop Navigation -->
           <div class="nav-links">
-            <a href="/" class="nav-link">Home</a>
-            <a href="#hub" class="nav-link">Hub</a>
-            {% if request.session.perfil == 'usuario' %}
-              <a href="#vagas" class="nav-link">Vagas</a>
-            {% endif %}
+            <a href="{% url 'core:home' %}" class="nav-link">Home</a>
+            <a href="{% url 'core:hubs' %}" class="nav-link">Hub</a>
+            <a href="#vagas" class="nav-link">Vagas</a>
             {% if request.session.perfil == 'empresa' %}
-              <a href="#cadastro vagas" class="nav-link">Cadastro de Vagas</a>
+              <a href="{% url 'vagas:cadastro_vagas' %}" class="nav-link">Cadastro de Vagas</a>
             {% endif %}
+            <a href="#espacoshub" class="nav-link">Espaços Hub</a>
             <a href="#parceiros" class="nav-link">Parceiros</a>
-            <a href="#contato" class="nav-link">Contato</a>
+            {% comment %} <a href="#contato" class="nav-link">Contato</a> {% endcomment %}
+            <a href="#sobre" class="nav-link">Sobre</a>
           </div>
 
           <!-- CTA Button & Mobile Menu -->
-          <div class="nav-actions">
+          <div class="nav-actions-pc">
             {% if not user.is_authenticated %}
               <a href="{% url 'core:login' %}"><button class="btn btn-primary desktop-only">Acessar</button></a>
             {% endif %}
@@ -80,7 +59,8 @@
               </div>
               <!-- <a href="{% url 'core:login' %}" class="nav-link-home">Login</a> -->
             {% endif %}
-
+          </div>
+          <div class="nav-actions-mobile">
             <button id="mobile-menu-btn" class="mobile-menu-btn mobile-only">☰</button>
           </div>
         </div>
@@ -88,15 +68,22 @@
         <!-- Mobile Navigation -->
         <div id="mobile-menu" class="mobile-menu">
           <div class="mobile-nav-links">
-            <a href="/" class="nav-link">Home</a>
-            <a href="#hub" class="nav-link">Hub</a>
+            <a href="{% url 'core:home' %}" class="nav-link">Home</a>
+            <a href="{% url 'core:hubs' %}" class="nav-link">Hub</a>
+
             <a href="#vagas" class="nav-link">Vagas</a>
+
+            {% if request.session.perfil == 'empresa' %}
+              <a href="{% url 'vagas:cadastro_vagas' %}" class="nav-link">Cadastro de Vagas</a>
+            {% endif %}
             <a href="#parceiros" class="nav-link">Parceiros</a>
-            <a href="#contato" class="nav-link">Contato</a>
-            <button href="{% url 'core:login' %}" class="btn btn-primary">Login</button>
-            {% if request.session.email_atual %}
-              <a class="nav-link">Usuário logado: {{ request.session.email_atual }}</a>
+            {% comment %} <a href="#contato" class="nav-link">Contato</a> {% endcomment %}
+            <a href="#sobre" class="nav-link">Sobre</a>
+            {% if user.is_authenticated %}
+              <a href="#perfil" class="nav-link">Perfil</a>
               <a href="{% url 'core:logout' %}" class="nav-link">Sair</a>
+            {% else %}
+              <button href="{% url 'core:login' %}" class="btn btn-primary">Acessar</button>
             {% endif %}
           </div>
         </div>
@@ -153,15 +140,13 @@
           <div class="contact-item">
             <span class="contact-icon">📍</span>
             <div>
-              <p>
-                Serra da Canastra, MG<br />Brasil
-              </p>
+              <p>IFMG Campus Bambuí</p>
             </div>
           </div>
 
           <div class="contact-item">
             <span class="contact-icon">📞</span>
-            <a href="tel:+5534999999999">(34) 9 9999-9999</a>
+            <a href="tel:+5534999999999">(37) 9 9999-9999</a>
           </div>
 
           <div class="contact-item">
@@ -172,7 +157,7 @@
       </div>
 
       <div class="footer-bottom">
-        <p>&copy; 2024 Hub Canastra. Todos os direitos reservados.</p>
+        <p>&copy; 2025 Hub Canastra. Todos os direitos reservados.</p>
       </div>
     </div>
   </footer>
