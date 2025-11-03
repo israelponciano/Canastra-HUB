@@ -1,0 +1,64 @@
+{% extends 'master.html' %} 
+{% load static %}
+
+{% block conteudo %}
+<div class="container mt-4">
+
+    <div class="row mb-4">
+        <div class="col-md-10 offset-md-1">
+            <form action="{% url 'vagas:buscar_vagas' %}" method="GET" class="d-flex">
+                <input 
+                    type="text" 
+                    name="q" 
+                    class="form-control form-control-lg me-2" 
+                    placeholder="Buscar por cargo, requisito ou palavra-chave..."
+                    value="{{ termo_busca }}"
+                >
+                <button type="submit" class="btn btn-primary">Buscar</button>
+            </form>
+        </div>
+    </div>
+
+    <h2 class="mb-3">
+        {% if termo_busca %}
+            Resultados para: **"{{ termo_busca }}"** {% else %}
+            Todas as Vagas Ativas
+        {% endif %}
+        <span class="badge bg-secondary">{{ vagas|length }} encontradas</span>
+    </h2>
+
+    <div class="row">
+        {% if vagas %}
+            {% for vaga in vagas %}
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">{{ vaga.cargo_vaga }}</h5>
+                        
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            Empresa: **{{ vaga.empresa.nome_empresa|default:'Não Informada' }}** | Local: {{ vaga.local|default:'Não Especificado' }}
+                        </h6>
+                        
+                        <p class="card-text">
+                            {{ vaga.descricao_vaga|truncatechars:150 }}
+                        </p>
+                        
+                        <a href="{% url 'vagas:detalhe_vaga' vaga.id %}" class="btn btn-success btn-sm mt-2">
+                            Ver Detalhes
+                        </a>
+                        
+                        <span class="float-end text-muted small mt-3">Publicada em: {{ vaga.data_publicacao|date:"d/m/Y" }}</span>
+                    </div>
+                </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info" role="alert">
+                    Nenhuma vaga ativa encontrada. Tente outra pesquisa.
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock conteudo %}

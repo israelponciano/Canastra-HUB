@@ -1,0 +1,74 @@
+{% extends 'master.html' %} 
+{% load static %}
+
+{% block conteudo %}
+<div class="container mt-5 mb-5">
+    <div class="row">
+        
+        <div class="col-lg-8">
+            <h1 class="display-6 text-primary">{{ vaga.cargo_vaga }}</h1>
+            <p class="lead text-muted">na empresa: {{ vaga.empresa.nome_empresa|default:'Não Informada' }}</p>
+            
+            <hr>
+
+            <h4 class="mt-4">Descrição da Vaga</h4>
+            <div class="card card-body bg-light">
+                <p>{{ vaga.descricao_vaga|linebreaksbr }}</p>
+            </div>
+
+            <h4 class="mt-4">Requisitos Principais</h4>
+            <p class="fw-bold">{{ vaga.requisito_vaga|default:'Não especificado' }}</p>
+
+            {% if cursos %}
+                <h4 class="mt-4">Cursos e Conhecimentos Desejados:</h4>
+                <ul class="list-group">
+                    {% for curso in cursos %}
+                        <li class="list-group-item list-group-item-action">{{ curso.curso }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <h4 class="mt-4">Informações da Vaga</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Local:</strong> {{ vaga.local|default:'Não informado' }}</p>
+                    </div>
+                <div class="col-md-6">
+                    <p><strong>Publicado em:</strong> {{ vaga.data_publicacao|date:"d/m/Y" }}</p>
+                </div>
+            </div>
+            
+            </div>
+        
+        <div class="col-lg-4">
+            <div class="card shadow-sm p-4 sticky-top" style="top: 20px;">
+                <h5 class="text-center mb-4">Ação Rápida</h5>
+
+                {% if request.user.is_authenticated %}
+                    
+                    {% if ja_candidatado %}
+                        <button class="btn btn-warning btn-lg disabled" type="button">
+                            ✅ Candidatura Registrada
+                        </button>
+                        <p class="text-center text-muted small mt-2">Você já se candidatou a esta vaga.</p>
+                    {% else %}
+                        <form action="{% url 'vagas:candidatar_vaga' vaga.id %}" method="POST">
+                            {% csrf_token %}
+                            <button class="btn btn-success btn-lg w-100" type="submit">
+                                Candidatar-se Agora
+                            </button>
+                        </form>
+                        <p class="text-center small mt-2">Seu perfil e currículo serão enviados para a empresa.</p>
+                    {% endif %}
+
+                {% else %}
+                    <div class="alert alert-info text-center" role="alert">
+                        Para se candidatar, você deve fazer <a href="{% url 'usuario:login' %}" class="alert-link">login</a>.
+                    </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock conteudo %}
