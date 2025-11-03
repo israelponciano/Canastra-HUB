@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand
 from core.models import *
 import json
 from empresa.models import Empresa
+from vagas.models import Vagas
 
 # from usuario.models import Usuario
 
@@ -54,22 +55,22 @@ class Command(BaseCommand):
         )
         cidade = Cidade.objects.get(nome_cidade="Arcos")
         usuario = Usuario.objects.create(
-            user=user, 
-            nome_social = 'Cleiton',
-            data_nascimento = '2002-07-11',
-            genero = 'masculino',
-            estado_civil = 'solteiro',
-            nacionalidade = 'brasileiro',
-            telefone = '(37) 99838-1976', 
-            cep = '398000000',
-            rua = 'rua teste',
-            numero = '981',
-            bairro = 'teste',
-            cidade_id = cidade.id,
-            estado_id = cidade.estado_cidade.id,
-            complemento = 'complemtento blablabla',
-            pretensao_salarial = 15.00
-            )
+            user=user,
+            nome_social='Cleiton',
+            data_nascimento='2002-07-11',
+            genero='masculino',
+            estado_civil='solteiro',
+            nacionalidade='brasileiro',
+            telefone='(37) 99838-1976',
+            cep='398000000',
+            rua='rua teste',
+            numero='981',
+            bairro='teste',
+            cidade_id=cidade.id,
+            estado_id=cidade.estado_cidade.id,
+            complemento='complemtento blablabla',
+            pretensao_salarial=15.00
+        )
 
         user2 = UsuarioBase.objects.create_user(
             email='empresa@teste',
@@ -99,9 +100,30 @@ class Command(BaseCommand):
             tipo='admin'
         )
 
+        vaga1 = Vagas.objects.create(cargo_vaga='Desenvolvedor Junior',
+                                     descricao_vaga='Vaga para Iniciantes',
+                                     requisito_vaga='Superior Completo',
+                                     local='casa',
+                                     data_publicacao='2025-11-03 02:50:00 -03',
+                                     data_atualizacao='2025-11-03 02:50:00 -03',
+                                     status='ativa',
+                                     empresa=empresa
+                                     )
+
+        vaga2 = Vagas.objects.create(cargo_vaga='Desenvolvedor Senior',
+                                     descricao_vaga='Vaga para Avançados',
+                                     requisito_vaga='Superior Completo, bigode grosso',
+                                     local='casa',
+                                     data_publicacao='2025-11-03 02:50:00 -03',
+                                     data_atualizacao='2025-11-03 02:50:00 -03',
+                                     status='ativa',
+                                     empresa=empresa
+                                     )
+
         print("User-1", user.email, usuario)
         print("User-2", user2.email, empresa.segmento)
         print("User-3", user3.email, user3.is_admin)
         print("hub1", hub1.nome_hub)
         print("hub2", hub2.nome_hub)
-        
+        print("vaga1", vaga1.cargo_vaga)
+        print("vaga2", vaga2.cargo_vaga)

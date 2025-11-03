@@ -2,13 +2,15 @@ from django.shortcuts import render, redirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
+from django.db import models
 from empresa.models import *
 from core.models import *
-from vagas.models import * 
+from vagas.models import *
 from django.contrib import messages
 from django.http import JsonResponse
 
 import re
+
 
 def limpar_numeros(valor):
     # Remove tudo que não for dígito
@@ -19,6 +21,7 @@ def cadastro_vagas(request):
     estados = Estado.objects.all().order_by('nome_estado')
     return render(request, 'cadastro_vagas.html', {'estados': estados})
 
+
 def criar_vagas(request):
     usuario_email = request.session.get('email_atual')
 
@@ -27,15 +30,15 @@ def criar_vagas(request):
         descricao_vaga = request.POST.get('txtDescricao')
         local = request.POST.get('txtLocal')
         requisito_vaga = request.POST.get('txtRequisito')
-        cursos = request.POST.getlist('txtCursos[]') 
+        cursos = request.POST.getlist('txtCursos[]')
 
-        usuario = UsuarioBase.objects.get(email = usuario_email)  
+        usuario = UsuarioBase.objects.get(email=usuario_email)
         empresa = usuario.empresa
 
         # Criar Vaga
         vaga = Vagas.objects.create(
             cargo_vaga=titulo,
-            local = local,
+            local=local,
             descricao_vaga=descricao_vaga,
             requisito_vaga=requisito_vaga,
 
@@ -43,10 +46,10 @@ def criar_vagas(request):
         )
 
         for curso in cursos:
-                CursoVaga.objects.create(
-                    vaga=vaga,
-                    curso=curso
-                )
+            CursoVaga.objects.create(
+                vaga=vaga,
+                curso=curso
+            )
 
         messages.success(request, 'Vaga cadastrada com sucesso!')
         return redirect('core:home')
@@ -58,11 +61,12 @@ def criar_vagas(request):
         # 'empresas': empresas
     })
 
+
 @require_http_methods(["GET"])
 def get_cidades(request):
     """View para retornar cidades via AJAX baseado no estado selecionado"""
     estado_id = request.GET.get('estado_id')
-    
+
     print(f"DEBUG: estado_id recebido = {estado_id}")
 
     # Validação básica do parâmetro
@@ -79,8 +83,9 @@ def get_cidades(request):
             'error': 'Estado não encontrado'
         })
 
-    cidades = Cidade.objects.filter(estado_cidade_id=estado_id).order_by('nome_cidade')
-    
+    cidades = Cidade.objects.filter(
+        estado_cidade_id=estado_id).order_by('nome_cidade')
+
     print(f"DEBUG: {cidades.count()} cidades encontradas")
 
     cidades_data = [
@@ -92,3 +97,69 @@ def get_cidades(request):
         'cidades': cidades_data,
         'total': len(cidades_data)
     })
+
+# bucar vagas
+
+
+@login_required  # Garante que só usuários logados possam ver as vagas
+def buscar_vagas(request):
+    """
+    Lista todas as vagas ativas, com opção de filtrar por termo de busca.
+    """
+    # 1. Receber o termo de busca (query) da URL (ex: /vagas/?q=Desenvolvedor)
+    termo_busca = request.GET.get('q', '').strip()
+
+    # 2. Começa com todas as vagas ativas
+    vagas = Vagas.objects.filter(status='ativa').order_by('-data_publicacao')
+
+    # 3. Se houver um termo de busca, aplica o filtro
+    if termo_busca:
+        # Filtra as vagas onde o termo de busca aparece:
+        # - No cargo da vaga (cargo_vaga__icontains)
+        # - Na descrição da vaga (descricao_vaga__icontains)
+        # - Ou no requisito (requisito_vaga__icontains)
+        vagas = vagas.filter(
+            models.Q(cargo_vaga__icontains=termo_busca) |
+            models.Q(descricao_vaga__icontains=termo_busca) |
+            models.Q(requisito_vaga__icontains=termo_busca)
+            # Usa .distinct() para evitar duplicatas, se a busca for mais complexa
+        ).distinct()
+
+    # 4. Prepara o contexto
+    contexto = {
+        'vagas': vagas,
+        'termo_busca': termo_busca,  # Passa o termo de volta para o input na tela
+    }
+
+    # 5. Renderiza o template de busca
+    return render(request, 'tela_busca_vagas.html', contexto)
+
+# detalhe da vaga
+
+
+def detalhe_vaga(request, vaga_id):
+    # Tenta buscar a vaga
+    vaga = get_object_or_404(Vagas, id=vaga_id)
+
+    # Busca os cursos/requisitos relacionados a esta vaga (CursoVaga)
+    cursos = CursoVaga.objects.filter(vaga=vaga)
+
+    ja_candidatado = False
+
+    if request.user.is_authenticated:
+        # Assumindo que o perfil do usuário se chama 'Usuario'
+        try:
+            usuario = Usuario.objects.get(user=request.user)
+            # Verifica se já existe um registro em UsuarioVaga
+            ja_candidatado = UsuarioVaga.objects.filter(
+                vaga=vaga, usuario=usuario).exists()
+        except Usuario.DoesNotExist:
+            pass
+
+    contexto = {
+        'vaga': vaga,
+        'cursos': cursos,  # Passando os cursos para o template
+        'ja_candidatado': ja_candidatado,
+    }
+
+    return render(request, 'detalhe_vaga.html', contexto)
