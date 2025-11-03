@@ -1,26 +1,7 @@
 {% extends 'master.html' %}
 {% load static %}
 {% block conteudo %}
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Canastra HUB - Inovação e Empreendedorismo</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      line-height: 1.6;
-      color: #333;
-      background: #fff;
-    }
-
     /* Hero Section */
     .hero-section {
       position: relative;
@@ -28,7 +9,7 @@
       background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
       overflow: hidden;
     }
-
+    
     .hero-overlay {
       position: absolute;
       top: 0;
@@ -37,7 +18,7 @@
       bottom: 0;
       background: rgba(0, 0, 0, 0.4);
     }
-
+    
     .hero-content {
       position: relative;
       z-index: 2;
@@ -46,7 +27,7 @@
       padding: 120px 2rem 2rem;
       color: white;
     }
-
+    
     .hero-category {
       display: inline-block;
       background: rgba(255, 255, 255, 0.2);
@@ -56,34 +37,34 @@
       font-weight: 600;
       margin-bottom: 1rem;
     }
-
+    
     .hero-title {
       font-size: 3.5rem;
       font-weight: 700;
       margin-bottom: 1rem;
       line-height: 1.2;
     }
-
+    
     .hero-description {
       font-size: 1.3rem;
       max-width: 700px;
       margin-bottom: 2rem;
       opacity: 0.95;
     }
-
+    
     /* Container */
     .container {
       max-width: 1200px;
       margin: 0 auto;
       padding: 0 2rem;
     }
-
+    
     /* Mission Section */
     .mission-section {
       padding: 5rem 0;
       background: #f9fafb;
     }
-
+    
     .section-title {
       font-size: 2.5rem;
       font-weight: 700;
@@ -91,7 +72,7 @@
       margin-bottom: 1rem;
       color: #1f2937;
     }
-
+    
     .section-subtitle {
       text-align: center;
       font-size: 1.1rem;
@@ -99,14 +80,14 @@
       max-width: 800px;
       margin: 0 auto 3rem;
     }
-
+    
     .mission-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 2rem;
       margin-top: 3rem;
     }
-
+    
     .mission-card {
       background: white;
       padding: 2rem;
@@ -114,35 +95,35 @@
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-
+    
     .mission-card:hover {
       transform: translateY(-5px);
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     }
-
+    
     .mission-card h3 {
       font-size: 1.5rem;
       margin-bottom: 1rem;
       color: #22c55e;
     }
-
+    
     .mission-card p {
       color: #4b5563;
       line-height: 1.8;
     }
-
+    
     /* Values Section */
     .values-section {
       padding: 5rem 0;
       background: white;
     }
-
+    
     .values-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 2rem;
     }
-
+    
     .value-card {
       padding: 2rem;
       border-left: 4px solid #22c55e;
@@ -150,36 +131,36 @@
       border-radius: 8px;
       transition: all 0.3s ease;
     }
-
+    
     .value-card:hover {
       background: #f0fdf4;
       border-left-width: 6px;
     }
-
+    
     .value-card h3 {
       font-size: 1.3rem;
       margin-bottom: 0.5rem;
       color: #1f2937;
     }
-
+    
     .value-card p {
       color: #6b7280;
       font-size: 0.95rem;
     }
-
+    
     /* Benefits Section */
     .benefits-section {
       padding: 5rem 0;
       background: linear-gradient(to bottom, #f0fdf4, #dcfce7);
     }
-
+    
     .benefits-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 1.5rem;
       margin-top: 3rem;
     }
-
+    
     .benefit-item {
       background: white;
       padding: 1.5rem;
@@ -189,7 +170,7 @@
       align-items: start;
       gap: 1rem;
     }
-
+    
     .benefit-icon {
       width: 40px;
       height: 40px;
@@ -202,24 +183,24 @@
       font-weight: 700;
       flex-shrink: 0;
     }
-
+    
     .benefit-item p {
       color: #374151;
       font-size: 0.95rem;
     }
-
+    
     /* Structure Section */
     .structure-section {
       padding: 5rem 0;
       background: white;
     }
-
+    
     .structure-grid {
       display: grid;
       gap: 3rem;
       margin-top: 3rem;
     }
-
+    
     .structure-card {
       background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
       padding: 2.5rem;
@@ -227,7 +208,7 @@
       border: 1px solid #e5e7eb;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
-
+    
     .structure-card h3 {
       font-size: 1.8rem;
       color: #22c55e;
@@ -236,17 +217,17 @@
       align-items: center;
       gap: 0.5rem;
     }
-
+    
     .structure-card h3::before {
       content: '●';
       font-size: 1.5rem;
     }
-
+    
     .structure-card ul {
       list-style: none;
       padding: 0;
     }
-
+    
     .structure-card ul li {
       padding: 0.75rem 0;
       padding-left: 1.5rem;
@@ -254,7 +235,7 @@
       color: #4b5563;
       line-height: 1.7;
     }
-
+    
     .structure-card ul li::before {
       content: '→';
       position: absolute;
@@ -262,7 +243,7 @@
       color: #22c55e;
       font-weight: 700;
     }
-
+    
     /* CTA Section */
     .cta-section {
       padding: 5rem 0;
@@ -270,19 +251,19 @@
       color: white;
       text-align: center;
     }
-
+    
     .cta-section h2 {
       font-size: 2.5rem;
       margin-bottom: 1rem;
     }
-
+    
     .cta-section p {
       font-size: 1.2rem;
       max-width: 700px;
       margin: 0 auto 2rem;
       opacity: 0.95;
     }
-
+    
     .btn {
       display: inline-block;
       padding: 1rem 2rem;
@@ -294,76 +275,41 @@
       cursor: pointer;
       border: none;
     }
-
+    
     .btn-primary {
       background: white;
       color: #22c55e;
     }
-
+    
     .btn-primary:hover {
       transform: translateY(-2px);
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     }
-
+    
     .btn-outline {
       background: transparent;
       border: 2px solid white;
       color: white;
     }
-
+    
     .btn-outline:hover {
       background: white;
       color: #22c55e;
     }
-
-    /* Footer */
-    .footer {
-      background: #1f2937;
-      color: white;
-      padding: 3rem 0 1rem;
-      text-align: center;
-    }
-
-    .footer-content {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 2rem;
-    }
-
-    .footer-logo {
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-      color: #22c55e;
-    }
-
-    .footer-text {
-      color: #9ca3af;
-      margin-bottom: 2rem;
-    }
-
-    .footer-bottom {
-      border-top: 1px solid #374151;
-      padding-top: 1rem;
-      margin-top: 2rem;
-      color: #6b7280;
-      font-size: 0.9rem;
-    }
-
     /* Responsive */
     @media (max-width: 768px) {
       .hero-title {
         font-size: 2.5rem;
       }
-
+    
       .hero-description {
         font-size: 1.1rem;
       }
-
+    
       .section-title {
         font-size: 2rem;
       }
-
+    
       .mission-grid,
       .values-grid,
       .benefits-grid {
@@ -371,14 +317,12 @@
       }
     }
   </style>
-</head>
-<body>
   <!-- Hero Section -->
   <section class="hero-section">
     <div class="hero-overlay"></div>
     <div class="hero-content">
       <span class="hero-category">IFMG - Campus Bambuí</span>
-      <h1 class="hero-title">CANASTRA HUB<br>Inovação e Empreendedorismo</h1>
+      <h1 class="hero-title">CANASTRA HUB<br />Inovação e Empreendedorismo</h1>
       <p class="hero-description">Inovação que transforma. Parcerias que impulsionam. Um espaço colaborativo que conecta academia, mercado e sociedade.</p>
     </div>
   </section>
@@ -388,13 +332,13 @@
     <div class="container">
       <h2 class="section-title">Quem Somos</h2>
       <p class="section-subtitle">O Canastra HUB é o centro de inovação, empreendedorismo e desenvolvimento tecnológico do IFMG – Campus Bambuí. Um espaço colaborativo que transforma ideias em soluções concretas, promovendo impacto regional e nacional.</p>
-      
+
       <div class="mission-grid">
         <div class="mission-card">
           <h3>Nossa Missão</h3>
           <p>Fomentar o empreendedorismo e a inovação por meio da integração entre ensino, pesquisa e extensão, consolidando um ecossistema colaborativo para geração de negócios inovadores e fortalecimento socioeconômico da região.</p>
         </div>
-        
+
         <div class="mission-card">
           <h3>Nossa Visão</h3>
           <p>Ser referência nacional em inovação e empreendedorismo, conectando talentos, empresas e comunidades para o desenvolvimento sustentável da região.</p>
@@ -412,33 +356,33 @@
   <section class="values-section">
     <div class="container">
       <h2 class="section-title">Nossos <span style="color:#22c55e">Valores</span></h2>
-      
+
       <div class="values-grid">
         <div class="value-card">
           <h3>Inovação com Propósito</h3>
           <p>Criatividade voltada para soluções reais e impacto positivo.</p>
         </div>
-        
+
         <div class="value-card">
           <h3>Conectividade</h3>
           <p>Pontes que aproximam talentos, empresas e comunidades.</p>
         </div>
-        
+
         <div class="value-card">
           <h3>Empreendedorismo Colaborativo</h3>
           <p>Crescimento construído com cooperação e protagonismo.</p>
         </div>
-        
+
         <div class="value-card">
           <h3>Sustentabilidade</h3>
           <p>Desenvolvimento responsável, com visão de futuro.</p>
         </div>
-        
+
         <div class="value-card">
           <h3>Excelência com Ética</h3>
           <p>Qualidade em processos, relações e entregas, com integridade.</p>
         </div>
-        
+
         <div class="value-card">
           <h3>Inclusão e Diversidade</h3>
           <p>Um ambiente plural, onde diferentes vozes fortalecem o ecossistema.</p>
@@ -452,28 +396,28 @@
     <div class="container">
       <h2 class="section-title">Por que sua empresa deve se conectar conosco?</h2>
       <p class="section-subtitle">Benefícios exclusivos para parceiros do Canastra HUB</p>
-      
+
       <div class="benefits-grid">
         <div class="benefit-item">
           <div class="benefit-icon">1</div>
           <p>Desenvolvimento de soluções personalizadas</p>
         </div>
-        
+
         <div class="benefit-item">
           <div class="benefit-icon">2</div>
           <p>Apoio técnico e científico de pesquisadores do IFMG</p>
         </div>
-        
+
         <div class="benefit-item">
           <div class="benefit-icon">3</div>
           <p>Acesso a talentos formados em Engenharia, TI, Agroindústria e áreas estratégicas</p>
         </div>
-        
+
         <div class="benefit-item">
           <div class="benefit-icon">4</div>
           <p>Uso de laboratórios, coworking, estúdio e espaços colaborativos</p>
         </div>
-        
+
         <div class="benefit-item">
           <div class="benefit-icon">5</div>
           <p>Participação em desafios de inovação e vitrine de marca</p>
@@ -481,7 +425,6 @@
       </div>
     </div>
   </section>
-
 
   <!-- CTA Section -->
   <section class="cta-section">
@@ -502,6 +445,4 @@
       </div>
     </div>
   </footer>
-</body>
-</html>
 {% endblock %}

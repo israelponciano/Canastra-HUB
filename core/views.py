@@ -29,7 +29,7 @@ def sobre(request):
 
 def espacos_hub(request):
 
-    return render(request, 'espacos_hub')
+    return render(request, 'espacos_hub.html')
 
 def cadastro(request):
 
