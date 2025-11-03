@@ -33,10 +33,10 @@
             {% if request.session.perfil == 'empresa' %}
               <a href="{% url 'vagas:cadastro_vagas' %}" class="nav-link">Cadastro de Vagas</a>
             {% endif %}
-            <a href="#espacoshub" class="nav-link">Espaços Hub</a>
+            <a href="{% url 'core:espacos_hub' %}" class="nav-link">Espaços Hub</a>
             <a href="#parceiros" class="nav-link">Parceiros</a>
             {% comment %} <a href="#contato" class="nav-link">Contato</a> {% endcomment %}
-            <a href="#sobre" class="nav-link">Sobre</a>
+            <a href="{% url 'core:sobre' %}" class="nav-link">Sobre</a>
           </div>
 
           <!-- CTA Button & Mobile Menu -->

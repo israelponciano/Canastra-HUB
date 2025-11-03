@@ -27,6 +27,10 @@ def sobre(request):
 
     return render(request, 'sobre.html')
 
+def espacos_hub(request):
+
+    return render(request, 'espacos_hub')
+
 def cadastro(request):
 
     return render(request, 'cadastro.html')
@@ -234,7 +238,7 @@ def cadastro_completo(request):
         usuario.save()
 
         # del request.session['usuario_email']
-        messages.success(request, 'Deu boa')
+        messages.success(request, 'Cadastro realizado com sucesso!')
         return render(request, 'home.html')
 
     estados = Estado.objects.all().order_by('nome_estado')

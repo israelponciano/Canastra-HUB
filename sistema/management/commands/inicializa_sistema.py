@@ -104,3 +104,4 @@ class Command(BaseCommand):
         print("User-3", user3.email, user3.is_admin)
         print("hub1", hub1.nome_hub)
         print("hub2", hub2.nome_hub)
+        
