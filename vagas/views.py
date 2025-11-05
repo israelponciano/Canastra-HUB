@@ -101,7 +101,6 @@ def get_cidades(request):
 # bucar vagas
 
 
-@login_required  # Garante que só usuários logados possam ver as vagas
 def buscar_vagas(request):
     """
     Lista todas as vagas ativas, com opção de filtrar por termo de busca.
@@ -136,7 +135,7 @@ def buscar_vagas(request):
 
 # detalhe da vaga
 
-
+@login_required
 def detalhe_vaga(request, vaga_id):
     # Tenta buscar a vaga
     vaga = get_object_or_404(Vagas, id=vaga_id)
