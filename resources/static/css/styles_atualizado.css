@@ -122,73 +122,73 @@ p {
 
 /* Button Components */
 .btn {
-   display: inline-flex;
-   align-items: center;
-   justify-content: center;
-   padding: 0.75rem 1.5rem;
-   border: none;
-   border-radius: 0.5rem;
-   font-weight: 600;
-   text-decoration: none;
-   cursor: pointer;
-   transition: var(--transition);
-   font-size: 1rem;
-   gap: 0.5rem;
+   display: inline-flex !important;
+   align-items: center !important;
+   justify-content: center !important;
+   padding: 0.75rem 1.5rem !important;
+   border: none !important;
+   border-radius: 0.5rem !important;
+   font-weight: 600 !important;
+   text-decoration: none !important;
+   cursor: pointer !important;
+   transition: var(--transition) !important;
+   font-size: 1rem !important;
+   gap: 0.5rem !important;
 }
 
 .btn-primary {
-   background: var(--gradient-primary);
-   color: white;
+   background: var(--gradient-primary) !important;
+   color: white !important;
 }
 
 .btn-primary:hover {
-   transform: translateY(-2px);
-   box-shadow: var(--shadow-lg);
+   transform: translateY(-2px) !important;
+   box-shadow: var(--shadow-lg) !important;
 }
 
 .btn-secondary {
-   background: rgba(255, 255, 255, 0.9);
-   color: hsl(var(--foreground));
-   backdrop-filter: blur(10px);
+   background: rgba(255, 255, 255, 0.9) !important;
+   color: hsl(var(--foreground)) !important;
+   backdrop-filter: blur(10px) !important;
 }
 
 .btn-secondary:hover {
-   background: white;
-   transform: translateY(-2px);
+   background: white !important;
+   transform: translateY(-2px) !important;
 }
 
 .btn-outline {
-   background: transparent;
-   color: hsl(var(--foreground));
-   border: 2px solid hsl(var(--border));
+   background: transparent !important;
+   color: hsl(var(--foreground)) !important;
+   border: 2px solid hsl(var(--border)) !important;
 }
 
 .btn-outline:hover {
-   background: hsl(var(--primary));
-   color: white;
-   border-color: hsl(var(--primary));
+   background: hsl(var(--primary)) !important;
+   color: white !important;
+   border-color: hsl(var(--primary)) !important;
 }
 
 .btn-accent {
-   background: var(--accent-light);
-   color: white;
+   background: var(--accent-light) !important;
+   color: white !important;
 }
 
 .btn-accent:hover {
-   transform: translateY(-2px) scale(1.02);
-   background-color: var(--accent-light);
-   color: #fff;
-   box-shadow: var(--shadow-lg);
+   transform: translateY(-2px) scale(1.02) !important;
+   background-color: var(--accent-light) !important;
+   color: #fff !important;
+   box-shadow: var(--shadow-lg) !important;
 }
 
 .btn-lg {
-   padding: 1rem 2rem;
-   font-size: 1.1rem;
+   padding: 1rem 2rem !important;
+   font-size: 1.1rem !important;
 }
 
 .btn-arrow,
 .link-arrow {
-   transition: var(--transition-fast);
+   transition: var(--transition-fast) !important;
 }
 
 .btn:hover .btn-arrow,
@@ -1095,6 +1095,15 @@ p {
    margin-bottom: 2rem;
    color: rgba(255, 255, 255, 0.8);
 }
+
+.footer-logo {
+   flex-wrap: wrap;
+   /* permite quebrar linha em telas pequenas */
+   gap: 60px;
+   /* espaçamento padrão entre os logos */
+}
+
+
 
 .social-links {
    display: flex;

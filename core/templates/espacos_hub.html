@@ -1,89 +1,7 @@
 {% extends 'master.html' %}
 {% load static %}
 {% block conteudo %}
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Canastra HUB - Inovação e Empreendedorismo</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      line-height: 1.6;
-      color: #333;
-      background: #fff;
-    }
-
-    /* Hero Section */
-    .hero-section {
-      position: relative;
-      height: 600px;
-      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-      overflow: hidden;
-    }
-
-    .hero-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.4);
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 2;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 120px 2rem 2rem;
-      color: white;
-    }
-
-    .hero-category {
-      display: inline-block;
-      background: rgba(255, 255, 255, 0.2);
-      padding: 0.5rem 1rem;
-      border-radius: 20px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
-    }
-
-    .hero-title {
-      font-size: 3.5rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-      line-height: 1.2;
-    }
-
-    .hero-description {
-      font-size: 1.3rem;
-      max-width: 700px;
-      margin-bottom: 2rem;
-      opacity: 0.95;
-    }
-
-    /* Container */
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 2rem;
-    }
-
-    /* Mission Section */
-    .mission-section {
-      padding: 5rem 0;
-      background: #f9fafb;
-    }
-
     .section-title {
       font-size: 2.5rem;
       font-weight: 700;
@@ -91,7 +9,7 @@
       margin-bottom: 1rem;
       color: #1f2937;
     }
-
+    
     .section-subtitle {
       text-align: center;
       font-size: 1.1rem;
@@ -99,127 +17,19 @@
       max-width: 800px;
       margin: 0 auto 3rem;
     }
-
-    .mission-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-      margin-top: 3rem;
-    }
-
-    .mission-card {
-      background: white;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .mission-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .mission-card h3 {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-      color: #22c55e;
-    }
-
-    .mission-card p {
-      color: #4b5563;
-      line-height: 1.8;
-    }
-
-    /* Values Section */
-    .values-section {
-      padding: 5rem 0;
-      background: white;
-    }
-
-    .values-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2rem;
-    }
-
-    .value-card {
-      padding: 2rem;
-      border-left: 4px solid #22c55e;
-      background: #f9fafb;
-      border-radius: 8px;
-      transition: all 0.3s ease;
-    }
-
-    .value-card:hover {
-      background: #f0fdf4;
-      border-left-width: 6px;
-    }
-
-    .value-card h3 {
-      font-size: 1.3rem;
-      margin-bottom: 0.5rem;
-      color: #1f2937;
-    }
-
-    .value-card p {
-      color: #6b7280;
-      font-size: 0.95rem;
-    }
-
-    /* Benefits Section */
-    .benefits-section {
-      padding: 5rem 0;
-      background: linear-gradient(to bottom, #f0fdf4, #dcfce7);
-    }
-
-    .benefits-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
-      margin-top: 3rem;
-    }
-
-    .benefit-item {
-      background: white;
-      padding: 1.5rem;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(34, 197, 94, 0.1);
-      display: flex;
-      align-items: start;
-      gap: 1rem;
-    }
-
-    .benefit-icon {
-      width: 40px;
-      height: 40px;
-      background: #22c55e;
-      color: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      flex-shrink: 0;
-    }
-
-    .benefit-item p {
-      color: #374151;
-      font-size: 0.95rem;
-    }
-
+    
     /* Structure Section */
     .structure-section {
-      padding: 5rem 0;
+      padding: 3rem 0;
       background: white;
     }
-
+    
     .structure-grid {
       display: grid;
       gap: 3rem;
       margin-top: 3rem;
     }
-
+    
     .structure-card {
       background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
       padding: 2.5rem;
@@ -227,7 +37,7 @@
       border: 1px solid #e5e7eb;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
-
+    
     .structure-card h3 {
       font-size: 1.8rem;
       color: #22c55e;
@@ -236,17 +46,17 @@
       align-items: center;
       gap: 0.5rem;
     }
-
+    
     .structure-card h3::before {
       content: '●';
       font-size: 1.5rem;
     }
-
+    
     .structure-card ul {
       list-style: none;
       padding: 0;
     }
-
+    
     .structure-card ul li {
       padding: 0.75rem 0;
       padding-left: 1.5rem;
@@ -254,7 +64,7 @@
       color: #4b5563;
       line-height: 1.7;
     }
-
+    
     .structure-card ul li::before {
       content: '→';
       position: absolute;
@@ -262,202 +72,73 @@
       color: #22c55e;
       font-weight: 700;
     }
-
-    /* CTA Section */
-    .cta-section {
-      padding: 5rem 0;
-      background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
-      color: white;
-      text-align: center;
-    }
-
-    .cta-section h2 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-    }
-
-    .cta-section p {
-      font-size: 1.2rem;
-      max-width: 700px;
-      margin: 0 auto 2rem;
-      opacity: 0.95;
-    }
-
-    .btn {
-      display: inline-block;
-      padding: 1rem 2rem;
-      font-size: 1rem;
-      font-weight: 600;
-      border-radius: 8px;
-      text-decoration: none;
-      transition: all 0.3s ease;
-      cursor: pointer;
-      border: none;
-    }
-
-    .btn-primary {
-      background: white;
-      color: #22c55e;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    }
-
-    .btn-outline {
-      background: transparent;
-      border: 2px solid white;
-      color: white;
-    }
-
-    .btn-outline:hover {
-      background: white;
-      color: #22c55e;
-    }
-
-    /* Footer */
-    .footer {
-      background: #1f2937;
-      color: white;
-      padding: 3rem 0 1rem;
-      text-align: center;
-    }
-
-    .footer-content {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 2rem;
-    }
-
-    .footer-logo {
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-      color: #22c55e;
-    }
-
-    .footer-text {
-      color: #9ca3af;
-      margin-bottom: 2rem;
-    }
-
-    .footer-bottom {
-      border-top: 1px solid #374151;
-      padding-top: 1rem;
-      margin-top: 2rem;
-      color: #6b7280;
-      font-size: 0.9rem;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .hero-title {
-        font-size: 2.5rem;
-      }
-
-      .hero-description {
-        font-size: 1.1rem;
-      }
-
-      .section-title {
-        font-size: 2rem;
-      }
-
-      .mission-grid,
-      .values-grid,
-      .benefits-grid {
-        grid-template-columns: 1fr;
-      }
-    }
   </style>
-</head>
-<body>
-  <!-- Structure Section -->
-  <section class="structure-section">
-    <div class="container">
-      <h2 class="section-title">Nossa <span style="color:#22c55e">Estrutura Estratégica</span></h2>
-      <p class="section-subtitle">Um verdadeiro hub de negócios integrados onde se conectam empresas, talentos acadêmicos e iniciativas que impulsionam o crescimento regional</p>
-      
-      <div class="structure-grid">
-        <div class="structure-card">
-          <h3>HUB de Negócios e Conexões Empresariais</h3>
-          <ul>
-            <li>Plataforma de articulação entre empresas, startups, poder público e academia</li>
-            <li>Criação de ambientes propícios para networking, negócios e desenvolvimento conjunto de projetos</li>
-            <li>Realização de rodadas de negócios, eventos empresariais e encontros de inovação</li>
-            <li>Conexão com agentes do ecossistema local, regional e nacional</li>
-          </ul>
-        </div>
+  <main>
+    <!-- Structure Section -->
+    <section class="structure-section">
+      <div class="container">
+        <h2 class="section-title">Nossa <span style="color:#22c55e">Estrutura Estratégica</span></h2>
+        <p class="section-subtitle">Um verdadeiro hub de negócios integrados onde se conectam empresas, talentos acadêmicos e iniciativas que impulsionam o crescimento regional</p>
 
-        <div class="structure-card">
-          <h3>Fábrica de Soluções</h3>
-          <ul>
-            <li>Núcleo técnico dedicado ao desenvolvimento de softwares, aplicativos, sistemas digitais e tecnologias personalizadas</li>
-            <li>Atuação com equipe multidisciplinar formada por professores, técnicos e estudantes bolsistas</li>
-            <li>Aplicação de metodologias ágeis (Scrum, Kanban) para entrega contínua de valor</li>
-          </ul>
-        </div>
+        <div class="structure-grid">
+          <div class="structure-card">
+            <h3>HUB de Negócios e Conexões Empresariais</h3>
+            <ul>
+              <li>Plataforma de articulação entre empresas, startups, poder público e academia</li>
+              <li>Criação de ambientes propícios para networking, negócios e desenvolvimento conjunto de projetos</li>
+              <li>Realização de rodadas de negócios, eventos empresariais e encontros de inovação</li>
+              <li>Conexão com agentes do ecossistema local, regional e nacional</li>
+            </ul>
+          </div>
 
-        <div class="structure-card">
-          <h3>Empresas Juniores Integradas</h3>
-          <ul>
-            <li>Núcleos de consultoria empresarial coordenados por alunos, com orientação acadêmica</li>
-            <li>Prestação de serviços especializados em gestão, engenharia, tecnologia e agronegócio</li>
-            <li>Contribuição direta para a melhoria da competitividade e inovação das empresas atendidas</li>
-          </ul>
-        </div>
+          <div class="structure-card">
+            <h3>Fábrica de Soluções</h3>
+            <ul>
+              <li>Núcleo técnico dedicado ao desenvolvimento de softwares, aplicativos, sistemas digitais e tecnologias personalizadas</li>
+              <li>Atuação com equipe multidisciplinar formada por professores, técnicos e estudantes bolsistas</li>
+              <li>Aplicação de metodologias ágeis (Scrum, Kanban) para entrega contínua de valor</li>
+            </ul>
+          </div>
 
-        <div class="structure-card">
-          <h3>Programas de Aceleração e Incubação</h3>
-          <ul>
-            <li>Apoio ao ciclo completo de desenvolvimento de negócios: ideação, validação, crescimento e escala</li>
-            <li>Acompanhamento especializado com mentores, consultores e investidores parceiros</li>
-            <li>Estruturação de editais de pré-incubação e aceleração com foco em impacto</li>
-          </ul>
-        </div>
+          <div class="structure-card">
+            <h3>Empresas Juniores Integradas</h3>
+            <ul>
+              <li>Núcleos de consultoria empresarial coordenados por alunos, com orientação acadêmica</li>
+              <li>Prestação de serviços especializados em gestão, engenharia, tecnologia e agronegócio</li>
+              <li>Contribuição direta para a melhoria da competitividade e inovação das empresas atendidas</li>
+            </ul>
+          </div>
 
-        <div class="structure-card">
-          <h3>Centro de Desenvolvimento de Negócios Inovadores</h3>
-          <ul>
-            <li>Estímulo a soluções que conciliem modernidade tecnológica com vocações regionais</li>
-            <li>Apoio a projetos de base científica, tecnológica ou de economia criativa</li>
-            <li>Espaço para inovação aberta, com participação de diversos perfis de empreendedores</li>
-          </ul>
-        </div>
+          <div class="structure-card">
+            <h3>Programas de Aceleração e Incubação</h3>
+            <ul>
+              <li>Apoio ao ciclo completo de desenvolvimento de negócios: ideação, validação, crescimento e escala</li>
+              <li>Acompanhamento especializado com mentores, consultores e investidores parceiros</li>
+              <li>Estruturação de editais de pré-incubação e aceleração com foco em impacto</li>
+            </ul>
+          </div>
 
-        <div class="structure-card">
-          <h3>Núcleo de Treinamento e Capacitação Profissional</h3>
-          <ul>
-            <li>Programas contínuos de qualificação de mão de obra alinhados às demandas locais</li>
-            <li>Oficinas, cursos, mentorias e workshops com foco técnico e de gestão</li>
-            <li>Formação para áreas estratégicas: agronegócio, energias renováveis, alimentos, tecnologia e indústria</li>
-            <li>Preparação de talentos para atuação em empresas inovadoras e tradicionais</li>
-          </ul>
+          <div class="structure-card">
+            <h3>Centro de Desenvolvimento de Negócios Inovadores</h3>
+            <ul>
+              <li>Estímulo a soluções que conciliem modernidade tecnológica com vocações regionais</li>
+              <li>Apoio a projetos de base científica, tecnológica ou de economia criativa</li>
+              <li>Espaço para inovação aberta, com participação de diversos perfis de empreendedores</li>
+            </ul>
+          </div>
+
+          <div class="structure-card">
+            <h3>Núcleo de Treinamento e Capacitação Profissional</h3>
+            <ul>
+              <li>Programas contínuos de qualificação de mão de obra alinhados às demandas locais</li>
+              <li>Oficinas, cursos, mentorias e workshops com foco técnico e de gestão</li>
+              <li>Formação para áreas estratégicas: agronegócio, energias renováveis, alimentos, tecnologia e indústria</li>
+              <li>Preparação de talentos para atuação em empresas inovadoras e tradicionais</li>
+            </ul>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- CTA Section -->
-  <section class="cta-section">
-    <div class="container">
-      <h2>Faça Parte do <span style="opacity: 0.9;">Canastra HUB</span></h2>
-      <p>Conecte sua empresa ao futuro da inovação. Junte-se ao nosso ecossistema colaborativo e transforme ideias em realidade.</p>
-      <button class="btn btn-primary">Entre em Contato</button>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="footer-content">
-      <div class="footer-logo">CANASTRA HUB</div>
-      <p class="footer-text">Inovação e Empreendedorismo - IFMG Campus Bambuí</p>
-      <div class="footer-bottom">
-        <p>&copy; 2024 Canastra HUB. Todos os direitos reservados.</p>
-      </div>
-    </div>
-  </footer>
-</body>
-</html>
+    </section>
+  </main>
+  <script src="{% static 'js/scripts.js' %}"></script>
 {% endblock %}
