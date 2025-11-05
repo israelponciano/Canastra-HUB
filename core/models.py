@@ -74,7 +74,6 @@ class Cidade(models.Model):
 
 # USUARIO DO SISTEMA
 
-
 class Usuario(models.Model):
     user = models.OneToOneField(
         UsuarioBase, on_delete=models.CASCADE, primary_key=True)
@@ -103,13 +102,29 @@ class Usuario(models.Model):
     pretensao_salarial = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     disponibilidade =  models.CharField(max_length=255, blank=True, null=True)
 
-    # formação academica
-    instituicao_nome = models.CharField(max_length=255, blank=True, null=True)
-    grau_escolaridade = models.CharField(max_length=255, blank=True, null=True)
-    curso_graduacao = models.CharField(max_length=255, blank=True, null=True)
-    situacao_academica = models.CharField(max_length=255, blank=True, null=True)
-    data_acad_inicio = models.DateField(blank=True, null=True)
-    data_acad_fim = models.DateField(blank=True, null=True)
+    # formação academica 1 
+    instituicao_nome1 = models.CharField(max_length=255, blank=True, null=True)
+    grau_escolaridade1 = models.CharField(max_length=255, blank=True, null=True)
+    curso_graduacao1 = models.CharField(max_length=255, blank=True, null=True)
+    situacao_academica1 = models.CharField(max_length=255, blank=True, null=True)
+    data_acad_inicio1 = models.DateField(blank=True, null=True)
+    data_acad_fim1 = models.DateField(blank=True, null=True)
+
+    # formação academica 2 
+    instituicao_nome2 = models.CharField(max_length=255, blank=True, null=True)
+    grau_escolaridade2 = models.CharField(max_length=255, blank=True, null=True)
+    curso_graduacao2 = models.CharField(max_length=255, blank=True, null=True)
+    situacao_academica2= models.CharField(max_length=255, blank=True, null=True)
+    data_acad_inicio2 = models.DateField(blank=True, null=True)
+    data_acad_fim2 = models.DateField(blank=True, null=True)
+
+    # formação academica 3 
+    instituicao_nome3 = models.CharField(max_length=255, blank=True, null=True)
+    grau_escolaridade3 = models.CharField(max_length=255, blank=True, null=True)
+    curso_graduacao3 = models.CharField(max_length=255, blank=True, null=True)
+    situacao_academica3 = models.CharField(max_length=255, blank=True, null=True)
+    data_acad_inicio3 = models.DateField(blank=True, null=True)
+    data_acad_fim3 = models.DateField(blank=True, null=True)
 
     # rede sociais e links
     linkedin = models.URLField(blank=True, null=True)
@@ -118,9 +133,17 @@ class Usuario(models.Model):
     facebook = models.URLField(blank=True, null=True)
     site_pessoal = models.URLField(blank=True, null=True)
 
-    # competencias
-    competencias_tecnicas = models.TextField(blank=True, null=True)
-    competencias_comportamentais = models.TextField(blank=True, null=True)
+    # competencias 1 
+    competencias_tecnicas1 = models.TextField(blank=True, null=True)
+    competencias_comportamentais1 = models.TextField(blank=True, null=True)
+
+    # competencias 2
+    competencias_tecnicas2 = models.TextField(blank=True, null=True)
+    competencias_comportamentais2 = models.TextField(blank=True, null=True)
+
+    # competencias 3
+    competencias_tecnicas3 = models.TextField(blank=True, null=True)
+    competencias_comportamentais3 = models.TextField(blank=True, null=True)
 
     # inclusao e acessibilidade
     pessoa_com_deficiencia = models.BooleanField(default=False)
@@ -148,20 +171,23 @@ class Usuario(models.Model):
         verbose_name_plural = 'Usuários'
 
 
-# MODELOS SEPARADOS RECOMENDADOS (para melhor normalização)
 class ExperienciaProfissional(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='experiencias')
-    nome_empresa = models.CharField(max_length=255, blank=True, null=True)
-    cargo = models.CharField(max_length=255, blank=True, null=True)
+    nome_empresa1 = models.CharField(max_length=255, blank=True, null=True)
+    cargo1 = models.CharField(max_length=255, blank=True, null=True)
+    data_inicio1 = models.DateField(blank=True, null=True)
+    data_fim1 = models.DateField(blank=True, null=True)  
 
-    empresa_cidade = models.ForeignKey(Cidade, on_delete=models.PROTECT, blank=True, null=True)
-    empresa_estado = models.ForeignKey(Estado, on_delete=models.PROTECT, blank=True, null=True)
-    tipo_contrato = models.CharField(max_length=255, blank=True, null=True)
-    descricao_atividades = models.TextField(blank=True, null=True)
-    data_inicio = models.DateField(blank=True, null=True)
-    data_fim = models.DateField(blank=True, null=True)  
-    emprego_atual = models.BooleanField(default=False)
+    nome_empresa2 = models.CharField(max_length=255, blank=True, null=True)
+    cargo2 = models.CharField(max_length=255, blank=True, null=True)
+    data_inicio2 = models.DateField(blank=True, null=True)
+    data_fim2= models.DateField(blank=True, null=True)  
 
+    nome_empresa3= models.CharField(max_length=255, blank=True, null=True)
+    cargo3 = models.CharField(max_length=255, blank=True, null=True)
+    data_inicio3 = models.DateField(blank=True, null=True)
+    data_fim3 = models.DateField(blank=True, null=True)  
+    
     def __str__(self):
         return f"{self.cargo} - {self.nome_empresa}"
 
@@ -172,11 +198,23 @@ class ExperienciaProfissional(models.Model):
 class CursoExtraCurricular(models.Model):
     usuario = models.ForeignKey(
         Usuario, on_delete=models.CASCADE, related_name='cursos_extras')
-    nome_curso = models.CharField(max_length=255, blank=True, null=True)
-    instituicao = models.CharField(max_length=255, blank=True, null=True)
-    carga_horaria = models.PositiveIntegerField(blank=True, null=True)
-    data_conclusao = models.DateField(blank=True, null=True)
-    link_certificado = models.URLField(blank=True, null=True)
+    nome_curso1 = models.CharField(max_length=255, blank=True, null=True)
+    instituicao1 = models.CharField(max_length=255, blank=True, null=True)
+    carga_horaria1 = models.PositiveIntegerField(blank=True, null=True)
+    data_conclusao1 = models.DateField(blank=True, null=True)
+    link_certificado1 = models.URLField(blank=True, null=True)
+
+    nome_curso2 = models.CharField(max_length=255, blank=True, null=True)
+    instituicao2 = models.CharField(max_length=255, blank=True, null=True)
+    carga_horaria2 = models.PositiveIntegerField(blank=True, null=True)
+    data_conclusao2 = models.DateField(blank=True, null=True)
+    link_certificado2 = models.URLField(blank=True, null=True)
+
+    nome_curso3 = models.CharField(max_length=255, blank=True, null=True)
+    instituicao3 = models.CharField(max_length=255, blank=True, null=True)
+    carga_horaria3 = models.PositiveIntegerField(blank=True, null=True)
+    data_conclusao3 = models.DateField(blank=True, null=True)
+    link_certificado3 = models.URLField(blank=True, null=True)
 
     def __str__(self):
         return self.nome_curso
@@ -185,8 +223,14 @@ class CursoExtraCurricular(models.Model):
 class Idioma(models.Model):
     usuario = models.ForeignKey(
         Usuario, on_delete=models.CASCADE, related_name='idiomas')
-    idioma = models.CharField(max_length=100, blank=True, null=True)
-    nivel_fluencia = models.CharField(max_length=100, blank=True, null=True)
+    idioma1 = models.CharField(max_length=100, blank=True, null=True)
+    nivel_fluencia1 = models.CharField(max_length=100, blank=True, null=True)
+
+    idioma2 = models.CharField(max_length=100, blank=True, null=True)
+    nivel_fluencia2 = models.CharField(max_length=100, blank=True, null=True)
+
+    idioma3 = models.CharField(max_length=100, blank=True, null=True)
+    nivel_fluencia3 = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         return f"{self.idioma}"

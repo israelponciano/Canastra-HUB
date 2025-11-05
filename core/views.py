@@ -29,7 +29,7 @@ def sobre(request):
 
 def espacos_hub(request):
 
-    return render(request, 'espacos_hub')
+    return render(request, 'espacos_hub.html')
 
 def cadastro(request):
 
@@ -128,23 +128,48 @@ def cadastro_completo(request):
         pretensao_salarial = request.POST.get('decPretensaoSalarial')
         disponibilidade = request.POST.get('txtDisponibilidade')
 
-        #Formacao Academica
-        instituicao_nome = request.POST.get('txtNomeInstituicao')
-        grau_escolaridade = request.POST.get('escolaridade')
-        curso_graduacao = request.POST.get('txtCurso')
-        situacao_academica = request.POST.get('txtSituacao')
-        data_acad_inicio = request.POST.get('txtDataAcad')
-        data_acad_fim = request.POST.get('txtDataFimAcad')
+        #Formacao Academica 1 
+        instituicao_nome = request.POST.get('txtNomeInstituicao1')
+        grau_escolaridade = request.POST.get('escolaridade1')
+        curso_graduacao = request.POST.get('txtCurso1')
+        situacao_academica = request.POST.get('txtSituacao1')
+        data_acad_inicio = request.POST.get('txtDataAcad1')
+        data_acad_fim = request.POST.get('txtDataFimAcad1')
 
-        #Experiencia professional
-        nome_empresa = request.POST.get('txtNomeEmpresa')
-        cargo = request.POST.get('txtCargo')
-        tipo_contrato = request.POST.get('tipoContrato')
-        empresa_cidade_id = request.POST.get('cidadeEmpresa')
-        empresa_estado_id = request.POST.get('estadoEmpresa')
-        descricao_atividades = request.POST.get('txtDescricao')
-        data_inicio = request.POST.get('txtDataProf')
-        data_fim = request.POST.get('txtDataFimProf')
+        #Formacao Academica 2 
+        instituicao_nome = request.POST.get('txtNomeInstituicao2')
+        grau_escolaridade = request.POST.get('escolaridade2')
+        curso_graduacao = request.POST.get('txtCurso2')
+        situacao_academica = request.POST.get('txtSituacao2')
+        data_acad_inicio = request.POST.get('txtDataAcad2')
+        data_acad_fim = request.POST.get('txtDataFimAcad2')
+
+        #Formacao Academica 3
+        instituicao_nome = request.POST.get('txtNomeInstituicao3')
+        grau_escolaridade = request.POST.get('escolaridade3')
+        curso_graduacao = request.POST.get('txtCurso3')
+        situacao_academica = request.POST.get('txtSituacao3')
+        data_acad_inicio = request.POST.get('txtDataAcad3')
+        data_acad_fim = request.POST.get('txtDataFimAcad3')
+
+
+        #Experiencia professional 1
+        nome_empresa1 = request.POST.get('txtNomeEmpresa1')
+        cargo1 = request.POST.get('txtCargo1')
+        data_inicio1 = request.POST.get('txtDataProf1')
+        data_fim1 = request.POST.get('txtDataFimProf1')
+        
+        #Experiencia professional 2 
+        nome_empresa2 = request.POST.get('txtNomeEmpresa2')
+        cargo2 = request.POST.get('txtCargo2')
+        data_inicio2 = request.POST.get('txtDataProf2')
+        data_fim2 = request.POST.get('txtDataFimProf2')
+        
+        #Experiencia professional 3 
+        nome_empresa3 = request.POST.get('txtNomeEmpresa3')
+        cargo3 = request.POST.get('txtCargo3')
+        data_inicio3 = request.POST.get('txtDataProf3')
+        data_fim3 = request.POST.get('txtDataFimProf3')
 
         #Rede sociais e links
         linkedin = request.POST.get('txtLinkedin')
@@ -152,6 +177,20 @@ def cadastro_completo(request):
         instagram = request.POST.get('txtInstagram')
         facebook = request.POST.get('txtFacebook')
         site_pessoal = request.POST.get('txtSitePessoal')
+
+        #Curso Extracurriculares 1
+        nome_curso1 = request.POST.get('txtNomeCurso1')
+        instituicao1 = request.POST.get('txtInstituicao1')
+        carga_horaria1 = request.POST.get('txtCargaHoras1')
+        data_conclusao1 = request.POST.get('txtDataFimCurso1')
+        link_certificado1 = request.POST.get('txtLinkCertificado1')
+
+        #Curso Extracurriculares 2
+        nome_curso2 = request.POST.get('txtNomeCurso2')
+        instituicao2 = request.POST.get('txtInstituicao2')
+        carga_horaria2 = request.POST.get('txtCargaHoras2')
+        data_conclusao2 = request.POST.get('txtDataFimCurso2')
+        link_certificado2 = request.POST.get('txtLinkCertificado2')
 
         #Curso Extracurriculares
         nome_curso = request.POST.get('txtNomeCurso')
