@@ -2,36 +2,94 @@
 {% load static %}
 {% block conteudo %}
   <style>
-    .form-container {
-      max-width: 900px;
-      margin: 2rem auto;
-      padding: 2rem;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
-    .form-label {
-      color: #000000ff;
-    }
-    .form-container h2 {
-      margin-bottom: 1.5rem;
-      color: #22c55e;
-      font-weight: bold;
-    }
-    .submit-btn {
-      text-align: right;
-    }
-    .submit-btn button {
-      background-color: #22c55e;
-      color: #fff;
-      font-size: 18px;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-    }
-    .submit-btn button:hover {
-      background-color: #1a9e4b;
-    }
+        .form-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: #fff;
+            border-radius: 12px;
+        }
+        .form-label {
+            color: #000000ff;
+        }
+        .form-container h2 {
+            margin-bottom: 1.5rem;
+            color: #22c55e;
+            font-weight: bold;
+        }
+        .submit-btn {
+            text-align: right;
+        }
+        .submit-btn button {
+            background-color: #22c55e;
+            color: #fff;
+            font-size: 18px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+        }
+        .submit-btn button:hover {
+            background-color: #1a9e4b;
+        }
+
+        /* Estilos para o sistema dinâmico */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .section-header h5 {
+            margin: 0 !important; 
+        }
+
+        .add-btn {
+            background-color: #000000;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            display: inline-block;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .add-btn:hover {
+            background-color: #625656;
+        }
+
+        .add-btn:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .counter {
+            font-weight: bold;
+        }
+
+        .dynamic-group {
+            display: none;
+            border: 1px solid #e5e7eb;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            background-color: #fafafa;
+        }
+
+        .dynamic-group.active {
+            display: block;
+        }
+
+        h5.mt-4 {
+            color: #000000;
+            font-weight: bold;
+        }
   </style>
 
   <div class="form-container">
@@ -39,460 +97,562 @@
 
     <form action="{% url 'core:cadastro_completo' %}" method="POST" enctype="multipart/form-data">
       {% csrf_token %}
-      <!-- Objetivo Profissional -->
       <h5 class="mt-4">Objetivo Profissional</h5>
       <div class="row mb-3">
-        <div class="col-md-6">  
-          <label class="form-label">Cargo Pretendido</label>
-          <input type="text" name="txtCargoPretendido" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Áreas de Interesse</label>
-          <input type="text" name="txtAreaInteresse"
-          class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Pretensão Salarial</label>
-          <input type="text" name="decPretensaoSalarial" class="form-control" />
-        </div>
-        <div class="mb-3">
-        <label class="form-label">Disponibilidade</label>
-        <div class="d-flex flex-wrap gap-3">
-          <div><input type="radio" name="txtDisponibilidade" value="manha">Manhã</div>
-          <div><input type="radio" name="txtDisponibilidade" value="tarde"> Tarde</div>
-          <div><input type="radio" name="txtDisponibilidade" value="noite"> Noite</div>
-          <div><input type="radio" name="txtDisponibilidade" value="periodoIntegral">Periodo Integral</div>
-        </div>
-      </div>
-      </div>
-      
-      <!-- Formação Academica -->
-      <h5 class="mt-4">Formação Acadêmica 1</h5>
-      <div class="row mb-3">
-        <div class="col-md-6">
-          <label class="form-label">Nome da Instituição</label>
-          <input type="text" name="txtNomeInstituicao1" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Grau Escolaridade</label>
-          <select id="escolaridade1" name="escolaridade1" class="form-select">
-            <option value="">Selecione...</option>
-            <option value="analfabeto1">Analfabeto</option>
-            <option value="fundamental-incompleto1">Ensino Fundamental Incompleto</option>
-            <option value="fundamental-completo1">Ensino Fundamental Completo</option>
-            <option value="medio-incompleto1">Ensino Médio Incompleto</option>
-            <option value="medio-completo1">Ensino Médio Completo</option>
-            <option value="tecnico-incompleto1">Ensino Técnico Incompleto</option>
-            <option value="tecnico-completo1">Ensino Técnico Completo</option>
-            <option value="superior-incompleto1">Ensino Superior Incompleto</option>
-            <option value="superior-completo1">Ensino Superior Completo</option>
-            <option value="pos-graduacao-incompleta1">Pós-Graduação Incompleta</option>
-            <option value="pos-graduacao-completa1">Pós-Graduação Completa</option>
-            <option value="mestrado-incompleto1">Mestrado Incompleto</option>
-            <option value="mestrado-completo1">Mestrado Completo</option>
-            <option value="doutorado-incompleto1">Doutorado Incompleto</option>
-            <option value="doutorado-completo1">Doutorado Completo</option>
-          </select>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Curso</label>
-          <input type="text" name="txtCurso1" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Situação</label>
-          <input type="text" name="txtSituacao1" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Data Início</label>
-          <input type="date" name="txtDataAcad1" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Data de Conclusão</label>
-          <input type="date" name="txtDataFimAcad1" class="form-control" />
-        </div>
+          <div class="col-md-6">  
+              <label class="form-label">Cargo Pretendido</label>
+              <input type="text" name="txtCargoPretendido" class="form-control" />
+          </div>
+          <div class="col-md-6">
+              <label class="form-label">Áreas de Interesse</label>
+              <input type="text" name="txtAreaInteresse" class="form-control" />
+          </div>
+          <div class="col-md-6">
+              <label class="form-label">Pretensão Salarial</label>
+              <input type="text" name="decPretensaoSalarial" class="form-control" />
+          </div>
+          <div class="mb-3">
+              <label class="form-label">Disponibilidade</label>
+              <div class="d-flex flex-wrap gap-3">
+                  <div><input type="radio" name="txtDisponibilidade" value="manha"> Manhã</div>
+                  <div><input type="radio" name="txtDisponibilidade" value="tarde"> Tarde</div>
+                  <div><input type="radio" name="txtDisponibilidade" value="noite"> Noite</div>
+                  <div><input type="radio" name="txtDisponibilidade" value="periodoIntegral"> Periodo Integral</div>
+              </div>
+          </div>
       </div>
 
-      <!-- Formação Academica -->
-      <h5 class="mt-4">Formação Acadêmica 2 </h5>
-      <div class="row mb-3">
-        <div class="col-md-6">
-          <label class="form-label">Nome da Instituição</label>
-          <input type="text" name="txtNomeInstituicao2" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Grau Escolaridade</label>
-          <select id="escolaridade2" name="escolaridade2" class="form-select">
-            <option value="">Selecione...</option>
-            <option value="analfabeto2">Analfabeto</option>
-            <option value="fundamental-incompleto2">Ensino Fundamental Incompleto</option>
-            <option value="fundamental-completo2">Ensino Fundamental Completo</option>
-            <option value="medio-incompleto2">Ensino Médio Incompleto</option>
-            <option value="medio-completo2">Ensino Médio Completo</option>
-            <option value="tecnico-incompleto2">Ensino Técnico Incompleto</option>
-            <option value="tecnico-completo2">Ensino Técnico Completo</option>
-            <option value="superior-incompleto2">Ensino Superior Incompleto</option>
-            <option value="superior-completo2">Ensino Superior Completo</option>
-            <option value="pos-graduacao-incompleta2">Pós-Graduação Incompleta</option>
-            <option value="pos-graduacao-completa2">Pós-Graduação Completa</option>
-            <option value="mestrado-incompleto2">Mestrado Incompleto</option>
-            <option value="mestrado-completo2">Mestrado Completo</option>
-            <option value="doutorado-incompleto2">Doutorado Incompleto</option>
-            <option value="doutorado-completo2">Doutorado Completo</option>
-          </select>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Curso</label>
-          <input type="text" name="txtCurso2" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Situação</label>
-          <input type="text" name="txtSituacao2" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Data Início</label>
-          <input type="date" name="txtDataAcad2" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Data de Conclusão</label>
-          <input type="date" name="txtDataFimAcad2" class="form-control" />
-        </div>
+      <!-- Formação Acadêmica -->
+      <div class="section-header">
+          <h5 class="mt-4 mb-0">Formação Acadêmica</h5>
+          <button type="button" class="add-btn" onclick="addItem('formacao-academica')">
+              ➕ <span class="counter">1x</span>
+          </button>
       </div>
 
-      <!-- Formação Academica 3  -->
-      <h5 class="mt-4">Formação Acadêmica 3</h5>
-      <div class="row mb-3">
-        <div class="col-md-6">
-          <label class="form-label">Nome da Instituição</label>
-          <input type="text" name="txtNomeInstituicao3" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Grau Escolaridade</label>
-          <select id="escolaridade3" name="escolaridade3" class="form-select">
-            <option value="">Selecione...</option>
-            <option value="analfabeto3">Analfabeto</option>
-            <option value="fundamental-incompleto3">Ensino Fundamental Incompleto</option>
-            <option value="fundamental-completo3">Ensino Fundamental Completo</option>
-            <option value="medio-incompleto3">Ensino Médio Incompleto</option>
-            <option value="medio-completo3">Ensino Médio Completo</option>
-            <option value="tecnico-incompleto3">Ensino Técnico Incompleto</option>
-            <option value="tecnico-completo3">Ensino Técnico Completo</option>
-            <option value="superior-incompleto3">Ensino Superior Incompleto</option>
-            <option value="superior-completo3">Ensino Superior Completo</option>
-            <option value="pos-graduacao-incompleta3">Pós-Graduação Incompleta</option>
-            <option value="pos-graduacao-completa3">Pós-Graduação Completa</option>
-            <option value="mestrado-incompleto3">Mestrado Incompleto</option>
-            <option value="mestrado-completo3">Mestrado Completo</option>
-            <option value="doutorado-incompleto3">Doutorado Incompleto</option>
-            <option value="doutorado-completo3">Doutorado Completo</option>
-          </select>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Curso</label>
-          <input type="text" name="txtCurso3" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Situação</label>
-          <input type="text" name="txtSituacao3" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Data Início</label>
-          <input type="date" name="txtDataAcad3" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Data de Conclusão</label>
-          <input type="date" name="txtDataFimAcad3" class="form-control" />
-        </div>
+      <!-- Formação Acadêmica 1 -->
+      <div class="dynamic-group active" data-section="formacao-academica" data-index="1">
+          <div class="row mb-3">
+              <div class="col-md-6">
+                  <label class="form-label">Nome da Instituição</label>
+                  <input type="text" name="txtNomeInstituicao1" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Grau Escolaridade</label>
+                  <select name="escolaridade1" class="form-select">
+                      <option value="">Selecione...</option>
+                      <option value="analfabeto1">Analfabeto</option>
+                      <option value="fundamental-incompleto1">Ensino Fundamental Incompleto</option>
+                      <option value="fundamental-completo1">Ensino Fundamental Completo</option>
+                      <option value="medio-incompleto1">Ensino Médio Incompleto</option>
+                      <option value="medio-completo1">Ensino Médio Completo</option>
+                      <option value="tecnico-incompleto1">Ensino Técnico Incompleto</option>
+                      <option value="tecnico-completo1">Ensino Técnico Completo</option>
+                      <option value="superior-incompleto1">Ensino Superior Incompleto</option>
+                      <option value="superior-completo1">Ensino Superior Completo</option>
+                      <option value="pos-graduacao-incompleta1">Pós-Graduação Incompleta</option>
+                      <option value="pos-graduacao-completa1">Pós-Graduação Completa</option>
+                      <option value="mestrado-incompleto1">Mestrado Incompleto</option>
+                      <option value="mestrado-completo1">Mestrado Completo</option>
+                      <option value="doutorado-incompleto1">Doutorado Incompleto</option>
+                      <option value="doutorado-completo1">Doutorado Completo</option>
+                  </select>
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Curso</label>
+                  <input type="text" name="txtCurso1" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Situação</label>
+                  <input type="text" name="txtSituacao1" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Data Início</label>
+                  <input type="date" name="txtDataAcad1" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Data de Conclusão</label>
+                  <input type="date" name="txtDataFimAcad1" class="form-control" />
+              </div>
+          </div>
       </div>
 
-      <!-- Experiencia Profissional 1 -->
-      <h5 class="mt-4">Experiencia Profissional 1</h5>
-      <div class="row mb-3">
-        <div class="col-md-6">
-          <label class="form-label">Nome da Empresa</label>
-          <input type="text" name="txtNomeEmpresa1" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Cargo</label>
-          <input type="text" name="txtCargo1" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Periodo (Início)</label>
-          <input type="date" name="txtDataProf1" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Periodo (Fim)</label>
-          <input type="date" name="txtDataFimProf1" class="form-control" />
-        </div>
+      <!-- Formação Acadêmica 2 -->
+      <div class="dynamic-group" data-section="formacao-academica" data-index="2">
+          <div class="row mb-3">
+              <div class="col-md-6">
+                  <label class="form-label">Nome da Instituição</label>
+                  <input type="text" name="txtNomeInstituicao2" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Grau Escolaridade</label>
+                  <select name="escolaridade2" class="form-select">
+                      <option value="">Selecione...</option>
+                      <option value="analfabeto2">Analfabeto</option>
+                      <option value="fundamental-incompleto2">Ensino Fundamental Incompleto</option>
+                      <option value="fundamental-completo2">Ensino Fundamental Completo</option>
+                      <option value="medio-incompleto2">Ensino Médio Incompleto</option>
+                      <option value="medio-completo2">Ensino Médio Completo</option>
+                      <option value="tecnico-incompleto2">Ensino Técnico Incompleto</option>
+                      <option value="tecnico-completo2">Ensino Técnico Completo</option>
+                      <option value="superior-incompleto2">Ensino Superior Incompleto</option>
+                      <option value="superior-completo2">Ensino Superior Completo</option>
+                      <option value="pos-graduacao-incompleta2">Pós-Graduação Incompleta</option>
+                      <option value="pos-graduacao-completa2">Pós-Graduação Completa</option>
+                      <option value="mestrado-incompleto2">Mestrado Incompleto</option>
+                      <option value="mestrado-completo2">Mestrado Completo</option>
+                      <option value="doutorado-incompleto2">Doutorado Incompleto</option>
+                      <option value="doutorado-completo2">Doutorado Completo</option>
+                  </select>
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Curso</label>
+                  <input type="text" name="txtCurso2" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Situação</label>
+                  <input type="text" name="txtSituacao2" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Data Início</label>
+                  <input type="date" name="txtDataAcad2" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Data de Conclusão</label>
+                  <input type="date" name="txtDataFimAcad2" class="form-control" />
+              </div>
+          </div>
       </div>
 
-      <!-- Experiencia Profissional 2 -->
-      <h5 class="mt-4">Experiencia Profissional 2</h5>
-      <div class="row mb-3">
-        <div class="col-md-6">
-          <label class="form-label">Nome da Empresa</label>
-          <input type="text" name="txtNomeEmpresa2" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Cargo</label>
-          <input type="text" name="txtCargo2" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Periodo (Início)</label>
-          <input type="date" name="txtDataProf2" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Periodo (Fim)</label>
-          <input type="date" name="txtDataFimProf2" class="form-control" />
-        </div>
+      <!-- Formação Acadêmica 3 -->
+      <div class="dynamic-group" data-section="formacao-academica" data-index="3">
+          <div class="row mb-3">
+              <div class="col-md-6">
+                  <label class="form-label">Nome da Instituição</label>
+                  <input type="text" name="txtNomeInstituicao3" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Grau Escolaridade</label>
+                  <select name="escolaridade3" class="form-select">
+                      <option value="">Selecione...</option>
+                      <option value="analfabeto3">Analfabeto</option>
+                      <option value="fundamental-incompleto3">Ensino Fundamental Incompleto</option>
+                      <option value="fundamental-completo3">Ensino Fundamental Completo</option>
+                      <option value="medio-incompleto3">Ensino Médio Incompleto</option>
+                      <option value="medio-completo3">Ensino Médio Completo</option>
+                      <option value="tecnico-incompleto3">Ensino Técnico Incompleto</option>
+                      <option value="tecnico-completo3">Ensino Técnico Completo</option>
+                      <option value="superior-incompleto3">Ensino Superior Incompleto</option>
+                      <option value="superior-completo3">Ensino Superior Completo</option>
+                      <option value="pos-graduacao-incompleta3">Pós-Graduação Incompleta</option>
+                      <option value="pos-graduacao-completa3">Pós-Graduação Completa</option>
+                      <option value="mestrado-incompleto3">Mestrado Incompleto</option>
+                      <option value="mestrado-completo3">Mestrado Completo</option>
+                      <option value="doutorado-incompleto3">Doutorado Incompleto</option>
+                      <option value="doutorado-completo3">Doutorado Completo</option>
+                  </select>
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Curso</label>
+                  <input type="text" name="txtCurso3" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Situação</label>
+                  <input type="text" name="txtSituacao3" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Data Início</label>
+                  <input type="date" name="txtDataAcad3" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Data de Conclusão</label>
+                  <input type="date" name="txtDataFimAcad3" class="form-control" />
+              </div>
+          </div>
       </div>
 
-      <!-- Experiencia Profissional 3 -->
-      <h5 class="mt-4">Experiencia Profissional 3</h5>
-      <div class="row mb-3">
-        <div class="col-md-6">
-          <label class="form-label">Nome da Empresa</label>
-          <input type="text" name="txtNomeEmpresa3" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Cargo</label>
-          <input type="text" name="txtCargo3" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Periodo (Início)</label>
-          <input type="date" name="txtDataProf3" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Periodo (Fim)</label>
-          <input type="date" name="txtDataFimProf3" class="form-control" />
-        </div>
+      <!-- Experiência Profissional -->
+      <div class="section-header">
+          <h5 class="mt-4 mb-0">Experiência Profissional</h5>
+          <button type="button" class="add-btn" onclick="addItem('experiencia-profissional')">
+              ➕ <span class="counter">1x</span>
+          </button>
       </div>
 
-      
-      <!-- Curso Extracurriculares -->
-      <h5 class="mt-4">Curso Extracurriculares/ Certificações</h5>
-      <div class="row mb-3">
-        <div class="col-md-4">
-          <label class="form-label">Nome do Curso</label>
-          <input type="text" name="txtNomeCurso" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Instituição</label>
-          <input type="text" name="txtInstituicao" class="form-control" />
-        </div>
-        <div class="col-md-2">
-          <label class="form-label">Carga Horaria</label>
-          <input type="text" name="txtCargaHoras" class="form-control">
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Data Conclusão</label>
-          <input type="date" name="txtDataFimCurso" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Link Para Certificado</label>
-          <input type="url" name="txtLinkCertificado" class="form-control" />
-        </div>
+      <!-- Experiência Profissional 1 -->
+      <div class="dynamic-group active" data-section="experiencia-profissional" data-index="1">
+          <div class="row mb-3">
+              <div class="col-md-6">
+                  <label class="form-label">Nome da Empresa</label>
+                  <input type="text" name="txtNomeEmpresa1" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Cargo</label>
+                  <input type="text" name="txtCargo1" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Periodo (Início)</label>
+                  <input type="date" name="txtDataProf1" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Periodo (Fim)</label>
+                  <input type="date" name="txtDataFimProf1" class="form-control" />
+              </div>
+          </div>
       </div>
 
-      <!-- Redes Sociais e Links Profissionais -->
+      <!-- Experiência Profissional 2 -->
+      <div class="dynamic-group" data-section="experiencia-profissional" data-index="2">
+          <div class="row mb-3">
+              <div class="col-md-6">
+                  <label class="form-label">Nome da Empresa</label>
+                  <input type="text" name="txtNomeEmpresa2" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Cargo</label>
+                  <input type="text" name="txtCargo2" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Periodo (Início)</label>
+                  <input type="date" name="txtDataProf2" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Periodo (Fim)</label>
+                  <input type="date" name="txtDataFimProf2" class="form-control" />
+              </div>
+          </div>
+      </div>
+
+      <!-- Experiência Profissional 3 -->
+      <div class="dynamic-group" data-section="experiencia-profissional" data-index="3">
+          <div class="row mb-3">
+              <div class="col-md-6">
+                  <label class="form-label">Nome da Empresa</label>
+                  <input type="text" name="txtNomeEmpresa3" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Cargo</label>
+                  <input type="text" name="txtCargo3" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Periodo (Início)</label>
+                  <input type="date" name="txtDataProf3" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Periodo (Fim)</label>
+                  <input type="date" name="txtDataFimProf3" class="form-control" />
+              </div>
+          </div>
+      </div>
+
+      <!-- Cursos Extracurriculares -->
+      <div class="section-header">
+          <h5 class="mt-4 mb-0">Cursos Extracurriculares / Certificações</h5>
+          <button type="button" class="add-btn" onclick="addItem('cursos-extracurriculares')">
+              ➕ <span class="counter">1x</span>
+          </button>
+      </div>
+
+      <!-- Curso Extracurricular 1 -->
+      <div class="dynamic-group active" data-section="cursos-extracurriculares" data-index="1">
+          <div class="row mb-3">
+              <div class="col-md-4">
+                  <label class="form-label">Nome do Curso</label>
+                  <input type="text" name="txtNomeCurso1" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Instituição</label>
+                  <input type="text" name="txtInstituicao1" class="form-control" />
+              </div>
+              <div class="col-md-2">
+                  <label class="form-label">Carga Horaria</label>
+                  <input type="text" name="txtCargaHoras1" class="form-control">
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Data Conclusão</label>
+                  <input type="date" name="txtDataFimCurso1" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Link Para Certificado</label>
+                  <input type="url" name="txtLinkCertificado1" class="form-control" />
+              </div>
+          </div>
+      </div>
+
+      <!-- Curso Extracurricular 2 -->
+      <div class="dynamic-group" data-section="cursos-extracurriculares" data-index="2">
+          <div class="row mb-3">
+              <div class="col-md-4">
+                  <label class="form-label">Nome do Curso</label>
+                  <input type="text" name="txtNomeCurso2" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Instituição</label>
+                  <input type="text" name="txtInstituicao2" class="form-control" />
+              </div>
+              <div class="col-md-2">
+                  <label class="form-label">Carga Horaria</label>
+                  <input type="text" name="txtCargaHoras2" class="form-control">
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Data Conclusão</label>
+                  <input type="date" name="txtDataFimCurso2" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Link Para Certificado</label>
+                  <input type="url" name="txtLinkCertificado2" class="form-control" />
+              </div>
+          </div>
+      </div>
+
+      <!-- Curso Extracurricular 3 -->
+      <div class="dynamic-group" data-section="cursos-extracurriculares" data-index="3">
+          <div class="row mb-3">
+              <div class="col-md-4">
+                  <label class="form-label">Nome do Curso</label>
+                  <input type="text" name="txtNomeCurso3" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Instituição</label>
+                  <input type="text" name="txtInstituicao3" class="form-control" />
+              </div>
+              <div class="col-md-2">
+                  <label class="form-label">Carga Horaria</label>
+                  <input type="text" name="txtCargaHoras3" class="form-control">
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Data Conclusão</label>
+                  <input type="date" name="txtDataFimCurso3" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Link Para Certificado</label>
+                  <input type="url" name="txtLinkCertificado3" class="form-control" />
+              </div>
+          </div>
+      </div>
+
+      <!-- Redes Sociais -->
       <h5 class="mt-4">Redes Sociais e Links Profissionais</h5>
       <div class="row mb-3">
-        <div class="col-md-6">
-          <label class="form-label">Linkedin</label>
-          <input type="url" name="txtLinkedin" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Github</label>
-          <input type="url" name="txtGithub" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Instagram</label>
-          <input type="url" name="txtInstagram" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Facebook</label>
-          <input type="url" name="txtFacebook" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Site Pessoal</label>
-          <input type="url" name="txtSitePessoal" class="form-control" />
-        </div>
-      
-      <!-- Idiomas 1-->
-      <h5 class="mt-4">Idiomas</h5>
-      <div class="row mb-3">
-        <div class="col-md-6">
-          <label class="form-label">Idioma</label>
-          <input type="text" name="txtIdioma1" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Nivel de Fluência</label>
-          <select id="fluencia1" name="fluencia1" class="form-select">
-            <option value="">Nivel de Fluência</option>
-            <option value="basico1">Básico</option>
-            <option value="intermediario1">Intermediario</option>
-            <option value="Avancado1">Avançado</option>
-            <option value="fluente1">Fluente/Nativo</option>
-          </select>
-        </div>
+          <div class="col-md-6">
+              <label class="form-label">Linkedin</label>
+              <input type="url" name="txtLinkedin" class="form-control" />
+          </div>
+          <div class="col-md-6">
+              <label class="form-label">Github</label>
+              <input type="url" name="txtGithub" class="form-control" />
+          </div>
+          <div class="col-md-6">
+              <label class="form-label">Instagram</label>
+              <input type="url" name="txtInstagram" class="form-control" />
+          </div>
+          <div class="col-md-6">
+              <label class="form-label">Facebook</label>
+              <input type="url" name="txtFacebook" class="form-control" />
+          </div>
+          <div class="col-md-6">
+              <label class="form-label">Site Pessoal</label>
+              <input type="url" name="txtSitePessoal" class="form-control" />
+          </div>
       </div>
-      <!-- Idiomas 2-->
-      <h5 class="mt-4">Idiomas</h5>
-      <div class="row mb-3">
-        <div class="col-md-6">
-          <label class="form-label">Idioma</label>
-          <input type="text" name="txtIdioma" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Nivel de Fluência</label>
-          <select id="fluencia2" name="fluencia2" class="form-select">
-            <option value="">Nivel de Fluência</option>
-            <option value="basico2">Básico</option>
-            <option value="intermediario2">Intermediario</option>
-            <option value="Avancado2">Avançado</option>
-            <option value="fluente2">Fluente/Nativo</option>
-          </select>
-        </div>
-      </div>
-      <!-- Idiomas 3-->
-      <h5 class="mt-4">Idiomas</h5>
-      <div class="row mb-3">
-        <div class="col-md-6">
-          <label class="form-label">Idioma</label>
-          <input type="text" name="txtIdioma3" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Nivel de Fluência</label>
-          <select id="fluencia3" name="fluencia3" class="form-select">
-            <option value="">Nivel de Fluência</option>
-            <option value="basico3">Básico</option>
-            <option value="intermediario3">Intermediario</option>
-            <option value="Avancado3">Avançado</option>
-            <option value="fluente3">Fluente/Nativo</option>
-          </select>
-        </div>
-      </div>
-      
-      <!-- Competências 1-->
-      <h5 class="mt-4">Competências</h5>
-      <div>
-        <div class="col-md-6">
-          <label class="form-label">Competencia Tecnicas(Hard Skils)</label>
-          <input type="text" name="txtHardSkil1" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Competencia Comportamentais(Soft Skils)</label>
-          <input type="text" name="txtSoftSkil1" class="form-control" />
-        </div>
-      </div> 
 
-      <!-- Competências 2 -->
-      <h5 class="mt-4">Competências</h5>
-      <div>
-        <div class="col-md-6">
-          <label class="form-label">Competencia Tecnicas(Hard Skils)</label>
-          <input type="text" name="txtHardSkil2" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Competencia Comportamentais(Soft Skils)</label>
-          <input type="text" name="txtSoftSkil2" class="form-control" />
-        </div>
-      </div> 
+      <!-- Idiomas -->
+      <div class="section-header">
+          <h5 class="mt-4 mb-0">Idiomas</h5>
+          <button type="button" class="add-btn" onclick="addItem('idiomas')">
+              ➕ <span class="counter">1x</span>
+          </button>
+      </div>
+
+      <!-- Idioma 1 -->
+      <div class="dynamic-group active" data-section="idiomas" data-index="1">
+          <div class="row mb-3">
+              <div class="col-md-6">
+                  <label class="form-label">Idioma</label>
+                  <input type="text" name="txtIdioma1" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Nivel de Fluência</label>
+                  <select name="fluencia1" class="form-select">
+                      <option value="">Nivel de Fluência</option>
+                      <option value="basico1">Básico</option>
+                      <option value="intermediario1">Intermediario</option>
+                      <option value="Avancado1">Avançado</option>
+                      <option value="fluente1">Fluente/Nativo</option>
+                  </select>
+              </div>
+          </div>
+      </div>
+
+      <!-- Idioma 2 -->
+      <div class="dynamic-group" data-section="idiomas" data-index="2">
+          <div class="row mb-3">
+              <div class="col-md-6">
+                  <label class="form-label">Idioma</label>
+                  <input type="text" name="txtIdioma2" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Nivel de Fluência</label>
+                  <select name="fluencia2" class="form-select">
+                      <option value="">Nivel de Fluência</option>
+                      <option value="basico2">Básico</option>
+                      <option value="intermediario2">Intermediario</option>
+                      <option value="Avancado2">Avançado</option>
+                      <option value="fluente2">Fluente/Nativo</option>
+                  </select>
+              </div>
+          </div>
+      </div>
+
+      <!-- Idioma 3 -->
+      <div class="dynamic-group" data-section="idiomas" data-index="3">
+          <div class="row mb-3">
+              <div class="col-md-6">
+                  <label class="form-label">Idioma</label>
+                  <input type="text" name="txtIdioma3" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Nivel de Fluência</label>
+                  <select name="fluencia3" class="form-select">
+                      <option value="">Nivel de Fluência</option>
+                      <option value="basico3">Básico</option>
+                      <option value="intermediario3">Intermediario</option>
+                      <option value="Avancado3">Avançado</option>
+                      <option value="fluente3">Fluente/Nativo</option>
+                  </select>
+              </div>
+          </div>
+      </div>
 
       <!-- Competências -->
-      <h5 class="mt-4">Competências</h5>
-      <div>
-        <div class="col-md-6">
-          <label class="form-label">Competencia Tecnicas(Hard Skils)</label>
-          <input type="text" name="txtHardSkil3" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Competencia Comportamentais(Soft Skils)</label>
-          <input type="text" name="txtSoftSkil3" class="form-control" />
-        </div>
-      </div> 
+      <div class="section-header">
+          <h5 class="mt-4 mb-0">Competências</h5>
+          <button type="button" class="add-btn" onclick="addItem('competencias')">
+              ➕ <span class="counter">1x</span>
+          </button>
+      </div>
 
+      <!-- Competências 1 -->
+      <div class="dynamic-group active" data-section="competencias" data-index="1">
+          <div class="row mb-3">
+              <div class="col-md-6">
+                  <label class="form-label">Competencia Tecnicas (Hard Skills)</label>
+                  <input type="text" name="txtHardSkil1" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Competencia Comportamentais (Soft Skills)</label>
+                  <input type="text" name="txtSoftSkil1" class="form-control" />
+              </div>
+          </div>
+      </div>
+
+      <!-- Competências 2 -->
+      <div class="dynamic-group" data-section="competencias" data-index="2">
+          <div class="row mb-3">
+              <div class="col-md-6">
+                  <label class="form-label">Competencia Tecnicas (Hard Skills)</label>
+                  <input type="text" name="txtHardSkil2" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Competencia Comportamentais (Soft Skills)</label>
+                  <input type="text" name="txtSoftSkil2" class="form-control" />
+              </div>
+          </div>
+      </div>
+
+      <!-- Competências 3 -->
+      <div class="dynamic-group" data-section="competencias" data-index="3">
+          <div class="row mb-3">
+              <div class="col-md-6">
+                  <label class="form-label">Competencia Tecnicas (Hard Skills)</label>
+                  <input type="text" name="txtHardSkil3" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label">Competencia Comportamentais (Soft Skills)</label>
+                  <input type="text" name="txtSoftSkil3" class="form-control" />
+              </div>
+          </div>
+      </div>
       <!-- Acessibilidade -->
       <h5 class="mt-4">Inclusão</h5>
-      <!-- Pessoa com deficiência (PCD) -->
-        <div class="mb-3">
-            <label class="form-label">Pessoa com deficiência (PCD)</label>
-            <div class="d-flex flex-wrap gap-3">
-                <div>
-                    <input type="radio" id="pcd-sim" name="pcd" value="sim" onchange="togglePcdFields()">
-                    <label for="pcd-sim">Sim</label>
-                </div>
-                <div>
-                    <input type="radio" id="pcd-nao" name="pcd" value="nao" checked onchange="togglePcdFields()">
-                    <label for="pcd-nao">Não</label>
-                </div>
-            </div>
-        </div>
-        <!-- Campos que aparecem quando PCD = Sim -->
-        <div id="pcdFields" style="display: none;">
-            <div class="row">
-                <!-- Tipo de deficiência -->
-                <div class="col-md-6 mb-3">
-                    <label for="tipoDeficiencia" class="form-label">Tipo de deficiência</label>
-                    <select id="tipoDeficiencia" name="tipoDeficiencia" class="form-select">
-                        <option value="">Selecione...</option>
-                        <option value="fisica">Física</option>
-                        <option value="auditiva">Auditiva</option>
-                        <option value="visual">Visual</option>
-                        <option value="intelectual">Intelectual</option>
-                        <option value="psicossocial">Psicossocial</option>
-                        <option value="multipla">Múltipla</option>
-                        <option value="reabilitado">Reabilitado</option>
-                        <option value="outra">Outra</option>
-                    </select>
-                </div>
-
-            <!-- Necessidade de adaptação -->
-            <div class="mb-3">
-                <label for="necessidadeAdaptacao" class="form-label">Necessidade de adaptação no ambiente de trabalho</label>
-                <textarea id="necessidadeAdaptacao" name="necessidadeAdaptacao" class="form-control" rows="3" placeholder="Descreva as adaptações necessárias (ex: rampa de acesso, software leitor de tela, mesa adaptada, etc.)"></textarea>
-            </div>
-        </div>
+      <div class="mb-3">
+          <label class="form-label">Pessoa com deficiência (PCD)</label>
+          <div class="d-flex flex-wrap gap-3">
+              <div>
+                  <input type="radio" id="pcd-sim" name="pcd" value="sim" onchange="togglePcdFields()">
+                  <label for="pcd-sim">Sim</label>
+              </div>
+              <div>
+                  <input type="radio" id="pcd-nao" name="pcd" value="nao" checked onchange="togglePcdFields()">
+                  <label for="pcd-nao">Não</label>
+              </div>
+          </div>
       </div>
+      <div id="pcdFields" style="display: none;">
+          <div class="row">
+              <div class="col-md-6 mb-3">
+                  <label for="tipoDeficiencia" class="form-label">Tipo de deficiência</label>
+                  <select id="tipoDeficiencia" name="tipoDeficiencia" class="form-select">
+                      <option value="">Selecione...</option>
+                      <option value="fisica">Física</option>
+                      <option value="auditiva">Auditiva</option>
+                      <option value="visual">Visual</option>
+                      <option value="intelectual">Intelectual</option>
+                      <option value="psicossocial">Psicossocial</option>
+                      <option value="multipla">Múltipla</option>
+                      <option value="reabilitado">Reabilitado</option>
+                      <option value="outra">Outra</option>
+                  </select>
+              </div>
+              <div class="mb-3">
+                  <label for="necessidadeAdaptacao" class="form-label">Necessidade de adaptação no ambiente de trabalho</label>
+                  <textarea id="necessidadeAdaptacao" name="necessidadeAdaptacao" class="form-control" rows="3" placeholder="Descreva as adaptações necessárias (ex: rampa de acesso, software leitor de tela, mesa adaptada, etc.)"></textarea>
+              </div>
+          </div>
+      </div>
+
       <!-- Informações Adicionais -->
       <div class="col-md-6">
-        <h5 class="mt-4">Informações Adicionais</h5>
-        <div class="col-md-10">
-          <label class="form-label">Disponibilidade para trabalho Remoto</label>
-            <div class="d-flex flex-wrap gap-3">
-                <div>
-                    <input type="radio" id="remotoSim" name="remoto" value="sim">
-                    <label for="remotoSIm">Sim</label>
-                </div>
-                <div>
-                    <input type="radio" id="remotoNao" name="remoto" value="nao">
-                    <label for="remotoNao">Não</label>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Interesses ou Hobbies</label>
-          <input type="text" name="txtHobbie" class="form-control"/>
-        </div>
+          <h5 class="mt-4">Informações Adicionais</h5>
+          <div class="col-md-10">
+              <label class="form-label">Disponibilidade para trabalho Remoto</label>
+              <div class="d-flex flex-wrap gap-3">
+                  <div>
+                      <input type="radio" id="remotoSim" name="remoto" value="sim">
+                      <label for="remotoSim">Sim</label>
+                  </div>
+                  <div>
+                      <input type="radio" id="remotoNao" name="remoto" value="nao">
+                      <label for="remotoNao">Não</label>
+                  </div>
+              </div>
+          </div>
+          <div class="col-md-6">
+              <label class="form-label">Interesses ou Hobbies</label>
+              <input type="text" name="txtHobbie" class="form-control"/>
+          </div>
       </div>
 
       <!-- Anexos -->
       <div>
-        <h5 class="mt-4">Anexos</h5>
-        <div class="row mb-3">
-          <div class="col-md-6 mb-3">
-            <label for="curriculoPdf" class="form-label">Currículo em PDF</label>
-            <input type="file" id="curriculoPdf" name="curriculoPdf" class="form-control" accept=".pdf">
+          <h5 class="mt-4">Anexos</h5>
+          <div class="row mb-3">
+              <div class="col-md-6 mb-3">
+                  <label for="curriculoPdf" class="form-label">Currículo em PDF</label>
+                  <input type="file" id="curriculoPdf" name="curriculoPdf" class="form-control" accept=".pdf">
+              </div>
+              <div class="col-md-6 mb-3">
+                  <label for="cartaApresentacao" class="form-label">Carta de apresentação</label>
+                  <input type="file" id="cartaApresentacao" name="cartaApresentacao" class="form-control" accept=".pdf,.doc,.docx">
+              </div>
           </div>
-          <div class="col-md-6 mb-3">
-            <label for="cartaApresentacao" class="form-label">Carta de apresentação</label>
-            <input type="file" id="cartaApresentacao" name="cartaApresentacao" class="form-control" accept=".pdf,.doc,.docx">
-          </div>
-        </div>
       </div>
+
       <!-- Botão -->
       <div class="submit-btn">
-        <button type="submit">Cadastrar</button>
+          <button type="submit">Cadastrar</button>
       </div>
+
     </form>
     </div>
   </div>
@@ -501,80 +661,76 @@
   
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
-  $(document).ready(function() {
-    console.log("Script de cidades da empresa carregado!");
-    
-    // Para o dropdown de EXPERIÊNCIA PROFISSIONAL
-    $("select[name='estadoEmpresa']").on("change", function() {
-        const estado_id = $(this).val();
-        const cidadeSelect = $("select[name='cidadeEmpresa']");
+    function addItem(sectionName) {
+    const groups = document.querySelectorAll(`.dynamic-group[data-section="${sectionName}"]`);
+    const activeGroups = document.querySelectorAll(`.dynamic-group[data-section="${sectionName}"].active`);
+
+    // Verifica se já tem 3 ativos
+    if (activeGroups.length >= 3) {
+        const button = event.target.closest('.add-btn');
+        button.disabled = true;
+        return;
+    }
+
+    // Ativa o próximo grupo
+    const nextIndex = activeGroups.length + 1;
+    const nextGroup = document.querySelector(`.dynamic-group[data-section="${sectionName}"][data-index="${nextIndex}"]`);
+
+    if (nextGroup) {
+        nextGroup.classList.add('active');
         
-        console.log("Estado da empresa selecionado ID:", estado_id);
+        // Atualiza o contador
+        const button = event.target.closest('.add-btn');
+        const counter = button.querySelector('.counter');
+        counter.textContent = `${nextIndex}x`;
         
-        if (!estado_id) {
-            cidadeSelect.html('<option value="">Primeiro selecione o Estado</option>');
-            return;
+        // Desabilita o botão se chegou em 3
+        if (nextIndex >= 3) {
+            button.disabled = true;
         }
-        
-        cidadeSelect.html('<option value="">Carregando...</option>');
-        
-        $.ajax({
-            url: "{% url 'core:get_cidades' %}",
-            method: 'GET',
-            data: { 'estado_id': estado_id },
-            success: function(response) {
-                console.log("Cidades da empresa recebidas:", response.total, "cidades");
-                
-                cidadeSelect.empty();
-                cidadeSelect.append('<option value="">Selecione a Cidade</option>');
-                
-                if (response.cidades && response.cidades.length > 0) {
-                    response.cidades.forEach(function(cidade) {
-                        cidadeSelect.append(
-                            '<option value="' + cidade.id + '">' + cidade.nome + '</option>'
-                        );
-                    });
-                    console.log("Cidades da empresa adicionadas ao select!");
-                } else {
-                    cidadeSelect.append('<option value="">Nenhuma cidade encontrada</option>');
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error("Erro ao carregar cidades da empresa:", error);
-                cidadeSelect.html('<option value="">Erro ao carregar cidades</option>');
-            }
-        });
+    }
+    }
+
+    // Função para toggle dos campos PCD
+    function togglePcdFields() {
+    const pcdSim = document.getElementById('pcd-sim');
+    const pcdFields = document.getElementById('pcdFields');
+
+    if (pcdSim.checked) {
+        pcdFields.style.display = 'block';
+    } else {
+        pcdFields.style.display = 'none';
+    }
+    }
+    function togglePcdFields() {
+      const pcdSim = document.getElementById('pcd-sim');
+      const pcdFields = document.getElementById('pcdFields');
+      const tipoDeficiencia = document.getElementById('tipoDeficiencia');
+      
+      if (pcdSim.checked) {
+          pcdFields.style.display = 'block';
+          tipoDeficiencia.required = true;
+      } else {
+          pcdFields.style.display = 'none';
+          tipoDeficiencia.required = false;
+          // Limpar campos quando desmarcado
+          document.getElementById('tipoDeficiencia').value = '';
+          document.getElementById('cid').value = '';
+          document.getElementById('necessidadeAdaptacao').value = '';
+      }
+    }
+
+    document.getElementById('formInclusao').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(this);
+      const dados = Object.fromEntries(formData);
+      
+      console.log('Dados do formulário:', dados);
+      alert('Formulário enviado! Veja os dados no console.');
     });
-});
-        function togglePcdFields() {
-            const pcdSim = document.getElementById('pcd-sim');
-            const pcdFields = document.getElementById('pcdFields');
-            const tipoDeficiencia = document.getElementById('tipoDeficiencia');
-            
-            if (pcdSim.checked) {
-                pcdFields.style.display = 'block';
-                tipoDeficiencia.required = true;
-            } else {
-                pcdFields.style.display = 'none';
-                tipoDeficiencia.required = false;
-                // Limpar campos quando desmarcado
-                document.getElementById('tipoDeficiencia').value = '';
-                document.getElementById('cid').value = '';
-                document.getElementById('necessidadeAdaptacao').value = '';
-            }
-        }
 
-        document.getElementById('formInclusao').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            const dados = Object.fromEntries(formData);
-            
-            console.log('Dados do formulário:', dados);
-            alert('Formulário enviado! Veja os dados no console.');
-        });
-
-        // Inicializar estado dos campos
-        togglePcdFields();
+    // Inicializar estado dos campos
+    togglePcdFields();
   </script>
 {% endblock %}

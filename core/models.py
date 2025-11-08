@@ -190,10 +190,7 @@ class ExperienciaProfissional(models.Model):
     
     def __str__(self):
         return f"{self.cargo} - {self.nome_empresa}"
-
-    class Meta:
-        ordering = ['-data_inicio']
-
+        
 
 class CursoExtraCurricular(models.Model):
     usuario = models.ForeignKey(
