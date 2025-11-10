@@ -126,10 +126,11 @@ def cadastro_completo(request):
         cargo_pretendido = request.POST.get('txtCargoPretendido')
         area_interesse = request.POST.get('txtAreaInteresse')
         pretensao_salarial = request.POST.get('decPretensaoSalarial')
-
-
         disponibilidade = request.POST.get('txtDisponibilidade')
 
+        if(area_interesse != None):
+            request.session['incompleto'] = False
+            
         #Formacao Academica 1 
         instituicao_nome1= request.POST.get('txtNomeInstituicao1')
         grau_escolaridade1 = request.POST.get('escolaridade1')
@@ -413,7 +414,7 @@ def login(request):
             request.session['perfil'] = usuario.tipo
             if usuario.tipo == "usuario":
                 tblusuario = Usuario.objects.get(user = usuario)
-                if tblusuario.curso == None or tblusuario.grau_escolaridade1 == None:
+                if tblusuario.area_interesse == None:
                     request.session['incompleto'] = True 
                     
             request.session['id_atual'] = usuario.id
