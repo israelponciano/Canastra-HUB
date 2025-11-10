@@ -12,8 +12,12 @@ urlpatterns = [
     path("cadastro/", views.cadastro, name="cadastro"),
     path("cadastro_usuario/", views.cadastro_usuario, name="cadastro_usuario"),
     path("get_cidades/", views.get_cidades, name="get_cidades"),
-    path("cadastro_usuario_completo/", views.cadastro_completo, name="cadastro_completo"),
+    path("cadastro_usuario_completo/",
+         views.cadastro_completo, name="cadastro_completo"),
     path("hubs/", views.hubs, name="hubs"),
+
     path("agro/", views.agro, name="agro"),
+    path("apicultura/", views.apicultura, name="apicultura"),
+
     path("sobre/", views.sobre, name="sobre"),
 ]
