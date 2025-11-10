@@ -73,7 +73,7 @@
             <h2 class="hub-title">Conheça o <span style="color:#22c55e">Hub Canastra</span></h2>
             <p class="hub-description">Uma plataforma inovadora que conecta produtores, especialistas e tecnologia para impulsionar a região. Descubra conteúdos exclusivos, networking qualificado e oportunidades de crescimento em diversos setores.</p>
             <p class="hub-subtitle">Junte-se à nossa comunidade e transforme sua experiência com conhecimento especializado em agricultura, apicultura, cafeicultura e muito mais.</p>
-            <button class="btn btn-outline">
+            <button class="btn btn-outline" onclick="window.location.href='{% url 'core:sobre' %}'">
               Saiba Mais
               <span class="btn-arrow">→</span>
             </button>
@@ -135,42 +135,48 @@
 
         <div class="partners-grid">
           <div class="partner-card">
-            <div class="partner-logo">A</div>
-            <h3>AgroTech</h3>
-            <p>Tecnologia</p>
+            <div class="partner-logo">
+              <img src="{% static 'img/sicoob.png' %}" alt="Logo Sicoob" />
+            </div>
+            <h3>Sicoob</h3>
+            <p>Cooperativa de Crédito</p>
           </div>
+
           <div class="partner-card">
-            <div class="partner-logo">B</div>
-            <h3>BeeLab</h3>
-            <p>Apicultura</p>
+            <div class="partner-logo">
+              <img src="{% static 'img/sebrae.png' %}" alt="Logo Sebrae" />
+            </div>
+            <h3>Sebrae</h3>
+            <p>Serviço de Apoio às Micro e Pequenas Empresas</p>
           </div>
+
           <div class="partner-card">
-            <div class="partner-logo">C</div>
+            <div class="partner-logo highlight">C</div>
             <h3>Coffee Plus</h3>
             <p>Café</p>
           </div>
           <div class="partner-card">
-            <div class="partner-logo">R</div>
+            <div class="partner-logo highlight">R</div>
             <h3>Rural Connect</h3>
             <p>Conectividade</p>
           </div>
           <div class="partner-card">
-            <div class="partner-logo">G</div>
+            <div class="partner-logo highlight">G</div>
             <h3>Green Fields</h3>
             <p>Sustentabilidade</p>
           </div>
           <div class="partner-card">
-            <div class="partner-logo">F</div>
+            <div class="partner-logo highlight">F</div>
             <h3>Farm Solutions</h3>
             <p>Soluções</p>
           </div>
           <div class="partner-card">
-            <div class="partner-logo">A</div>
+            <div class="partner-logo highlight">A</div>
             <h3>Agro Finance</h3>
             <p>Financiamento</p>
           </div>
           <div class="partner-card">
-            <div class="partner-logo">S</div>
+            <div class="partner-logo highlight">S</div>
             <h3>Smart Harvest</h3>
             <p>Automação</p>
           </div>
