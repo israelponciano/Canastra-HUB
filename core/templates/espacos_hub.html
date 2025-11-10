@@ -1,0 +1,151 @@
+{% extends 'master.html' %}
+{% load static %}
+{% block conteudo %}
+  <style>
+    .section-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 1rem;
+      color: #1f2937;
+    }
+    
+    .section-subtitle {
+      text-align: center;
+      font-size: 1.1rem;
+      color: #6b7280;
+      max-width: 800px;
+      margin: 0 auto 3rem;
+    }
+    
+    /* Structure Section */
+    .structure-section {
+      padding: 3rem 0;
+      background: white;
+    }
+    
+    .structure-grid {
+      display: grid;
+      gap: 3rem;
+      margin-top: 3rem;
+    }
+    
+    .structure-card {
+      background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+      padding: 2.5rem;
+      border-radius: 16px;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    .structure-card h3 {
+      font-size: 1.8rem;
+      color: #22c55e;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .structure-card h3::before {
+      content: '●';
+      font-size: 1.5rem;
+    }
+    
+    .structure-card ul {
+      list-style: none;
+      padding: 0;
+    }
+    
+    .structure-card ul li {
+      padding: 0.75rem 0;
+      padding-left: 1.5rem;
+      position: relative;
+      color: #4b5563;
+      line-height: 1.7;
+    }
+    
+    .structure-card ul li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: #22c55e;
+      font-weight: 700;
+    }
+  </style>
+  <main>
+    <!-- Structure Section -->
+    <section class="structure-section">
+      <div class="container">
+        <h2 class="section-title">Nossa <span style="color:#22c55e">Estrutura Estratégica</span></h2>
+        <p class="section-subtitle">Um verdadeiro hub de negócios integrados onde se conectam empresas, talentos acadêmicos e iniciativas que impulsionam o crescimento regional</p>
+
+        <div class="structure-grid">
+          <div class="structure-card">
+            <h3>HUB de Negócios e Conexões Empresariais</h3>
+            <ul>
+              <li>Plataforma de articulação entre empresas, startups, poder público e academia</li>
+              <li>Criação de ambientes propícios para networking, negócios e desenvolvimento conjunto de projetos</li>
+              <li>Realização de rodadas de negócios, eventos empresariais e encontros de inovação</li>
+              <li>Conexão com agentes do ecossistema local, regional e nacional</li>
+            </ul>
+          </div>
+
+          <div class="structure-card">
+            <h3>Fábrica de Soluções</h3>
+            <ul>
+              <li>Núcleo técnico dedicado ao desenvolvimento de softwares, aplicativos, sistemas digitais e tecnologias personalizadas</li>
+              <li>Atuação com equipe multidisciplinar formada por professores, técnicos e estudantes bolsistas</li>
+              <li>Aplicação de metodologias ágeis (Scrum, Kanban) para entrega contínua de valor</li>
+            </ul>
+          </div>
+
+          <div class="structure-card">
+            <h3>Empresas Juniores Integradas</h3>
+            <ul>
+              <li>Núcleos de consultoria empresarial coordenados por alunos, com orientação acadêmica</li>
+              <li>Prestação de serviços especializados em gestão, engenharia, tecnologia e agronegócio</li>
+              <li>Contribuição direta para a melhoria da competitividade e inovação das empresas atendidas</li>
+            </ul>
+          </div>
+
+          <div class="structure-card">
+            <h3>Programas de Aceleração e Incubação</h3>
+            <ul>
+              <li>Apoio ao ciclo completo de desenvolvimento de negócios: ideação, validação, crescimento e escala</li>
+              <li>Acompanhamento especializado com mentores, consultores e investidores parceiros</li>
+              <li>Estruturação de editais de pré-incubação e aceleração com foco em impacto</li>
+            </ul>
+          </div>
+
+          <div class="structure-card">
+            <h3>Centro de Desenvolvimento de Negócios Inovadores</h3>
+            <ul>
+              <li>Estímulo a soluções que conciliem modernidade tecnológica com vocações regionais</li>
+              <li>Apoio a projetos de base científica, tecnológica ou de economia criativa</li>
+              <li>Espaço para inovação aberta, com participação de diversos perfis de empreendedores</li>
+            </ul>
+          </div>
+
+          <div class="structure-card">
+            <h3>Núcleo de Treinamento e Capacitação Profissional</h3>
+            <ul>
+              <li>Programas contínuos de qualificação de mão de obra alinhados às demandas locais</li>
+              <li>Oficinas, cursos, mentorias e workshops com foco técnico e de gestão</li>
+              <li>Formação para áreas estratégicas: agronegócio, energias renováveis, alimentos, tecnologia e indústria</li>
+              <li>Preparação de talentos para atuação em empresas inovadoras e tradicionais</li>
+            </ul>
+          </div>
+
+          <div class="structure-card">
+            <h3>IFMAKER</h3>
+            <ul>
+              <li>TEM QUE VER LA</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="{% static 'js/scripts.js' %}"></script>
+{% endblock %}

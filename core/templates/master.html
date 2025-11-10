@@ -29,7 +29,7 @@
           <div class="nav-links">
             <a href="{% url 'core:home' %}" class="nav-link">Home</a>
             <a href="{% url 'core:hubs' %}" class="nav-link">Hub</a>
-            <a href="#vagas" class="nav-link">Vagas</a>
+            <a href="{% url 'vagas:buscar_vagas' %}" class="nav-link">Vagas</a>
             {% if request.session.perfil == 'empresa' %}
               <a href="{% url 'vagas:cadastro_vagas' %}" class="nav-link">Cadastro de Vagas</a>
             {% endif %}
@@ -70,8 +70,7 @@
           <div class="mobile-nav-links">
             <a href="{% url 'core:home' %}" class="nav-link">Home</a>
             <a href="{% url 'core:hubs' %}" class="nav-link">Hub</a>
-
-            <a href="#vagas" class="nav-link">Vagas</a>
+            <a href="{% url 'vagas:buscar_vagas' %}" class="nav-link">Vagas</a>
 
             {% if request.session.perfil == 'empresa' %}
               <a href="{% url 'vagas:cadastro_vagas' %}" class="nav-link">Cadastro de Vagas</a>
@@ -103,6 +102,7 @@
         <div class="footer-brand">
           <div class="footer-logo">
             <a href="/"><img src="{% static 'img/logoCanastra.jpeg' %}" alt="Logo Canastra" class="logo" height="50px" /></a>
+            <a href="/"><img src="{% static 'img/ifmgLogoBranca.png' %}" alt="Logo Canastra" class="logo" height="110px" /></a>
           </div>
           <p class="footer-description">Conectando produtores, especialistas e tecnologia para impulsionar o agronegócio sustentável. Conteúdos exclusivos sobre agricultura, apicultura e cafeicultura.</p>
 
@@ -146,12 +146,12 @@
 
           <div class="contact-item">
             <span class="contact-icon">📞</span>
-            <a href="tel:+5534999999999">(37) 9 9999-9999</a>
+            <a href="tel:+5534999999999">(37) 3431-4901</a>
           </div>
 
           <div class="contact-item">
             <span class="contact-icon">✉️</span>
-            <a href="mailto:contato@hubcanastra.com.br">contato@hubcanastra.com.br</a>
+            <a href="mailto:contato@hubcanastra.com.br">canastrahub.bambui@ifmg.edu.br</a>
           </div>
         </div>
       </div>

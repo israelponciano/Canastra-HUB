@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     "core",
     "empresa",
     "sistema",
-    "usuario",
     "vagas",
 ]
 
