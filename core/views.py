@@ -126,6 +126,8 @@ def cadastro_completo(request):
         cargo_pretendido = request.POST.get('txtCargoPretendido')
         area_interesse = request.POST.get('txtAreaInteresse')
         pretensao_salarial = request.POST.get('decPretensaoSalarial')
+
+
         disponibilidade = request.POST.get('txtDisponibilidade')
 
         #Formacao Academica 1 
@@ -306,11 +308,11 @@ def cadastro_completo(request):
         usuario.data_conclusao2 = data_conclusao2
         usuario.link_certificado2 = link_certificado2
         # 3 
-        usuario.nome_curso1 = nome_curso3
-        usuario.instituicao1 = instituicao3
-        usuario.carga_horaria1 = carga_horaria3
-        usuario.data_conclusao1 = data_conclusao3
-        usuario.link_certificado1 = link_certificado3
+        usuario.nome_curso3 = nome_curso3
+        usuario.instituicao3 = instituicao3
+        usuario.carga_horaria3 = carga_horaria3
+        usuario.data_conclusao3 = data_conclusao3
+        usuario.link_certificado3 = link_certificado3
         # end curso
         # -----------
 
@@ -348,6 +350,31 @@ def cadastro_completo(request):
         usuario.curriculo_pdf = curriculo_pdf
         usuario.carta_apresentacao = carta_apresentacao
 
+        campos_verif = [
+            'data_nascimento', 'data_admissao', 'data_demissao',
+
+            'pretensao_salarial',
+
+            # Formação Acadêmica
+            'data_acad_inicio1', 'data_acad_fim1',
+            'data_acad_inicio2', 'data_acad_fim2',
+            'data_acad_inicio3', 'data_acad_fim3',
+            
+            # Experiência Profissional
+            'data_inicio1', 'data_fim1',
+            'data_inicio2', 'data_fim2',
+            'data_inicio3', 'data_fim3',
+            
+            # Cursos Extracurriculares
+            'data_conclusao1', 'data_conclusao2', 'data_conclusao3'
+        ]
+
+        # Limpa todos os campos de data vazios
+        for campo in campos_verif:
+            valor = getattr(usuario, campo, None)
+            if valor == '' or valor == 'None' or valor is None:
+                setattr(usuario, campo, None)
+        
         usuario.save()
 
         # del request.session['usuario_email']
