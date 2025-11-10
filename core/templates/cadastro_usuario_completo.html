@@ -1,422 +1,161 @@
-{% extends 'master.html' %}
-{% load static %}
-{% block conteudo %}
-  <style>
-    .form-container {
-      max-width: 900px;
-      margin: 2rem auto;
-      padding: 2rem;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
-    .form-label {
-      color: #000000ff;
-    }
-    .form-container h2 {
-      margin-bottom: 1.5rem;
-      color: #22c55e;
-      font-weight: bold;
-    }
-    .submit-btn {
-      text-align: right;
-    }
-    .submit-btn button {
-      background-color: #22c55e;
-      color: #fff;
-      font-size: 18px;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-    }
-    .submit-btn button:hover {
-      background-color: #1a9e4b;
-    }
-  </style>
+from django.shortcuts import render, redirect from django.contrib import messages from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout from django.http import JsonResponse from django.views.decorators.http import require_http_methods from django.utils.crypto import get_random_string from django.contrib.auth.hashers import make_password from django.core.mail import send_mail from core.models import *
 
-  <div class="form-container">
-    <h2 align="center">Cadastro de Usuário</h2>
+# Create your views here.
 
-    <form action="{% url 'core:cadastro_completo' %}" method="POST" enctype="multipart/form-data">
-      {% csrf_token %}
-      <!-- Objetivo Profissional -->
-      <h5 class="mt-4">Objetivo Profissional</h5>
-      <div class="row mb-3">
-        <div class="col-md-6">  
-          <label class="form-label">Cargo Pretendido</label>
-          <input type="text" name="txtCargoPretendido" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Áreas de Interesse</label>
-          <input type="text" name="txtAreaInteresse"
-          class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Pretensão Salarial</label>
-          <input type="text" name="decPretensaoSalarial" class="form-control" />
-        </div>
-        <div class="mb-3">
-        <label class="form-label">Disponibilidade</label>
-        <div class="d-flex flex-wrap gap-3">
-          <div><input type="radio" name="txtDisponibilidade" value="manha">Manhã</div>
-          <div><input type="radio" name="txtDisponibilidade" value="tarde"> Tarde</div>
-          <div><input type="radio" name="txtDisponibilidade" value="noite"> Noite</div>
-          <div><input type="radio" name="txtDisponibilidade" value="periodoIntegral">Periodo Integral</div>
-        </div>
-      </div>
+def home(request):
 
-      </div>
-      <!-- Formação Academica -->
-      <h5 class="mt-4">Formação Acadêmica</h5>
-      <div class="row mb-3">
-        <div class="col-md-6">
-          <label class="form-label">Nome da Instituição</label>
-          <input type="text" name="txtNomeInstituicao" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Grau Escolaridade</label>
-          <select id="escolaridade" name="escolaridade" class="form-select">
-            <option value="">Selecione...</option>
-            <option value="analfabeto">Analfabeto</option>
-            <option value="fundamental-incompleto">Ensino Fundamental Incompleto</option>
-            <option value="fundamental-completo">Ensino Fundamental Completo</option>
-            <option value="medio-incompleto">Ensino Médio Incompleto</option>
-            <option value="medio-completo">Ensino Médio Completo</option>
-            <option value="tecnico-incompleto">Ensino Técnico Incompleto</option>
-            <option value="tecnico-completo">Ensino Técnico Completo</option>
-            <option value="superior-incompleto">Ensino Superior Incompleto</option>
-            <option value="superior-completo">Ensino Superior Completo</option>
-            <option value="pos-graduacao-incompleta">Pós-Graduação Incompleta</option>
-            <option value="pos-graduacao-completa">Pós-Graduação Completa</option>
-            <option value="mestrado-incompleto">Mestrado Incompleto</option>
-            <option value="mestrado-completo">Mestrado Completo</option>
-            <option value="doutorado-incompleto">Doutorado Incompleto</option>
-            <option value="doutorado-completo">Doutorado Completo</option>
-          </select>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Curso</label>
-          <input type="text" name="txtCurso" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Situação</label>
-          <input type="text" name="txtSituacao" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Data Início</label>
-          <input type="date" name="txtDataAcad" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Data de Conclusão</label>
-          <input type="date" name="txtDataFimAcad" class="form-control" />
-        </div>
-      </div>
+return render(request, 'home.html')
 
-      <!-- Experiencia Profissional -->
-      <h5 class="mt-4">Experiencia Profissional</h5>
-      <div class="row mb-3">
-        <div class="col-md-6">
-          <label class="form-label">Nome da Empresa</label>
-          <input type="text" name="txtNomeEmpresa" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Cargo</label>
-          <input type="text" name="txtCargo" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Tipo de Contrato:</label>
-          <select id="tipoContrato" name="tipoContrato" class="form-select">
-              <option value="">-- Selecione um tipo --</option>
-              <option value="clt">CLT - Contrato por Tempo Indeterminado</option>
-              <option value="temporario">Contrato de Trabalho Temporário</option>
-              <option value="determinado">Contrato por Tempo Determinado</option>
-              <option value="estagio">Contrato de Estágio</option>
-              <option value="aprendiz">Contrato de Aprendizagem</option>
-              <option value="intermitente">Contrato de Trabalho Intermitente</option>
-              <option value="autonomo">Contrato de Trabalho Autônomo</option>
-              <option value="pj">Contrato PJ (Pessoa Jurídica)</option>
-              <option value="cooperado">Contrato de Trabalho Cooperado</option>
-              <option value="avulso">Contrato de Trabalho Avulso</option>
-              <option value="domestico">Contrato de Trabalho Doméstico</option>
-              <option value="rural">Contrato de Trabalho Rural</option>
-              <option value="home-office">Contrato de Teletrabalho/Home Office</option>
-              <option value="parcial">Contrato de Trabalho em Tempo Parcial</option>
-          </select>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Estado</label>
-          <select id="estadoEmpresa" name="estadoEmpresa" class="form-select" >
-            <option value="">Selecione o Estado</option>
-            {% for estado in estados %}
-              <option value="{{ estado.id }}">{{ estado.nome_estado }} ({{ estado.sigla_estado }})</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Cidade</label>
-          <select id="cidadeEmpresa" name="cidadeEmpresa" class="form-select" >
-            <option value="">Primeiro selecione o Estado</option>
-          </select>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Descrição</label>
-          <input type="text" name="txtDescricao" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Periodo (Início)</label>
-          <input type="date" name="txtDataProf" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Periodo (Fim)</label>
-          <input type="date" name="txtDataFimProf" class="form-control" />
-        </div>
-      </div>
+def hubs(request):
 
-      <!-- Redes Sociais e Links Profissionais -->
-      <h5 class="mt-4">Redes Sociais e Links Profissionais</h5>
-      <div class="row mb-3">
-        <div class="col-md-6">
-          <label class="form-label">Linkedin</label>
-          <input type="url" name="txtLinkedin" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Github</label>
-          <input type="url" name="txtGithub" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Instagram</label>
-          <input type="url" name="txtInstagram" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Facebook</label>
-          <input type="url" name="txtFacebook" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Site Pessoal</label>
-          <input type="url" name="txtSitePessoal" class="form-control" />
-        </div>
+return render(request, 'hubs.html')
 
-      <!-- Curso Extracurriculares -->
-      <h5 class="mt-4">Curso Extracurriculares/ Certificações</h5>
-      <div class="row mb-3">
-        <div class="col-md-4">
-          <label class="form-label">Nome do Curso</label>
-          <input type="text" name="txtNomeCurso" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Instituição</label>
-          <input type="text" name="txtInstituicao" class="form-control" />
-        </div>
-        <div class="col-md-2">
-          <label class="form-label">Carga Horaria</label>
-          <input type="text" name="txtCargaHoras" class="form-control">
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Data Conclusão</label>
-          <input type="date" name="txtDataFimCurso" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Link Para Certificado</label>
-          <input type="url" name="txtLinkCertificado" class="form-control" />
-        </div>
-      </div>
+def agro(request):
 
-      <!-- Idiomas -->
-      <h5 class="mt-4">Idiomas</h5>
-      <div class="row mb-3">
-        <div class="col-md-6">
-          <label class="form-label">Idioma</label>
-          <input type="text" name="txtIdioma" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Nivel de Fluência</label>
-          <select id="fluencia" name="txtFluencia" class="form-select">
-            <option value="">Nivel de Fluência</option>
-            <option value="basico">Básico</option>
-            <option value="intermediario">Intermediario</option>
-            <option value="Avancado">Avançado</option>
-            <option value="fluente">Fluente/Nativo</option>
-          </select>
-        </div>
-      </div>
-      
-      <!-- Competências -->
-      <h5 class="mt-4">Competências</h5>
-      <div>
-        <div class="col-md-6">
-          <label class="form-label">Competencia Tecnicas(Hard Skils)</label>
-          <input type="text" name="txtHardSkil" class="form-control" />
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Competencia Comportamentais(Soft Skils)</label>
-          <input type="text" name="txtSoftSkil" class="form-control" />
-        </div>
-      </div> 
+return render(request, 'agro.html')
 
-      <!-- Acessibilidade -->
-      <h5 class="mt-4">Inclusão</h5>
-      <!-- Pessoa com deficiência (PCD) -->
-        <div class="mb-3">
-            <label class="form-label">Pessoa com deficiência (PCD)</label>
-            <div class="d-flex flex-wrap gap-3">
-                <div>
-                    <input type="radio" id="pcd-sim" name="pcd" value="sim" onchange="togglePcdFields()">
-                    <label for="pcd-sim">Sim</label>
-                </div>
-                <div>
-                    <input type="radio" id="pcd-nao" name="pcd" value="nao" checked onchange="togglePcdFields()">
-                    <label for="pcd-nao">Não</label>
-                </div>
-            </div>
-        </div>
-        <!-- Campos que aparecem quando PCD = Sim -->
-        <div id="pcdFields" style="display: none;">
-            <div class="row">
-                <!-- Tipo de deficiência -->
-                <div class="col-md-6 mb-3">
-                    <label for="tipoDeficiencia" class="form-label">Tipo de deficiência</label>
-                    <select id="tipoDeficiencia" name="tipoDeficiencia" class="form-select">
-                        <option value="">Selecione...</option>
-                        <option value="fisica">Física</option>
-                        <option value="auditiva">Auditiva</option>
-                        <option value="visual">Visual</option>
-                        <option value="intelectual">Intelectual</option>
-                        <option value="psicossocial">Psicossocial</option>
-                        <option value="multipla">Múltipla</option>
-                        <option value="reabilitado">Reabilitado</option>
-                        <option value="outra">Outra</option>
-                    </select>
-                </div>
+def sobre(request):
 
-            <!-- Necessidade de adaptação -->
-            <div class="mb-3">
-                <label for="necessidadeAdaptacao" class="form-label">Necessidade de adaptação no ambiente de trabalho</label>
-                <textarea id="necessidadeAdaptacao" name="necessidadeAdaptacao" class="form-control" rows="3" placeholder="Descreva as adaptações necessárias (ex: rampa de acesso, software leitor de tela, mesa adaptada, etc.)"></textarea>
-            </div>
-        </div>
-      </div>
-      <!-- Informações Adicionais -->
-      <div class="col-md-6">
-        <h5 class="mt-4">Informações Adicionais</h5>
-        <div class="col-md-10">
-          <label class="form-label">Disponibilidade para trabalho Remoto</label>
-            <div class="d-flex flex-wrap gap-3">
-                <div>
-                    <input type="radio" id="remotoSim" name="remoto" value="sim">
-                    <label for="remotoSIm">Sim</label>
-                </div>
-                <div>
-                    <input type="radio" id="remotoNao" name="remoto" value="nao">
-                    <label for="remotoNao">Não</label>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Interesses ou Hobbies</label>
-          <input type="text" name="txtHobbie" class="form-control"/>
-        </div>
-      </div>
+return render(request, 'sobre.html')
 
-      <!-- Anexos -->
-      <div>
-        <h5 class="mt-4">Anexos</h5>
-        <div class="row mb-3">
-          <div class="col-md-6 mb-3">
-            <label for="curriculoPdf" class="form-label">Currículo em PDF</label>
-            <input type="file" id="curriculoPdf" name="curriculoPdf" class="form-control" accept=".pdf">
-          </div>
-          <div class="col-md-6 mb-3">
-            <label for="cartaApresentacao" class="form-label">Carta de apresentação</label>
-            <input type="file" id="cartaApresentacao" name="cartaApresentacao" class="form-control" accept=".pdf,.doc,.docx">
-          </div>
-        </div>
-      </div>
-      <!-- Botão -->
-      <div class="submit-btn">
-        <button type="submit">Cadastrar</button>
-      </div>
-    </form>
-    </div>
-  </div>
-  </div>
-    
-  
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script>
-  $(document).ready(function() {
-    console.log("Script de cidades da empresa carregado!");
-    
-    // Para o dropdown de EXPERIÊNCIA PROFISSIONAL
-    $("select[name='estadoEmpresa']").on("change", function() {
-        const estado_id = $(this).val();
-        const cidadeSelect = $("select[name='cidadeEmpresa']");
-        
-        console.log("Estado da empresa selecionado ID:", estado_id);
-        
-        if (!estado_id) {
-            cidadeSelect.html('<option value="">Primeiro selecione o Estado</option>');
-            return;
-        }
-        
-        cidadeSelect.html('<option value="">Carregando...</option>');
-        
-        $.ajax({
-            url: "{% url 'core:get_cidades' %}",
-            method: 'GET',
-            data: { 'estado_id': estado_id },
-            success: function(response) {
-                console.log("Cidades da empresa recebidas:", response.total, "cidades");
-                
-                cidadeSelect.empty();
-                cidadeSelect.append('<option value="">Selecione a Cidade</option>');
-                
-                if (response.cidades && response.cidades.length > 0) {
-                    response.cidades.forEach(function(cidade) {
-                        cidadeSelect.append(
-                            '<option value="' + cidade.id + '">' + cidade.nome + '</option>'
-                        );
-                    });
-                    console.log("Cidades da empresa adicionadas ao select!");
-                } else {
-                    cidadeSelect.append('<option value="">Nenhuma cidade encontrada</option>');
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error("Erro ao carregar cidades da empresa:", error);
-                cidadeSelect.html('<option value="">Erro ao carregar cidades</option>');
-            }
-        });
-    });
-});
-        function togglePcdFields() {
-            const pcdSim = document.getElementById('pcd-sim');
-            const pcdFields = document.getElementById('pcdFields');
-            const tipoDeficiencia = document.getElementById('tipoDeficiencia');
-            
-            if (pcdSim.checked) {
-                pcdFields.style.display = 'block';
-                tipoDeficiencia.required = true;
-            } else {
-                pcdFields.style.display = 'none';
-                tipoDeficiencia.required = false;
-                // Limpar campos quando desmarcado
-                document.getElementById('tipoDeficiencia').value = '';
-                document.getElementById('cid').value = '';
-                document.getElementById('necessidadeAdaptacao').value = '';
-            }
-        }
+def espacos_hub(request):
 
-        document.getElementById('formInclusao').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            const dados = Object.fromEntries(formData);
-            
-            console.log('Dados do formulário:', dados);
-            alert('Formulário enviado! Veja os dados no console.');
-        });
+return render(request, 'espacos_hub.html')
 
-        // Inicializar estado dos campos
-        togglePcdFields();
-  </script>
-{% endblock %}
+def cadastro(request):
+
+return render(request, 'cadastro.html')
+
+def cadastro_usuario(request): if request.user.is_authenticated: messages.warning( request, f'Você ja está logado, não é possivel realizar outro cadastro.') return redirect('core:home') if request.method == 'POST': nomeUser = request.POST.get('txtNome') nomeSocial = request.POST.get('txtNomeSocial') dataNasc = request.POST.get('txtDataNasc') genero = request.POST.get('txtGenero') estadoCivil = request.POST.get('txtEstadoCivil') nacionalidade = request.POST.get('txtNacionalidade') email = request.POST.get('txtEmail') telefone = request.POST.get('txtTelefone') senha = request.POST.get('txtSenha') foto_user = request.FILES.get('fileFoto') cep = request.POST.get('txtCep') rua = request.POST.get('txtRua') numero = request.POST.get('txtNumero') bairro = request.POST.get('txtBairro') complemento = request.POST.get('txtComplemento')
+
+cidade_id = request.POST.get('cidade') estado_id = request.POST.get('estado')
+
+if not Estado.objects.filter(id=estado_id).exists(): messages.error(request, 'Estado inválido.') estados = Estado.objects.all().order_by('nome_estado') return render(request, 'cadastro_usuario.html', {'estados': estados})
+
+if not Cidade.objects.filter(id=cidade_id).exists(): messages.error(request, 'Cidade inválida.') estados = Estado.objects.all().order_by('nome_estado') return render(request, 'cadastro_usuario.html', {'estados': estados}) # Buscar os objetos Estado e Cidade no Banco estado = Estado.objects.get(id=estado_id) cidade = Cidade.objects.get(id=cidade_id)
+
+# Criar usuário base user = UsuarioBase.objects.create_user( email=email, password=senha, nome=nomeUser, tipo='usuario' ) user.foto = foto_user user.save() # Cria usuario com os outros campos faltantes usuario = Usuario.objects.create( user=user, nome_social=nomeSocial, data_nascimento=dataNasc, genero=genero, estado_civil=estadoCivil, nacionalidade=nacionalidade, telefone=telefone, cep=cep, rua=rua, numero=numero, bairro=bairro, estado=estado, cidade=cidade, complemento=complemento ) request.session['usuario_email'] = usuario.user.email
+
+messages.success(request, 'Cadastro inicial realizado! Complete seu perfil profissional!') return redirect('core:login')
+
+estados = Estado.objects.all().order_by('nome_estado') return render(request, 'cadastro_usuario.html', {'estados': estados})
+
+def cadastro_completo(request): usuario_email = request.session.get('email_atual') print(usuario_email) if not usuario_email: messages.error(request, 'Você deve realizar o cadastro inicial primeiro!') return redirect('core:cadastro_usuario')
+
+usuario = Usuario.objects.select_related('user').filter(user__email=usuario_email).first() if not usuario: messages.error(request, 'Usuário não encontrado.') return redirect('core:cadastro_usuario')
+
+if request.method == 'POST': #Objetivo Profissional cargo_pretendido = request.POST.get('txtCargoPretendido') area_interesse = request.POST.get('txtAreaInteresse') pretensao_salarial = request.POST.get('decPretensaoSalarial')
+
+disponibilidade = request.POST.get('txtDisponibilidade')
+
+#Formacao Academica 1 instituicao_nome1= request.POST.get('txtNomeInstituicao1') grau_escolaridade1 = request.POST.get('escolaridade1') curso_graduacao1 = request.POST.get('txtCurso1') situacao_academica1 = request.POST.get('txtSituacao1') data_acad_inicio1 = request.POST.get('txtDataAcad1') data_acad_fim1= request.POST.get('txtDataFimAcad1')
+
+#Formacao Academica 2 instituicao_nome2 = request.POST.get('txtNomeInstituicao2') grau_escolaridade2 = request.POST.get('escolaridade2') curso_graduacao2 = request.POST.get('txtCurso2') situacao_academica2= request.POST.get('txtSituacao2') data_acad_inicio2 = request.POST.get('txtDataAcad2') data_acad_fim2 = request.POST.get('txtDataFimAcad2')
+
+#Formacao Academica 3 instituicao_nome3 = request.POST.get('txtNomeInstituicao3') grau_escolaridade3 = request.POST.get('escolaridade3') curso_graduacao3 = request.POST.get('txtCurso3') situacao_academica3 = request.POST.get('txtSituacao3') data_acad_inicio3= request.POST.get('txtDataAcad3') data_acad_fim3 = request.POST.get('txtDataFimAcad3')
+
+#Experiencia professional 1 nome_empresa1 = request.POST.get('txtNomeEmpresa1') cargo1 = request.POST.get('txtCargo1') data_inicio1 = request.POST.get('txtDataProf1') data_fim1 = request.POST.get('txtDataFimProf1')
+
+#Experiencia professional 2 nome_empresa2 = request.POST.get('txtNomeEmpresa2') cargo2 = request.POST.get('txtCargo2') data_inicio2 = request.POST.get('txtDataProf2') data_fim2 = request.POST.get('txtDataFimProf2')
+
+#Experiencia professional 3 nome_empresa3 = request.POST.get('txtNomeEmpresa3') cargo3 = request.POST.get('txtCargo3') data_inicio3 = request.POST.get('txtDataProf3') data_fim3 = request.POST.get('txtDataFimProf3')
+
+#Rede sociais e links linkedin = request.POST.get('txtLinkedin') github = request.POST.get('txtGithub') instagram = request.POST.get('txtInstagram') facebook = request.POST.get('txtFacebook') site_pessoal = request.POST.get('txtSitePessoal')
+
+#Curso Extracurriculares 1 nome_curso1 = request.POST.get('txtNomeCurso1') instituicao1 = request.POST.get('txtInstituicao1') carga_horaria1 = request.POST.get('txtCargaHoras1') data_conclusao1 = request.POST.get('txtDataFimCurso1') link_certificado1 = request.POST.get('txtLinkCertificado1')
+
+#Curso Extracurriculares 2 nome_curso2 = request.POST.get('txtNomeCurso2') instituicao2 = request.POST.get('txtInstituicao2') carga_horaria2 = request.POST.get('txtCargaHoras2') data_conclusao2 = request.POST.get('txtDataFimCurso2') link_certificado2 = request.POST.get('txtLinkCertificado2')
+
+#Curso Extracurriculares 3 nome_curso3 = request.POST.get('txtNomeCurso3') instituicao3 = request.POST.get('txtInstituicao3') carga_horaria3 = request.POST.get('txtCargaHoras3') data_conclusao3 = request.POST.get('txtDataFimCurso3') link_certificado3 = request.POST.get('txtLinkCertificado3')
+
+#Idiomas 1 idioma1 = request.POST.get('txtIdioma1') nivel_fluencia1 = request.POST.get('fluencia1')
+
+#Idiomas 2 idioma2 = request.POST.get('txtIdioma2') nivel_fluencia2 = request.POST.get('fluencia2')
+
+#Idiomas idioma3 = request.POST.get('txtIdioma3') nivel_fluencia3 = request.POST.get('fluencia3')
+
+#Competencias 1 competencias_tecnicas1 = request.POST.get('txtHardSkil1') competencias_comportamentais1 = request.POST.get('txtSoftSkil1')
+
+#Competencias 2 competencias_tecnicas2 = request.POST.get('txtHardSkil2') competencias_comportamentais2 = request.POST.get('txtSoftSkil2')
+
+#Competencias 3 competencias_tecnicas3 = request.POST.get('txtHardSkil3') competencias_comportamentais3 = request.POST.get('txtSoftSkil3')
+
+#Acessibilidade pessoa_com_deficiencia = request.POST.get('pcd') == 'sim' tipo_deficiencia = request.POST.get('tipoDeficiencia') necessidade_adaptacao = request.POST.get('necessidadeAdaptacao')
+
+#Informações Adicionais remoto = request.POST.get('remoto') == 'sim' interesses_hobbies = request.POST.get('txtHobbie')
+
+#Anexos curriculo_pdf = request.FILES.get('curriculoPdf') carta_apresentacao = request.FILES.get('cartaApresentacao')
+
+# SALVANDO NO BANCO # Objetivo Profissional usuario.cargo_pretendido = cargo_pretendido usuario.area_interesse = area_interesse usuario.pretensao_salarial = pretensao_salarial usuario.disponibilidade = disponibilidade
+
+# Formação academica 1 usuario.instituicao_nome1 = instituicao_nome1 usuario.grau_escolaridade1 = grau_escolaridade1 usuario.curso_graduacao1 = curso_graduacao1 usuario.situacao_academica1 = situacao_academica1 usuario.data_acad_inicio1 = data_acad_inicio1 usuario.data_acad_fim1 = data_acad_fim1 # 2 usuario.instituicao_nome2 = instituicao_nome2 usuario.grau_escolaridade2 = grau_escolaridade2 usuario.curso_graduacao2 = curso_graduacao2 usuario.situacao_academica2 = situacao_academica2 usuario.data_acad_inicio2 = data_acad_inicio2 usuario.data_acad_fim2 = data_acad_fim2 # 3 usuario.instituicao_nome3 = instituicao_nome3 usuario.grau_escolaridade3 = grau_escolaridade3 usuario.curso_graduacao3 = curso_graduacao3 usuario.situacao_academica3 = situacao_academica3 usuario.data_acad_inicio3 = data_acad_inicio3 usuario.data_acad_fim3 = data_acad_fim3 # end formacao # ------------
+
+# Experiencia profissional usuario.nome_empresa1 = nome_empresa1 usuario.cargo1 = cargo1 usuario.data_inicio1 = data_inicio1 usuario.data_fim1 = data_fim1 # 2 usuario.nome_empresa2 = nome_empresa2 usuario.cargo2 = cargo2 usuario.data_inicio2 = data_inicio2 usuario.data_fim2 = data_fim2 # 3 usuario.nome_empresa3 = nome_empresa3 usuario.cargo3 = cargo3 usuario.data_inicio3 = data_inicio3 usuario.data_fim3 = data_fim3 # end Experiencia # ------------------
+
+# Links e sites usuario.linkedin = linkedin usuario.github = github usuario.instagram = instagram usuario.facebook = facebook usuario.site_pessoal = site_pessoal # end links # ----------
+
+# Curso Extra curricular usuario.nome_curso1 = nome_curso1 usuario.instituicao1 = instituicao1 usuario.carga_horaria1 = carga_horaria1 usuario.data_conclusao1 = data_conclusao1 usuario.link_certificado1 = link_certificado1 # 2 usuario.nome_curso2 = nome_curso2 usuario.instituicao2 = instituicao2 usuario.carga_horaria2 = carga_horaria2 usuario.data_conclusao2 = data_conclusao2 usuario.link_certificado2 = link_certificado2 # 3 usuario.nome_curso3 = nome_curso3 usuario.instituicao3 = instituicao3 usuario.carga_horaria3 = carga_horaria3 usuario.data_conclusao3 = data_conclusao3 usuario.link_certificado3 = link_certificado3 # end curso # -----------
+
+# Idioma usuario.idioma1 = idioma1 usuario.nivel_fluencia1 = nivel_fluencia1 # 2 usuario.idioma2 = idioma2 usuario.nivel_fluencia2 = nivel_fluencia2 # 3 usuario.idioma3 = idioma3 usuario.nivel_fluencia3 = nivel_fluencia3 # end idioma # ----------
+
+# Competencias usuario.competencias_tecnicas1 = competencias_tecnicas1 usuario.competencias_comportamentais1 = competencias_comportamentais1 # 2 usuario.competencias_tecnicas2 = competencias_tecnicas2 usuario.competencias_comportamentais2 = competencias_comportamentais2 # 3 usuario.competencias_tecnicas3 = competencias_tecnicas3 usuario.competencias_comportamentais3 = competencias_comportamentais3 # end Competencias # ---------------
+
+usuario.pessoa_com_deficiencia = pessoa_com_deficiencia usuario.tipo_deficiencia = tipo_deficiencia usuario.necessidade_adaptacao = necessidade_adaptacao
+
+usuario.remoto = remoto usuario.interesses_hobbies = interesses_hobbies
+
+usuario.curriculo_pdf = curriculo_pdf usuario.carta_apresentacao = carta_apresentacao
+
+campos_verif = [ 'data_nascimento', 'data_admissao', 'data_demissao',
+
+'pretensao_salarial',
+
+# Formação Acadêmica 'data_acad_inicio1', 'data_acad_fim1', 'data_acad_inicio2', 'data_acad_fim2', 'data_acad_inicio3', 'data_acad_fim3',
+
+# Experiência Profissional 'data_inicio1', 'data_fim1', 'data_inicio2', 'data_fim2', 'data_inicio3', 'data_fim3',
+
+# Cursos Extracurriculares 'data_conclusao1', 'data_conclusao2', 'data_conclusao3' ]
+
+# Limpa todos os campos de data vazios for campo in campos_verif: valor = getattr(usuario, campo, None) if valor == '' or valor == 'None' or valor is None: setattr(usuario, campo, None)
+
+usuario.save()
+
+# del request.session['usuario_email'] messages.success(request, 'Cadastro realizado com sucesso!') return render(request, 'home.html')
+
+estados = Estado.objects.all().order_by('nome_estado') return render(request, 'cadastro_usuario_completo.html', {'estados': estados})
+
+def login(request): if request.method == 'POST': email = request.POST.get('txtEmail') senha = request.POST.get('txtSenha')
+
+print(email, senha)
+
+usuario = authenticate(request, username=email, password=senha) print(usuario)
+
+if usuario is not None: request.session.flush() #cria a sessao do usuario auth_login(request, usuario)
+
+request.session['is_login'] = False if usuario.foto and hasattr(usuario.foto, "url"): foto = usuario.foto.url else: foto = None if usuario.is_admin: request.session['is_admin'] = usuario.is_admin request.session['nome'] = usuario.nome request.session['foto'] = foto request.session['perfil'] = usuario.tipo if usuario.tipo == "usuario": tblusuario = Usuario.objects.get(user = usuario) if tblusuario.curso == None or tblusuario.grau_escolaridade1 == None: request.session['incompleto'] = True
+
+request.session['id_atual'] = usuario.id request.session['email_atual'] = usuario.email
+
+#configura sessao para expirar em 4 horas request.session.set_expiry(14400)
+
+messages.success(request, 'Login realizado com sucesso!') return redirect('core:home')
+
+else: print("Usuario ou senha invalidos") messages.error(request, 'Usuário ou senha inválidos.')
+
+return render(request, 'login.html')
+
+def logout(request): # limpa a sessao ao deslogar request.session.flush() auth_logout(request)
+
+messages.success(request, 'Logout realizado com sucesso.') return redirect('core:home')
+
+@require_http_methods(["GET"]) def get_cidades(request): """View para retornar cidades via AJAX baseado no estado selecionado""" estado_id = request.GET.get('estado_id')
+
+# Validação básica do parâmetro if not estado_id or not estado_id.isdigit(): return JsonResponse({ 'cidades': [], 'error': 'ID do estado inválido' })
+
+# Verificar se o estado existe if not Estado.objects.filter(id=estado_id).exists(): return JsonResponse({ 'cidades': [], 'error': 'Estado não encontrado' })
+
+# Buscar cidades cidades = Cidade.objects.filter( estado_cidade_id=estado_id ).order_by('nome_cidade').values('id', 'nome_cidade')
+
+cidades_data = [ {'id': cidade['id'], 'nome': cidade['nome_cidade']} for cidade in cidades ]
+
+return JsonResponse({ 'cidades': cidades_data, 'total': len(cidades_data) })
