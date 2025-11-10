@@ -130,6 +130,9 @@ def cadastro_completo(request):
 
         disponibilidade = request.POST.get('txtDisponibilidade')
 
+        if(area_interesse != None):
+            request.session['incompleto'] = False
+            
         #Formacao Academica 1 
         instituicao_nome1= request.POST.get('txtNomeInstituicao1')
         grau_escolaridade1 = request.POST.get('escolaridade1')
