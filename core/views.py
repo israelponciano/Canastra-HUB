@@ -30,6 +30,14 @@ def apicultura(request):
     return render(request, 'apicultura.html')
 
 
+def calcados(request):
+    return render(request, 'calcados.html')
+
+
+def milho(request):
+    return render(request, 'milho.html')
+
+
 def sobre(request):
 
     return render(request, 'sobre.html')

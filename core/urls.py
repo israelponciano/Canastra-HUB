@@ -18,6 +18,8 @@ urlpatterns = [
 
     path("agro/", views.agro, name="agro"),
     path("apicultura/", views.apicultura, name="apicultura"),
+    path("calcados/", views.calcados, name="calcados"),
+    path("milho/", views.milho, name="milho"),
 
     path("sobre/", views.sobre, name="sobre"),
 ]
