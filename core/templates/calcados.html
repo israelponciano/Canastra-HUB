@@ -1,0 +1,198 @@
+{% extends 'master.html' %}
+{% load static %}
+{% block conteudo %}
+  <main class="hub-main">
+    <!-- Notícias Section -->
+    <h1 class="section-bigTitle">Calçados</h1>
+    <section id="noticias" class="hub-section">
+      <div class="container">
+        <h2 class="section-title">Notícias</h2>
+        <div class="carousel-wrapper">
+          <button class="carousel-control prev" aria-label="Notícia anterior">‹</button>
+          <div class="news-carousel">
+            <div class="news-track">
+              <!-- Notícia 1 -->
+              <div class="news-card">
+                <img src="{% static '/img/hubs/noticia_calcado_1.png' %}" alt="" />
+                <div class="news-content">
+                  <span class="news-author">Por Fábio Matos</span>
+                  <h3>Tarifaço de Trump derruba exportações de calçados brasileiros para EUA</h3>
+                  <p>Recuo nas exportações do setor no mês passado foi de 17,6%, em relação a agosto de 2024. No mesmo período, a receita caiu 1,4%.</p>
+                  <a target="_blank" href="https://www.metropoles.com/negocios/tarifaco-de-trump-derruba-exportacoes-de-calcados-brasileiros-para-eua">saiba mais...</a>
+                </div>
+              </div>
+
+              <!-- Notícia 2 -->
+              <div class="news-card">
+                <img src="{% static '/img/hubs/noticia_calcado_2.png'%}" alt="" />
+                <div class="news-content">
+                  <span class="news-author">Por Alana Gandra</span>
+                  <h3>Sonegação de ICMS no setor de calçados é investigada no Rio</h3>
+                  <p>Segundo as investigações, as empresas envolvidas pertenceriam a um mesmo grupo.</p>
+                  <a target="_blank" href="https://agenciabrasil.ebc.com.br/geral/noticia/2021-03/sonegacao-de-icms-no-setor-de-calcados-e-combatida-no-rio">saiba mais...</a>
+                </div>
+              </div>
+                
+              <!-- Notícia 3 -  -->
+              <div class="news-card">
+                <img src="{%static '/img/hubs/noticia_calcado_3.png'%}" alt="" />
+                <div class="news-content">
+                  <span class="news-author">Redação Abicalçados</span>
+                  <h3>Maior feira calçadista da América Latina, BFSHOW acontece entre 10 e 12 de novembro, em São Paulo</h3>
+                  <p>Mostra reunirá cerca de 350 marcas brasileiras de todos os polos produtivos, segmentos e nichos de mercado.</p>
+                  <a target="_blank" href="https://www.abicalcados.com.br/conteudo/noticias/maior-feira-calcadista-da-america-latina-bfshow-acontece-entre-10-e-12-de-novembro-em-sao-paulo">saiba mais...</a>
+                </div>
+              </div>
+
+              <!-- Notícia 4 -->
+              <div class="news-card">
+                <img src="{% static "/img/hubs/noticia_calcado_4.png" %}" alt="" />
+                <div class="news-content">
+                  <span class="news-author">Por g1 Centro-Oeste de Minas</span>
+                  <h3>Rede de falsificação de calçados de marcas famosas é descoberta em MG e polícia aprende mais de 23 mil pares</h3>
+                  <p>Pontos de produção, armazenamento e distribuição de produtos falsificados em Nova Serrana, no Centro-Oeste de Minas, foram alvo de operação da Polícia Civil.</p>
+                  <a target="_blank" href="https://g1.globo.com/mg/centro-oeste/noticia/2025/11/11/rede-de-falsificacao-de-calcados-de-marcas-famosas-e-descoberta-em-mg-e-policia-aprende-mais-de-23-mil-pares.ghtml">saiba mais...</a>
+                </div>
+              </div>
+
+              <!-- Notícia 5 -->
+              <div class="news-card">
+                <img src="{% static '/img/hubs/noticia_calcado_5.png' %}" alt="" />
+                <div class="news-content">
+                  <span class="news-author">Por Eliezio Jeffry</span>
+                  <h3>Novo parque industrial calçadista do Ceará terá investimento de R$ 40 milhões e geração de 800 empregos, anuncia Elmano de Freitas</h3>
+                  <p>Estado se destaca como maior produtor de calçados do país e segundo maior empregador do setor.</p>
+                  <a target="_blank" href="https://www.ceara.gov.br/2025/10/28/novo-parque-industrial-calcadista-do-ceara-tera-investimento-de-r-40-milhoes-e-geracao-de-800-empregos-anuncia-elmano-de-freitas/">saiba mais...</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button class="carousel-control next" aria-label="Próxima notícia">›</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Demandas Section -->
+    <section id="demandas" class="hub-section">
+      <div class="container">
+        <h2 class="section-title">Demandas</h2>
+        <div class="demands-grid">
+          <!-- Demanda 1 -->
+          <div class="demand-card">
+            <img src="" alt="AgroTech Solutions" class="company-logo" />
+            <h3>??</h3>
+            <span class="price">??</span>
+            <p>??.</p>
+          </div>
+
+          <!-- Demanda 2 -->
+          <div class="demand-card">
+            <img src="{% static '/img/hubs/demanda_calcado_2.png'%}" alt="irrigacao" class="company-logo" />
+            <h3>Modelo de Negócio Sustentável</h3>
+            <span class="price">Negociável</span>
+            <p>Modernizar linha de calçados artesanais utilizando tecnologia 3D e materiais recicláveis. Necessário apoio técnico e de gestão para redesenhar processos.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Empresas Section -->
+    <section id="empresas" class="hub-section">
+      <div class="container">
+        <h2 class="section-title">Empresas Parceiras</h2>
+        <div class="companies-grid">
+          <!-- Empresa 1 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1560493676-04071c5f467b?w=200&h=150&fit=crop" alt="AgroTech Solutions" />
+            </div>
+            <h3>AgroTech Solutions</h3>
+            <p>Líder em tecnologia agrícola com soluções inovadoras para aumentar produtividade e sustentabilidade no campo.</p>
+          </div>
+
+          <!-- Empresa 2 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1549923746-c502d488b3ea?w=200&h=150&fit=crop" alt="BeeLab Brasil" />
+            </div>
+            <h3>BeeLab Brasil</h3>
+            <p>Especialistas em apicultura moderna com foco em produção sustentável e preservação de abelhas nativas.</p>
+          </div>
+
+          <!-- Empresa 3 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=200&h=150&fit=crop" alt="Coffee Excellence" />
+            </div>
+            <h3>Coffee Excellence</h3>
+            <p>Exportadora premium de cafés especiais com certificação internacional e compromisso com produtores locais.</p>
+          </div>
+
+          <!-- Empresa 4 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?w=200&h=150&fit=crop" alt="Rural Finance" />
+            </div>
+            <h3>Rural Finance</h3>
+            <p>Soluções financeiras especializadas para o agronegócio com taxas competitivas e processos simplificados.</p>
+          </div>
+
+          <!-- Empresa 5 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=200&h=150&fit=crop" alt="Green Logistics" />
+            </div>
+            <h3>Green Logistics</h3>
+            <p>Transporte e logística especializada em produtos agrícolas com rastreamento em tempo real.</p>
+          </div>
+
+          <!-- Empresa 6 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=200&h=150&fit=crop" alt="Smart Irrigation" />
+            </div>
+            <h3>Smart Irrigation</h3>
+            <p>Sistemas de irrigação inteligente com economia de água e aumento de produtividade comprovados.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Treinamentos Section -->
+    <section id="treinamentos" class="hub-section">
+      <div class="container">
+        <h2 class="section-title">Treinamentos</h2>
+        <div class="training-grid">
+          
+          <!-- Treinamento 1 -->
+          <div class="training-card">
+            <img src="{% static '/img/hubs/treinamento_calcado_1.png' %}" alt="" />
+            <div class="training-content">
+              <h3>Inovação e Prototipagem de Calçados Sustentáveis</h3>
+              <p>Introdução à economia circular e novos materiais têxteis. Modelagem 3D e impressão de protótipos no If Maker. Treinamento em custos de produção, precificação e escalabilidade.</p>
+            </div>
+          </div>
+          
+          <!-- Treinamento 2 -->
+          <div class="training-card">
+            <img src="{% static '/img/hubs/.png' %}" alt="" />
+            <div class="training-content">
+              <h3>??</h3>
+              <p>??.</p>
+            </div>
+          </div>
+
+          <!-- Treinamento 3 -->
+          <div class="training-card">
+            <img src="{% static '/img/hubs/.png' %}" alt="" />
+            <div class="training-content">
+              <h3>??</h3>
+              <p>??.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="{% static 'js/hub.js' %}"></script>
+{% endblock %}

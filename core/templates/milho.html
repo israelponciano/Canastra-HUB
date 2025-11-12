@@ -1,0 +1,198 @@
+{% extends 'master.html' %}
+{% load static %}
+{% block conteudo %}
+  <main class="hub-main">
+    <!-- Notícias Section -->
+    <h1 class="section-bigTitle">Milho</h1>
+    <section id="noticias" class="hub-section">
+      <div class="container">
+        <h2 class="section-title">Notícias</h2>
+        <div class="carousel-wrapper">
+          <button class="carousel-control prev" aria-label="Notícia anterior">‹</button>
+          <div class="news-carousel">
+            <div class="news-track">
+              <!-- Notícia 1 -->
+              <div class="news-card">
+                <img src="{% static '/img/hubs/noticia_milho_1.png' %}" alt="" />
+                <div class="news-content">
+                  <span class="news-author">Por Nosso Campo, TV TEM</span>
+                  <h3>Plantio do milho segunda safra avança com chegada de chuvas</h3>
+                  <p>Falta de chuva atrasou o início do cultivo, mas produtores aproveitam melhora do tempo e uso de irrigação para manter o cronograma nas lavouras.</p>
+                  <a target="_blank" href="https://g1.globo.com/sp/sorocaba-jundiai/nosso-campo/noticia/2025/11/09/plantio-do-milho-segunda-safra-avanca-com-chegada-de-chuvas.ghtml">saiba mais...</a>
+                </div>
+              </div>
+
+              <!-- Notícia 2 -->
+              <div class="news-card">
+                <img src="{% static '/img/hubs/noticia_milho_2.png'%}" alt="" />
+                <div class="news-content">
+                  <span class="news-author">Por Roberto Meokarem</span>
+                  <h3>Levantamento da Emater-MG aponta municípios campeões na produção de milho e soja</h3>
+                  <p>Triângulo e Noroeste de Minas dominam a lista na safra 2024/2025.</p>
+                  <a target="_blank" href="https://www.otempo.com.br/canal-o-tempo/podcasts/agrotempo/2025/9/8/levantamento-da-emater-mg-aponta-municipios-campeoes-na-producao-de-milho-e-soja">saiba mais...</a>
+                </div>
+              </div>
+                
+              <!-- Notícia 3 -  -->
+              <div class="news-card">
+                <img src="{%static '/img/hubs/noticia_milho_3.png'%}" alt="" />
+                <div class="news-content">
+                  <span class="news-author">Por NDTV</span>
+                  <h3>Santa Catarina registra recuperação na produção de milho em 2025</h3>
+                  <p>Depois de anos consecutivos de queda na produção, a safra de milho em Santa Catarina começa a dar sinais de recuperação.</p>
+                  <a target="_blank" href="https://ndmais.com.br/video/santa-catarina-registra-recuperacao-na-producao-de-milho-em-2025/">saiba mais...</a>
+                </div>
+              </div>
+
+              <!-- Notícia 4 -->
+              <div class="news-card">
+                <img src="{% static "/img/hubs/noticia_milho_4.png" %}" alt="" />
+                <div class="news-content">
+                  <span class="news-author">Por Reuters</span>
+                  <h3>China reduz estimativa de importação de milho e eleva previsão para safra 25/26</h3>
+                  <p>O Ministério da Agricultura fixou as importações de milho em 1,83 milhão de toneladas métricas para o ano-safra de 2024/25.</p>
+                  <a target="_blank" href="https://www.infomoney.com.br/economia/china-reduz-estimativa-de-importacao-de-milho-e-eleva-previsao-para-safra-25-26/">saiba mais...</a>
+                </div>
+              </div>
+
+              <!-- Notícia 5 -->
+              <div class="news-card">
+                <img src="{% static '/img/hubs/noticia_milho_5.png' %}" alt="" />
+                <div class="news-content">
+                  <span class="news-author">Redação Estadão</span>
+                  <h3>Conab: Brasil semeou 58,4% da área prevista para soja e 47,7% de milho verão</h3>
+                  <p>Na comparação com igual momento da safra 2024/25, quando 66,1% da área havia sido semeada, os trabalhos estão 7,7 pontos porcentuais atrasados.</p>
+                  <a target="_blank" href="https://www.comprerural.com/conab-brasil-semeou-584-da-area-prevista-para-soja-e-477-de-milho-verao/">saiba mais...</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button class="carousel-control next" aria-label="Próxima notícia">›</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Demandas Section -->
+    <section id="demandas" class="hub-section">
+      <div class="container">
+        <h2 class="section-title">Demandas</h2>
+        <div class="demands-grid">
+          <!-- Demanda 1 -->
+          <div class="demand-card">
+            <img src="" alt="AgroTech Solutions" class="company-logo" />
+            <h3>??</h3>
+            <span class="price">??</span>
+            <p>??.</p>
+          </div>
+
+          <!-- Demanda 2 -->
+          <div class="demand-card">
+            <img src="{% static '/img/hubs/demanda_milho_2.png'%}" alt="irrigacao" class="company-logo" />
+            <h3>Modelo de Negócio Sustentável</h3>
+            <span class="price">Negociável</span>
+            <p>Lançar uma plataforma digital focada na cultura do milho, visando prever a safra (clima, produtividade por talhão) e otimizar a armazenagem inteligente (controle de umidade e pragas), conectando produtores de milho, transportadores especializados e compradores regionais (indústrias de ração, agroindústrias).</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Empresas Section -->
+    <section id="empresas" class="hub-section">
+      <div class="container">
+        <h2 class="section-title">Empresas Parceiras</h2>
+        <div class="companies-grid">
+          <!-- Empresa 1 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1560493676-04071c5f467b?w=200&h=150&fit=crop" alt="AgroTech Solutions" />
+            </div>
+            <h3>AgroTech Solutions</h3>
+            <p>Líder em tecnologia agrícola com soluções inovadoras para aumentar produtividade e sustentabilidade no campo.</p>
+          </div>
+
+          <!-- Empresa 2 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1549923746-c502d488b3ea?w=200&h=150&fit=crop" alt="BeeLab Brasil" />
+            </div>
+            <h3>BeeLab Brasil</h3>
+            <p>Especialistas em apicultura moderna com foco em produção sustentável e preservação de abelhas nativas.</p>
+          </div>
+
+          <!-- Empresa 3 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=200&h=150&fit=crop" alt="Coffee Excellence" />
+            </div>
+            <h3>Coffee Excellence</h3>
+            <p>Exportadora premium de cafés especiais com certificação internacional e compromisso com produtores locais.</p>
+          </div>
+
+          <!-- Empresa 4 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?w=200&h=150&fit=crop" alt="Rural Finance" />
+            </div>
+            <h3>Rural Finance</h3>
+            <p>Soluções financeiras especializadas para o agronegócio com taxas competitivas e processos simplificados.</p>
+          </div>
+
+          <!-- Empresa 5 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=200&h=150&fit=crop" alt="Green Logistics" />
+            </div>
+            <h3>Green Logistics</h3>
+            <p>Transporte e logística especializada em produtos agrícolas com rastreamento em tempo real.</p>
+          </div>
+
+          <!-- Empresa 6 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=200&h=150&fit=crop" alt="Smart Irrigation" />
+            </div>
+            <h3>Smart Irrigation</h3>
+            <p>Sistemas de irrigação inteligente com economia de água e aumento de produtividade comprovados.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Treinamentos Section -->
+    <section id="treinamentos" class="hub-section">
+      <div class="container">
+        <h2 class="section-title">Treinamentos</h2>
+        <div class="training-grid">
+          
+          <!-- Treinamento 1 -->
+          <div class="training-card">
+            <img src="{% static '/img/hubs/treinamento_milho_1.png' %}" alt="" />
+            <div class="training-content">
+              <h3>Tecnologias Digitais e Análise Preditiva na Cadeia Produtiva do Milho</h3>
+              <p>ntrodução à Agricultura de Precisão e Big Data no Milho: Uso de sensoriamento remoto, drones e IA para monitoramento da lavoura e previsão de produtividade do milho.</p>
+            </div>
+          </div>
+          
+          <!-- Treinamento 2 -->
+          <div class="training-card">
+            <img src="{% static '/img/hubs/.png' %}" alt="" />
+            <div class="training-content">
+              <h3>??</h3>
+              <p>??.</p>
+            </div>
+          </div>
+
+          <!-- Treinamento 3 -->
+          <div class="training-card">
+            <img src="{% static '/img/hubs/.png' %}" alt="" />
+            <div class="training-content">
+              <h3>??</h3>
+              <p>??.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="{% static 'js/hub.js' %}"></script>
+{% endblock %}
