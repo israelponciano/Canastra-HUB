@@ -31,6 +31,10 @@ def apicultura(request):
 
     return render(request, 'apicultura.html')
 
+def graos(request):
+
+    return render(request, 'graos.html')
+
 def sobre(request):
 
     return render(request, 'sobre.html')

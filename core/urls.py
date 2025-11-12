@@ -16,6 +16,7 @@ urlpatterns = [
     path("hubs/", views.hubs, name="hubs"),
     path("agro/", views.agro, name="agro"),
     path("apicultura/", views.apicultura, name="apicultura"),
+    path("graos/", views.graos, name="graos"),
     path("sobre/", views.sobre, name="sobre"),
     path("parceiros/", views.parceiros, name="parceiros"),
     path("espacos_hub/", views.espacos_hub, name="espacos_hub"),
