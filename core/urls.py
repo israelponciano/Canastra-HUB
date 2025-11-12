@@ -15,6 +15,7 @@ urlpatterns = [
     path("cadastro_usuario_completo/", views.cadastro_completo, name="cadastro_completo"),
     path("hubs/", views.hubs, name="hubs"),
     path("agro/", views.agro, name="agro"),
+    path("apicultura/", views.apicultura, name="apicultura"),
     path("sobre/", views.sobre, name="sobre"),
     path("parceiros/", views.parceiros, name="parceiros"),
     path("espacos_hub/", views.espacos_hub, name="espacos_hub"),

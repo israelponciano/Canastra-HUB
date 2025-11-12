@@ -27,6 +27,10 @@ def agro(request):
 
     return render(request, 'agro.html')
 
+def apicultura(request):
+
+    return render(request, 'apicultura.html')
+
 def sobre(request):
 
     return render(request, 'sobre.html')
