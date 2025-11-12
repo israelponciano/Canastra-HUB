@@ -19,6 +19,10 @@ def hubs(request):
 
     return render(request, 'hubs.html')
 
+def parceiros(request):
+
+    return render(request, 'parceiros.html')
+
 def agro(request):
 
     return render(request, 'agro.html')

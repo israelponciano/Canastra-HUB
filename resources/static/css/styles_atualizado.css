@@ -1003,22 +1003,36 @@ p {
 }
 
 .partner-logo {
-   width: 4rem;
-   height: 4rem;
-   background: var(--gradient-primary);
+   width: 100%;
+   height: 120px;
    border-radius: 1rem;
    display: flex;
    align-items: center;
    justify-content: center;
    color: white;
-   font-size: 1.5rem;
+   font-size: 2rem;
    font-weight: bold;
    margin: 0 auto 1rem;
    transition: var(--transition);
 }
 
+.partner-logo.highlight {
+   background: var(--gradient-primary);
+}
+
 .partner-card:hover .partner-logo {
    transform: scale(1.1);
+}
+
+.partner-logo img {
+   max-width: 120px;
+   /* limita largura */
+   max-height: 100px;
+   /* limita altura */
+   width: auto;
+   height: auto;
+   object-fit: contain;
+   /* mantém proporção */
 }
 
 .partner-card h3 {
