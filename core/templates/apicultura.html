@@ -1,0 +1,197 @@
+{% extends 'master.html' %}
+{% load static %}
+{% block conteudo %}
+  <main class="hub-main">
+    <!-- Notícias Section -->
+    <h1 class="section-bigTitle">Apicultura</h1>
+    <section id="noticias" class="hub-section">
+      <div class="container">
+        <h2 class="section-title">Notícias</h2>
+        <div class="carousel-wrapper">
+          <button class="carousel-control prev" aria-label="Notícia anterior">‹</button>
+          <div class="news-carousel">
+            <div class="news-track">
+              <!-- Notícia 1 -->
+              <div class="news-card">
+                <img src="{% static '/img/hubs/noticia_apicultura_1.png' %}" alt="" />
+                <div class="news-content">
+                  <span class="news-author">Por Gisele Flor</span>
+                  <h3>Emater-MG promove 1º Seminário de Apicultura do Sudoeste mineiro</h3>
+                  <p>Evento acontece nesta terça-feira (4), em paralelo será realizado  o 1º Concurso de Qualidade do Mel.</p>
+                  <a target="_blank" href="https://www.emater.mg.gov.br/portal.do/site-noticias/emater-mg-promove-1-seminario-de-apicultura-do-sudoeste-mineiro/?flagweb=novosite_pagina_interna_noticia&id=29783">saiba mais...</a>
+                </div>
+              </div>
+
+              <!-- Notícia 2 -->
+              <div class="news-card">
+                <img src="{% static '/img/hubs/noticia_apicultura_2.png'%}" alt="" />
+                <div class="news-content">
+                  <span class="news-author">Por Ricardo Guimarães</span>
+                  <h3>Eventos técnicos destacam a força da apicultura mineira</h3>
+                  <p>Com mais de 2 mil participantes, Montes Claros foi o ponto central da apicultura estadual durante a realização do 5º Congresso Mineiro de Apicultura e 22º Seminário de Apicultura do Norte de Minas.</p>
+                  <a target="_blank" href="https://www.sistemafaemg.org.br/senar/noticias/eventos-tecnicos-destacam-a-forca-da-apicultura-mineira">saiba mais...</a>
+                </div>
+              </div>
+                
+              <!-- Notícia 3 -->
+              <div class="news-card">
+                <img src="{%static '/img/hubs/noticia_apicultura_3.png'%}" alt="" />
+                <div class="news-content">
+                  <span class="news-author">Por Michelle Valverde</span>
+                  <h3>Apicultura ganha força no Norte de Minas e movimenta cadeia produtiva do mel</h3>
+                  <p>Montes Claros vai sediar dois eventos simultâneos nesta quarta (22) e quinta-feira (23); região produz méis reconhecidos pelo sabor suave e emprega métodos sustentáveis de produção</p>
+                  <a target="_blank" href="https://diariodocomercio.com.br/agronegocio/apicultura-sera-discutida-norte-minas/">saiba mais...</a>
+                </div>
+              </div>
+
+              <!-- Notícia 4 -->
+              <div class="news-card">
+                <img src="{% static "/img/hubs/noticia_apicultura_4.png" %}" alt="" />
+                <div class="news-content">
+                  <span class="news-author">Desenvolvimento Regional</span>
+                  <h3>Rota do Mel: do semiárido mineiro para o mercado europeu</h3>
+                  <p>Brasil exporta 20 toneladas de mel de silvestre para Bélgica em ação coordenada pelo programa Rotas de Integração Nacional.</p>
+                  <a target="_blank" href="https://www.gov.br/mdr/pt-br/noticias/rota-do-mel-do-semiarido-mineiro-para-o-mercado-europeu">saiba mais...</a>
+                </div>
+              </div>
+
+              <!-- Notícia 5 -->
+              <div class="news-card">
+                <img src="{% static '/img/hubs/noticia_apicultura_5.png' %}" alt="" />
+                <div class="news-content">
+                  <span class="news-author">Por Mônica Rossi</span>
+                  <h3>Adoçado com engano: apicultores denunciam uso de ‘falso mel’ na indústria alimentícia</h3>
+                  <p>Ação Civil Pública aponta omissão da fiscalização e pede o fim do “preparado de mel”, mistura com açúcar e corantes usada em alimentos.</p>
+                  <a target="_blank" href="https://agro.estadao.com.br/economia/adocado-com-engano-apicultores-denunciam-uso-de-falso-mel-na-industria-alimenticia">saiba mais...</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button class="carousel-control next" aria-label="Próxima notícia">›</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Demandas Section -->
+    <section id="demandas" class="hub-section">
+      <div class="container">
+        <h2 class="section-title">Demandas</h2>
+        <div class="demands-grid">
+          <!-- Demanda 1 -->
+          <div class="demand-card">
+            <img src="https://images.unsplash.com/photo-1560493676-04071c5f467b?w=100&h=100&fit=crop" alt="AgroTech Solutions" class="company-logo" />
+            <h3>Insumos Agrícolas Orgânicos</h3>
+            <span class="price">R$ 5.000 - R$ 15.000</span>
+            <p>Buscamos fornecedores de insumos orgânicos certificados para grande escala. Prioridade para produtores locais.</p>
+          </div>
+
+          <!-- Demanda 2 -->
+          <div class="demand-card">
+            <img src="{% static '/img/hubs/demanda_apicultura_2.png'%}" alt="" class="company-logo" />
+            <h3>Embalagem Sustentável/Sistema de Rastreamento por QR Code</h3>
+            <span class="price">Negociável</span>
+            <p>Desenvolver uma embalagem ecológica e rastreável para o mel da Serra da Canastra, que valorize a origem e facilite a exportação.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Empresas Section -->
+    <section id="empresas" class="hub-section">
+      <div class="container">
+        <h2 class="section-title">Empresas Parceiras</h2>
+        <div class="companies-grid">
+          <!-- Empresa 1 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1560493676-04071c5f467b?w=200&h=150&fit=crop" alt="AgroTech Solutions" />
+            </div>
+            <h3>AgroTech Solutions</h3>
+            <p>Líder em tecnologia agrícola com soluções inovadoras para aumentar produtividade e sustentabilidade no campo.</p>
+          </div>
+
+          <!-- Empresa 2 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1549923746-c502d488b3ea?w=200&h=150&fit=crop" alt="BeeLab Brasil" />
+            </div>
+            <h3>BeeLab Brasil</h3>
+            <p>Especialistas em apicultura moderna com foco em produção sustentável e preservação de abelhas nativas.</p>
+          </div>
+
+          <!-- Empresa 3 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=200&h=150&fit=crop" alt="Coffee Excellence" />
+            </div>
+            <h3>Coffee Excellence</h3>
+            <p>Exportadora premium de cafés especiais com certificação internacional e compromisso com produtores locais.</p>
+          </div>
+
+          <!-- Empresa 4 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?w=200&h=150&fit=crop" alt="Rural Finance" />
+            </div>
+            <h3>Rural Finance</h3>
+            <p>Soluções financeiras especializadas para o agronegócio com taxas competitivas e processos simplificados.</p>
+          </div>
+
+          <!-- Empresa 5 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=200&h=150&fit=crop" alt="Green Logistics" />
+            </div>
+            <h3>Green Logistics</h3>
+            <p>Transporte e logística especializada em produtos agrícolas com rastreamento em tempo real.</p>
+          </div>
+
+          <!-- Empresa 6 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=200&h=150&fit=crop" alt="Smart Irrigation" />
+            </div>
+            <h3>Smart Irrigation</h3>
+            <p>Sistemas de irrigação inteligente com economia de água e aumento de produtividade comprovados.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Treinamentos Section -->
+    <section id="treinamentos" class="hub-section">
+      <div class="container">
+        <h2 class="section-title">Treinamentos</h2>
+        <div class="training-grid">
+          <!-- Treinamento 1 -->
+          <div class="training-card">
+            <img src="{% static '/img/hubs/agricultura_precisao.png' %}" alt="Agricultura de Precisão" />
+            <div class="training-content">
+              <h3>Agricultura de Precisão</h3>
+              <p>Aprenda a utilizar tecnologias de ponta para otimizar recursos, reduzir custos e aumentar a produtividade da sua propriedade rural.</p>
+            </div>
+          </div>
+
+          <!-- Treinamento 2 -->
+          <div class="training-card">
+            <img src="{% static '/img/hubs/treinamento_apicultura_2.png' %}" alt="" />
+            <div class="training-content">
+              <h3>Design de Embalagens Sustentáveis e Rastreabilidade Digital</h3>
+              <p>Introdução à identidade territorial de produtos agro. Oficina de design com materiais recicláveis e biodegradáveis. Criação de etiquetas inteligentes com QR Code .</p>
+            </div>
+          </div>
+
+          <!-- Treinamento 3 -->
+          <div class="training-card">
+            <img src="{% static '/img/hubs/cafe_especial.png' %}" alt="Café Especial" />
+            <div class="training-content">
+              <h3>Produção de Café Especial</h3>
+              <p>Do plantio à colheita: aprenda todos os segredos para produzir cafés com alta pontuação e conquistar mercados premium.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="{% static 'js/hub.js' %}"></script>
+{% endblock %}

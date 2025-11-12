@@ -288,6 +288,39 @@ body {
    object-fit: cover;
 }
 
+.news-card a {
+   /* Remove o sublinhado dos links dentro do card */
+   text-decoration: none !important;
+   /* Define a cor do texto para preto (ou a cor padrão que você deseja) */
+   color: #000000;
+   /* Use a cor que for mais adequada ao seu design */
+   /* Garante que o link ocupe todo o espaço do card */
+   display: block;
+}
+
+.news-card a span,
+.news-card a h3,
+.news-card a p,
+.news-card a {
+   /* Define a cor do texto para herdar a cor do elemento pai (ou defina uma cor específica) */
+   color: inherit;
+}
+
+/* Se você quiser que o texto volte a ser sublinhado e/ou mude de cor ao passar o mouse, 
+   aplique o efeito apenas no card em si ou nos elementos de texto específicos: */
+.news-card:hover h3,
+.news-card:focus h3 {
+   text-decoration: underline;
+   /* Adiciona o sublinhado apenas ao título ao passar o mouse */
+   color: #0056b3;
+   /* Opcional: muda a cor do título */
+}
+
+.news-card a:visited {
+   /* Opcional: Garante que links visitados não fiquem roxos */
+   color: #000000;
+}
+
 .news-content {
    padding: 1.5rem;
 }
