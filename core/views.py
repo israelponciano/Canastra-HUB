@@ -27,6 +27,10 @@ def agro(request):
 
     return render(request, 'agro.html')
 
+def queijo(request):
+
+    return render(request, 'queijo.html')
+
 def apicultura(request):
 
     return render(request, 'apicultura.html')

@@ -1,0 +1,175 @@
+{% extends 'master.html' %}
+{% load static %}
+{% block conteudo %}
+  <main class="hub-main">
+    <!-- Notícias Section -->
+    <h1 class="section-bigTitle">Queijo</h1>
+    <section id="noticias" class="hub-section">
+      <div class="container">
+        <h2 class="section-title">Notícias</h2>
+        <div class="carousel-wrapper">
+          <button class="carousel-control prev" aria-label="Notícia anterior">‹</button>
+          <div class="news-carousel">
+            <div class="news-track">
+              <!-- Notícia 1 -->
+              <div class="news-card">
+                <img src="{% static '/img/hubs/noticiaCanastra.jpg' %}" alt="" />
+                <div class="news-content">
+                  <span class="news-author">Por Agência Minas</span>
+                  <h3>Serra da Canastra realiza 1º Concurso de Queijo</h3>
+                  <p>Evento valoriza a inovação dos produtores com diversos tipos de queijo e reforça a identidade da iguaria artesanal.</p>
+                  <a target="_blank" href="https://www.agenciaminas.mg.gov.br/noticia/serra-da-canastra-realiza-1-concurso-de-queijo-autoral-para-celebrar-criatividade-e-tradicao">saiba mais...</a>
+                </div>
+              </div>
+
+              <!-- Notícia 2 -->
+              <div class="news-card">
+                <img src="{% static '/img/hubs/noticiaQueijo.jpg' %}" alt="" />
+                <div class="news-content">
+                  <span class="news-author">Assembleia Legislativa de Minas Gerais</span>
+                  <h3>Produtores mineiros de queijo se destacam no Mondial du Fromage</h3>
+                  <p>Parlamentares e especialistas reconheceram, em audiência na quinta (6), a importância da participação em concurso considerado a "copa do mundo do queijo", na França.</p>
+                  <a target="_blank" href="https://www.almg.gov.br/comunicacao/noticias/arquivos/Produtores-mineiros-de-queijo-se-destacam-no-Mondial-du-Fromage/">saiba mais...</a>
+                </div>
+              </div>
+
+              <!-- Notícia 3 -->
+              <div class="news-card">
+                <img src="{% static '/img/hubs/noticiaQueijo2.jpg' %}" alt="" />
+                <div class="news-content">
+                  <span class="news-author">Por Boca News</span>
+                  <h3>Fazenda mineira faz sucesso com queijos artesanais no sul da Bahia</h3>
+                  <p>Uma fazenda de Medina (MG) está conquistando a Bahia com seus queijos artesanais premium, combinando tradição mineira e cacau baiano.</p>
+                  <a target="_blank" href="https://bocanews.com.br/noticias/fazenda-mineira-faz-sucesso-com-queijos-artesanais-no-sul-da-bahia/">saiba mais...</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button class="carousel-control next" aria-label="Próxima notícia">›</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Demandas Section -->
+    <section id="demandas" class="hub-section">
+      <div class="container">
+        <h2 class="section-title">Demandas</h2>
+        <div class="demands-grid">
+          <!-- Demanda 1 -->
+          <div class="demand-card">
+            <img src="https://cptstatic.s3.amazonaws.com/imagens/enviadas/materias/materia5477/cpt-centro-de-producoes-tecnicas-producao-de-queijo.JPG" alt="AgroTech Solutions" class="company-logo" />
+            <h3>Sistema de qualidade para queijos artesanais</h3>
+            <span class="price">R$ 10.000 - R$ 15.000</span>
+            <p>Produtores de queijo artesanal da Canastra querem padronizar a qualidade e o controle sanitário sem perder a tradição, e solicitam ao Hub apoio para desenvolver um sistema simples de rastreamento e boas práticas de produção.</p>
+          </div>
+
+          <!-- Demanda 2 -->
+          <div class="demand-card">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQzcitA1YQIsaNBp7AKSid8woIvAmK5eI5FA&s" alt="Queijo Maturação Tech" class="company-logo" />
+            <h3>Monitoramento inteligente da maturação de queijos</h3>
+            <span class="price">R$ 8.000 - R$ 12.000</span>
+            <p>Pequenos produtores de queijo da Serra da Mantiqueira buscam uma solução de sensores e aplicativo móvel para monitorar temperatura e umidade nas câmaras de maturação, garantindo consistência e qualidade do produto artesanal.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Empresas Section -->
+    <section id="empresas" class="hub-section">
+      <div class="container">
+        <h2 class="section-title">Empresas Parceiras</h2>
+        <div class="companies-grid">
+          <!-- Empresa 1 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1560493676-04071c5f467b?w=200&h=150&fit=crop" alt="AgroTech Solutions" />
+            </div>
+            <h3>AgroTech Solutions</h3>
+            <p>Líder em tecnologia agrícola com soluções inovadoras para aumentar produtividade e sustentabilidade no campo.</p>
+          </div>
+
+          <!-- Empresa 2 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1549923746-c502d488b3ea?w=200&h=150&fit=crop" alt="BeeLab Brasil" />
+            </div>
+            <h3>BeeLab Brasil</h3>
+            <p>Especialistas em apicultura moderna com foco em produção sustentável e preservação de abelhas nativas.</p>
+          </div>
+
+          <!-- Empresa 3 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=200&h=150&fit=crop" alt="Coffee Excellence" />
+            </div>
+            <h3>Coffee Excellence</h3>
+            <p>Exportadora premium de cafés especiais com certificação internacional e compromisso com produtores locais.</p>
+          </div>
+
+          <!-- Empresa 4 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?w=200&h=150&fit=crop" alt="Rural Finance" />
+            </div>
+            <h3>Rural Finance</h3>
+            <p>Soluções financeiras especializadas para o agronegócio com taxas competitivas e processos simplificados.</p>
+          </div>
+
+          <!-- Empresa 5 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=200&h=150&fit=crop" alt="Green Logistics" />
+            </div>
+            <h3>Green Logistics</h3>
+            <p>Transporte e logística especializada em produtos agrícolas com rastreamento em tempo real.</p>
+          </div>
+
+          <!-- Empresa 6 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=200&h=150&fit=crop" alt="Smart Irrigation" />
+            </div>
+            <h3>Smart Irrigation</h3>
+            <p>Sistemas de irrigação inteligente com economia de água e aumento de produtividade comprovados.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Treinamentos Section -->
+    <section id="treinamentos" class="hub-section">
+      <div class="container">
+        <h2 class="section-title">Treinamentos</h2>
+        <div class="training-grid">
+          <!-- Treinamento 1 -->
+          <div class="training-card">
+            <img src="https://cptstatic.s3.amazonaws.com/imagens/enviadas/materias/materia25534/queijaria-higienizacao-de-formas-caixas-e-embalagem-artigos-cursos-cpt.jpg" alt="Agricultura de Precisão" />
+            <div class="training-content">
+              <h3>Boas Práticas de Fabricação e Inovação na Produção Queijeira</h3>
+              <p>Padronização da produção e controle de qualidade. Implementação de rastreabilidade digital. Oficina prática em parceria com o laboratório de alimentos do IFMG.</p>
+            </div>
+          </div>
+
+          <!-- Treinamento 2 -->
+          <div class="training-card">
+            <img src="https://www.agenciaminas.mg.gov.br/system/news/images/000/125/428/large/Pesquisa_Queijo_Serro_2a_%281%29.jpg?1741621313" alt="Maturação de Queijos" />
+            <div class="training-content">
+              <h3>Técnicas de Maturação e Análise Sensorial de Queijos</h3>
+              <p>Capacitação sobre controle de temperatura, umidade e tempo de maturação. Degustação guiada e avaliação sensorial de diferentes tipos de queijo artesanal.</p>
+            </div>
+          </div>
+
+          <!-- Treinamento 3 -->
+          <div class="training-card">
+            <img src="https://vault.pulsarimagens.com.br/file/preview/08TA107.jpg" alt="Marketing de Queijos Artesanais" />
+            <div class="training-content">
+              <h3>Marketing e Valorização do Queijo Artesanal</h3>
+              <p>Treinamento em branding e identidade territorial. Estratégias de venda direta, certificação de origem e uso de mídias sociais para fortalecer o valor do produto local.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="{% static 'js/hub.js' %}"></script>
+{% endblock %}

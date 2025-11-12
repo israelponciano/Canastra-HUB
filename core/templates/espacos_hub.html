@@ -46,30 +46,29 @@
       align-items: center;
       gap: 0.5rem;
     }
-      .structure-card h3::before {
+    .structure-card h3::before {
       content: '●';
       font-size: 1.5rem;
     }
-        
-
+    
     .image-gallery {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 10px;
       margin-bottom: 20px;
     }
-
+    
     .image-gallery img {
       width: 100%;
       height: 250px;
-      object-fit: cover; 
+      object-fit: cover;
       object-position: center;
       border-radius: 8px;
       cursor: pointer;
       transition: transform 0.3s ease;
-      display: block; 
+      display: block;
     }
-
+    
     .image-gallery img:hover {
       transform: scale(1.05);
     }
@@ -90,56 +89,60 @@
         <div class="structure-grid">
           <div class="structure-card">
             <h3>Incubadora de Empresas e Startups</h3>
-              <div class="image-gallery">
-                <img src="{% static 'img/espacos_hub/incubadora/incubadora1.jpeg' %}" alt="Sala de reuniões da Incubadora">
-                <img src="{% static 'img/espacos_hub/incubadora/incubadora2.jpeg' %}" alt="Sala de reuniões da Incubadora">
-              </div>
-                <p>A Incubadora de Empresas e Startups é o núcleo que dá origem ao próprio Canastra HUB. Ela oferece suporte técnico, orientação gerencial e infraestrutura física a empreendedores e estudantes que buscam desenvolver negócios inovadores. Baseada na integração entre academia, mercado e sociedade, sua função é transformar ideias em empreendimentos viáveis, conectando projetos de base tecnológica às demandas do agronegócio, da indústria e dos serviços regionais.</p>
-              <div class="image-gallery">
-                <img src="{% static 'img/espacos_hub/incubadora/incubadora3.jpeg' %}" alt="Sala de reuniões da Incubadora">
-                <img src="{% static 'img/espacos_hub/incubadora/incubadora4.jpeg' %}" alt="Sala de reuniões da Incubadora">
-              </div>
+            <p>A Incubadora de Empresas e Startups é o núcleo que dá origem ao próprio Canastra HUB. Ela oferece suporte técnico, orientação gerencial e infraestrutura física a empreendedores e estudantes que buscam desenvolver negócios inovadores. Baseada na integração entre academia, mercado e sociedade, sua função é transformar ideias em empreendimentos viáveis, conectando projetos de base tecnológica às demandas do agronegócio, da indústria e dos serviços regionais.</p>
+            <div class="image-gallery">
+              <img src="{% static 'img/espacos_hub/incubadora/incubadora3.jpeg' %}" alt="Sala de reuniões da Incubadora" />
+              <img src="{% static 'img/espacos_hub/incubadora/incubadora4.jpeg' %}" alt="Sala de reuniões da Incubadora" />
+              <img src="{% static 'img/espacos_hub/incubadora/incubadora1.jpeg' %}" alt="Sala de reuniões da Incubadora" />
+              <img src="{% static 'img/espacos_hub/incubadora/incubadora2.jpeg' %}" alt="Sala de reuniões da Incubadora" />
+            </div>
           </div>
 
           <div class="structure-card">
             <h3>Aceleradora de Empresas</h3>
             <p>O Aceleradora de Empresas é o programa do Canastra HUB que impulsiona o crescimento de negócios em fase inicial. Inspirado em modelos de aceleração de startups e apoiado pelo SEBRAE e por mentores do setor produtivo, ele oferece capacitações, mentorias e conexões estratégicas. Seu objetivo é fortalecer o ecossistema empreendedor regional, ajudando empresas incubadas e startups a validarem modelos de negócio, ampliarem sua rede de contatos e alcançarem sustentabilidade financeira.</p>
           </div>
-          
+
           <div class="structure-card">
             <h3>Espaço de Empresas Simuladas</h3>
             <p>O Espaço de Empresas Simuladas é um ambiente de aprendizagem prática voltado à formação empreendedora. Nele, estudantes desenvolvem atividades empresariais em contextos simulados, aplicando conceitos de gestão, marketing, contabilidade e produção em situações reais de mercado. Esse espaço prepara alunos para atuarem em empresas juniores, startups e empreendimentos incubados, unindo teoria e prática de forma integrada.</p>
-            <div class="image-gallery ">
-              <img src="{% static 'img/espacos_hub/incubadora/incubadora5.jpeg' %}" alt="Sala de reuniões da Incubadora">
-              <img src="{% static 'img/espacos_hub/incubadora/incubadora6.jpeg' %}" alt="Sala de reuniões da Incubadora">
+            <div class="image-gallery">
+              <img src="{% static 'img/espacos_hub/incubadora/incubadora5.jpeg' %}" alt="Sala de reuniões da Incubadora" />
+              <img src="{% static 'img/espacos_hub/incubadora/incubadora6.jpeg' %}" alt="Sala de reuniões da Incubadora" />
             </div>
           </div>
 
           <div class="structure-card">
             <h3>Fábrica de Soluções Tecnológicas</h3>
             <p>A Fábrica de Soluções Tecnológicas é o coração digital do Canastra HUB. Com uma equipe multidisciplinar de alunos, professores e técnicos, ela é responsável pelo desenvolvimento de softwares, aplicativos e sistemas voltados às demandas regionais — especialmente nas áreas de agronegócio, alimentos e sustentabilidade. Utilizando metodologias ágeis como Scrum e Design Thinking, a Fábrica de Soluções transforma desafios locais em inovações tecnológicas de impacto real.</p>
+            <div class="image-gallery">
+              <img src="{% static 'img/espacos_hub/fast/fabrica (1).jpeg' %}" alt="Fast" />
+              <img src="{% static 'img/espacos_hub/fast/fabrica (2).jpeg' %}" alt="Fast" />
+              <img src="{% static 'img/espacos_hub/fast/fabrica (3).jpeg' %}" alt="Fast" />
+              <img src="{% static 'img/espacos_hub/fast/fabrica (4).jpeg' %}" alt="Fast" />
+            </div>
           </div>
 
           <div class="structure-card">
             <h3>Espaço de Treinamento e Desenvolvimento</h3>
             <p>O Espaço de Treinamento e Desenvolvimento é dedicado à capacitação de estudantes, empreendedores e comunidade. Com salas equipadas, auditórios e infraestrutura multimídia, o local sedia cursos, workshops, hackathons e mentorias voltados à inovação, liderança e empreendedorismo. É o ponto de encontro entre conhecimento técnico e desenvolvimento humano dentro do Canastra HUB.</p>
             <div class="image-gallery">
-              <img src="{% static 'img/espacos_hub/desenvolvimento/sala_pc1.jpeg' %}" alt="Auditório do Canastra HUB">
-              <img src="{% static 'img/espacos_hub/desenvolvimento/sala_pc2.jpeg' %}" alt="Auditório do Canastra HUB">
-              <img src="{% static 'img/espacos_hub/desenvolvimento/sala_pc3.jpeg' %}" alt="Auditório do Canastra HUB">
-              <img src="{% static 'img/espacos_hub/desenvolvimento/sala_pc4.jpeg' %}" alt="Auditório do Canastra HUB">
+              <img src="{% static 'img/espacos_hub/desenvolvimento/sala_pc1.jpeg' %}" alt="Auditório do Canastra HUB" />
+              <img src="{% static 'img/espacos_hub/desenvolvimento/sala_pc2.jpeg' %}" alt="Auditório do Canastra HUB" />
+              <img src="{% static 'img/espacos_hub/desenvolvimento/sala_pc3.jpeg' %}" alt="Auditório do Canastra HUB" />
+              <img src="{% static 'img/espacos_hub/desenvolvimento/sala_pc4.jpeg' %}" alt="Auditório do Canastra HUB" />
             </div>
           </div>
           <div class="structure-card">
             <h3>Auditórios</h3>
             <p>Ambientes estruturados para a realização de atividades formativas, apresentações institucionais e eventos acadêmicos. Utilizados em palestras, defesas, workshops e encontros promovidos pelo HUB, os auditórios favorecem a disseminação de conhecimento, o diálogo entre diferentes áreas e a valorização de iniciativas empreendedoras e educacionais.</p>
             <div class="image-gallery">
-              <img src="{% static 'img/espacos_hub/auditorio/auditorio1.jpeg' %}" alt="Auditório do Canastra HUB">
-              <img src="{% static 'img/espacos_hub/auditorio/auditorio2.jpeg' %}" alt="Auditório do Canastra HUB">
+              <img src="{% static 'img/espacos_hub/auditorio/auditorio1.jpeg' %}" alt="Auditório do Canastra HUB" />
+              <img src="{% static 'img/espacos_hub/auditorio/auditorio2.jpeg' %}" alt="Auditório do Canastra HUB" />
             </div>
             <div class="image-gallery">
-              <img src="{% static 'img/espacos_hub/auditorio/auditorio3.jpeg' %}" alt="Auditório do Canastra HUB">
-              <img src="{% static 'img/espacos_hub/auditorio/auditorio4.jpeg' %}" alt="Auditório do Canastra HUB">
+              <img src="{% static 'img/espacos_hub/auditorio/auditorio3.jpeg' %}" alt="Auditório do Canastra HUB" />
+              <img src="{% static 'img/espacos_hub/auditorio/auditorio4.jpeg' %}" alt="Auditório do Canastra HUB" />
             </div>
           </div>
 
@@ -147,22 +150,22 @@
             <h3>IF Maker</h3>
             <p>O IF Maker é o espaço do Canastra HUB voltado à prototipagem, modelagem 3D e experimentação tecnológica. Integrado à infraestrutura do IFMG – Campus Bambuí, ele oferece equipamentos como impressoras 3D, cortadoras a laser e fresadoras CNC, permitindo que estudantes e empreendedores desenvolvam protótipos, testem soluções e transformem ideias em produtos reais. É um ambiente de criatividade prática e inovação aplicada, essencial para os projetos da Fábrica de Soluções e das empresas juniores.</p>
             <div class="image-gallery">
-              <img src="{% static 'img/espacos_hub/maker/maker1.jpeg' %}" alt="Sala de reuniões da Incubadora">
-              <img src="{% static 'img/espacos_hub/maker/maker2.jpeg' %}" alt="Sala de reuniões da Incubadora">
+              <img src="{% static 'img/espacos_hub/maker/maker1.jpeg' %}" alt="Sala de reuniões da Incubadora" />
+              <img src="{% static 'img/espacos_hub/maker/maker2.jpeg' %}" alt="Sala de reuniões da Incubadora" />
             </div>
             <div class="image-gallery">
-              <img src="{% static 'img/espacos_hub/maker/maker3.jpeg' %}" alt="Sala de reuniões da Incubadora">
-              <img src="{% static 'img/espacos_hub/maker/maker4.jpeg' %}" alt="Sala de reuniões da Incubadora">
+              <img src="{% static 'img/espacos_hub/maker/maker3.jpeg' %}" alt="Sala de reuniões da Incubadora" />
+              <img src="{% static 'img/espacos_hub/maker/maker4.jpeg' %}" alt="Sala de reuniões da Incubadora" />
             </div>
-          </div>         
+          </div>
 
           <div class="structure-card">
-            <h3>Epaço SEBRAE</h3>
+            <h3>Espaço SEBRAE</h3>
             <p>O Espaço Sebrae é uma área estratégica do Canastra HUB destinada à parceria entre o IFMG e o Sebrae Minas. Nele são oferecidos atendimentos, consultorias e programas de capacitação voltados a empreendedores, startups e pequenos negócios. A presença do Sebrae no HUB garante acesso a mentorias especializadas, editais de fomento e oportunidades de networking, fortalecendo a ponte entre a academia e o mercado regional.</p>
             <div class="image-gallery">
-              <img src="{% static 'img/sebrae.img' %}" alt="Logo Sebrae">
+              <img src="{% static 'img/sebrae.png' %}" alt="Logo Sebrae" />
             </div>
-          </div>         
+          </div>
         </div>
       </div>
     </section>
