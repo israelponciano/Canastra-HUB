@@ -1,0 +1,186 @@
+{% extends 'master.html' %}
+{% load static %}
+{% block conteudo %}
+  <main class="hub-main">
+    <!-- Notícias Section -->
+    <h1 class="section-bigTitle">Grãos</h1>
+    <section id="noticias" class="hub-section">
+      <div class="container">
+        <h2 class="section-title">Notícias</h2>
+        <div class="carousel-wrapper">
+          <button class="carousel-control prev" aria-label="Notícia anterior">‹</button>
+          <div class="news-carousel">
+            <div class="news-track">
+              <!-- Notícia 1 -->
+              <div class="news-card">
+                <img src="{% static '/img/hubs/graos/noticia_graos1.png' %}" alt="Graos" />
+                <div class="news-content">
+                  <span class="news-author">Por Raphael Salomão</span>
+                  <h3>A jornada dos grãos pelo Tapajós rumo ao mercado externo</h3>
+                  <p>Reportagem viajou em empurrador e acompanhou transporte de grãos pela hidrovia</p>
+                  <a target="_blank" href="https://globorural.globo.com/google/amp/especiais/caminhos-da-safra/noticia/2025/11/a-jornada-dos-graos-pelo-tapajos-rumo-ao-mercado-externo.ghtml">saiba mais...</a>
+                </div>
+              </div>
+
+              <!-- Notícia 2 -->
+              <div class="news-card">
+                <img src="{% static '/img/hubs/graos/noticia_graos2.png'%}" alt="Feijao" />
+                <div class="news-content">
+                  <span class="news-author">Por Sociedade Nacional de Agricultura</span>
+                  <h3>Feijão: Exportações seguem registrando desempenho recorde</h3>
+                  <p>As exportações brasileiras de feijão seguem registrando um desempenho recorde, tanto no volume mensal quanto no acumulado de 12 meses.</p>
+                  <a target="_blank" href="https://sna.agr.br/feijao-exportacoes-seguem-registrando-desempenho-recorde/">saiba mais...</a>
+                </div>
+              </div>
+                
+              <!-- Notícia 3 -->
+              <div class="news-card">
+                <img src="{%static '/img/hubs/graos/noticia_graos3.png'%}" alt="SIC" />
+                <div class="news-content">
+                  <span class="news-author">Por Hannah Andrade</span>
+                  <h3>SIC 2025 destaca inovação e sustentabilidade, reforçando protagonismo de Minas Gerais na cafeicultura mundial</h3>
+                  <p>Aconteceu na última quarta-feira (05/11), no Expominas, em Belo Horizonte, a 13ª SIC (Semana Internacional do Café).</p>
+                  <a target="_blank" href="https://amirt.com.br/sic-2025-destaca-inovacao-e-sustentabilidade-reforcando-protagonismo-de-minas-gerais-na-cafeicultura-mundial/">saiba mais...</a>
+                </div>
+              </div>
+                <!-- Notícia 5 -->
+              <div class="news-card">
+                <img src="{% static '/img/hubs/graos/noticia_graos4.png' %}" alt="Mercado Graos" />
+                <div class="news-content">
+                  <span class="news-author">Por Pátria Agronegócios</span>
+                  <h3>Plantio da soja chega a 57,68% da área no Brasil, informa Pátria Agronegócios</h3>
+                  <p> Brasil em 2025 alcança 57,68% da área, na média dos últimos 5 anos foi de 58,90% para este mesmo período do ano.</p>
+                  <a target="_blank" href="https://www.noticiasagricolas.com.br/noticias/soja/410612-plantio-da-soja-chega-a-57-68-da-area-no-brasil-informa-patria-agronegocios.html">saiba mais...</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button class="carousel-control next" aria-label="Próxima notícia">›</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Demandas Section -->
+    <section id="demandas" class="hub-section">
+      <div class="container">
+        <h2 class="section-title">Demandas</h2>
+        <div class="demands-grid">
+          <!-- Demanda 1 -->
+          <div class="demand-card">
+            <img src="{% static '/img/hubs/graos/demanda_grao.png'%}" alt="Gestao-de-Safra" class="company-logo" />
+            <h3>Plataforma de Gestão de Safra</h3>
+            <span class="price">Negociável</span>
+            <p>Um grupo de jovens empreendedores rurais quer lançar uma plataforma digital para prever safra e armazenagem inteligente de grãos, conectando produtores, transportadores e compradores regionais.</p>
+          </div>
+
+          <!-- Demanda 2 -->
+          <div class="demand-card">
+            <img src="{% static '/img/hubs/graos/armazem_grao.png'%}" alt="Armazenagem Inteligente" class="company-logo" />
+            <h3>Monitoramento de Armazéns</h3>
+            <span class="price">Negociável</span>
+            <p>Produtores necessitam de sistema IoT para monitoramento de temperatura, umidade e qualidade dos grãos armazenados, com alertas automáticos para prevenir perdas e garantir qualidade do produto.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Empresas Section -->
+    <section id="empresas" class="hub-section">
+      <div class="container">
+        <h2 class="section-title">Empresas Parceiras</h2>
+        <div class="companies-grid">
+          <!-- Empresa 1 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1560493676-04071c5f467b?w=200&h=150&fit=crop" alt="AgroTech Solutions" />
+            </div>
+            <h3>AgroTech Solutions</h3>
+            <p>Líder em tecnologia agrícola com soluções inovadoras para aumentar produtividade e sustentabilidade no campo.</p>
+          </div>
+
+          <!-- Empresa 2 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1549923746-c502d488b3ea?w=200&h=150&fit=crop" alt="BeeLab Brasil" />
+            </div>
+            <h3>BeeLab Brasil</h3>
+            <p>Especialistas em apicultura moderna com foco em produção sustentável e preservação de abelhas nativas.</p>
+          </div>
+
+          <!-- Empresa 3 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=200&h=150&fit=crop" alt="Coffee Excellence" />
+            </div>
+            <h3>Coffee Excellence</h3>
+            <p>Exportadora premium de cafés especiais com certificação internacional e compromisso com produtores locais.</p>
+          </div>
+
+          <!-- Empresa 4 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?w=200&h=150&fit=crop" alt="Rural Finance" />
+            </div>
+            <h3>Rural Finance</h3>
+            <p>Soluções financeiras especializadas para o agronegócio com taxas competitivas e processos simplificados.</p>
+          </div>
+
+          <!-- Empresa 5 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=200&h=150&fit=crop" alt="Green Logistics" />
+            </div>
+            <h3>Green Logistics</h3>
+            <p>Transporte e logística especializada em produtos agrícolas com rastreamento em tempo real.</p>
+          </div>
+
+          <!-- Empresa 6 -->
+          <div class="company-card">
+            <div class="company-logo-large">
+              <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=200&h=150&fit=crop" alt="Smart Irrigation" />
+            </div>
+            <h3>Smart Irrigation</h3>
+            <p>Sistemas de irrigação inteligente com economia de água e aumento de produtividade comprovados.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Treinamentos Section -->
+    <section id="treinamentos" class="hub-section">
+      <div class="container">
+        <h2 class="section-title">Treinamentos</h2>
+        <div class="training-grid">
+          <!-- Treinamento 1 -->
+          <div class="training-card">
+            <img src="{% static '/img/hubs/graos/agriculture_technology.jpg' %}" alt="teste" />
+            <div class="training-content">
+              <h3>Agronegócio Digital e Gestão de Dados na Produção de Grãos</h3>
+              <p>Introdução à agricultura de precisão e Big Data no agro. Desenvolvimento de protótipos de aplicativos e painéis de controle. Oficina de modelagem de negócios no Acelera de Empresas. Apresentação da startup para investidores parceiros do Hub</p>
+            </div>
+          </div>
+
+          <!-- Treinamento 2 -->
+          <div class="training-card">
+            <img src="{% static '/img/hubs/graos/supply_chain_grao.jpg' %}" alt="Logística e Supply Chain" />
+            <div class="training-content">
+              <h3>Logística Inteligente e Supply Chain para Grãos</h3>
+              <p>Otimização de rotas e gestão de frota no transporte de grãos. Tecnologias de rastreamento e blockchain para rastreabilidade. Gestão de armazéns e silos com IoT. Cases de sucesso em integração logística da produção aos portos de exportação.</p>
+            </div>
+          </div>
+
+          <!-- Treinamento 3 -->
+          <div class="training-card">
+            <img src="{% static '/img/hubs/graos/mercado_graos.jpg' %}" alt="Comercialização Digital" />
+            <div class="training-content">
+              <h3>Comercialização Digital e Mercado de Grãos</h3>
+              <p>Análise de mercado e formação de preços de commodities agrícolas. Plataformas digitais para negociação e venda direta. Contratos futuros e estratégias de hedge. Desenvolvimento de marketplace e conexão com compradores nacionais e internacionais.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="{% static 'js/hub.js' %}"></script>
+{% endblock %}

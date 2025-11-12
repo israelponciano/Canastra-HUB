@@ -42,6 +42,9 @@ def calcados(request):
 def milho(request):
     return render(request, 'milho.html')
 
+def graos(request):
+
+    return render(request, 'graos.html')
 
 def sobre(request):
 
