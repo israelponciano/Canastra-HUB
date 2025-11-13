@@ -8,7 +8,7 @@ from empresa.models import *
 class Vagas(models.Model):
     cargo_vaga = models.CharField(max_length=100,  blank=True, null=True)
     descricao_vaga = models.TextField(blank=True, null=True)
-    requisito_vaga = models.CharField(max_length=100,blank=True, null=True)
+    requisito_vaga = models.TextField(blank=True, null=True)
     
     local = models.CharField(max_length=255, blank=True, null=True)
     data_publicacao = models.DateTimeField(auto_now_add=True)

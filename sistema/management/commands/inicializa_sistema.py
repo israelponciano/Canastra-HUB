@@ -35,18 +35,33 @@ class Command(BaseCommand):
                 print(f"Erro ao inserir {estado_data['nome']}: {e}")
 
         hub1 = Hub.objects.create(
-            nome_hub='Café',
-            descricao='Cafeculura é melhor com o pessoal da canastra'
+            nome_hub='Agro',
+            descricao='Agro é melhor com o pessoal da canastra'
         )
         hub2 = Hub.objects.create(
-            nome_hub='Mel',
-            descricao='Mel é melhor com o pessoal da canastra'
+            nome_hub='Apicultura',
+            descricao='Apicultura é melhor com o pessoal da canastra'
         )
         hub3 = Hub.objects.create(
-            nome_hub='Tecnologia',
-            descricao='Venha fazer um site com o pessoal da canastra'
+            nome_hub='Calçados',
+            descricao='Calçados é melhor com o pessoal da canastra'
         )
 
+        hub4 = Hub.objects.create(
+            nome_hub='Milho',
+            descricao='Milho é melhor com o pessoal da canastra'
+        )
+        
+        hub5 = Hub.objects.create(
+            nome_hub='Queijo',
+            descricao='Queijo é melhor com o pessoal da canastra'
+        )
+        
+        hub6 = Hub.objects.create(
+            nome_hub='Grãos',
+            descricao='Grãos é melhor com o pessoal da canastra'
+        )
+        
         user = UsuarioBase.objects.create_user(
             email='usuario@teste',
             password='123',
@@ -100,30 +115,47 @@ class Command(BaseCommand):
             tipo='admin'
         )
 
-        vaga1 = Vagas.objects.create(cargo_vaga='Desenvolvedor Junior',
-                                     descricao_vaga='Vaga para Iniciantes',
-                                     requisito_vaga='Superior Completo',
-                                     local='casa',
-                                     data_publicacao='2025-11-03 02:50:00 -03',
-                                     data_atualizacao='2025-11-03 02:50:00 -03',
-                                     status='ativa',
-                                     empresa=empresa
-                                     )
+        vaga1 = Vagas.objects.create(
+            cargo_vaga='Operador de Máquinas Agrícolas',
+            descricao_vaga='Responsável por operar tratores, colheitadeiras e outros equipamentos agrícolas durante o plantio e a colheita.',
+            requisito_vaga='Experiência comprovada na operação de máquinas agrícolas e conhecimento básico em manutenção preventiva.',
+            local='Fazenda Primavera - Zona Rural',
+            data_publicacao='2025-11-03 02:50:00 -03',
+            data_atualizacao='2025-11-03 02:50:00 -03',
+            status='ativa',
+            empresa=empresa
+        )
 
-        vaga2 = Vagas.objects.create(cargo_vaga='Desenvolvedor Senior',
-                                     descricao_vaga='Vaga para Avançados',
-                                     requisito_vaga='Superior Completo, bigode grosso',
-                                     local='casa',
-                                     data_publicacao='2025-11-03 02:50:00 -03',
-                                     data_atualizacao='2025-11-03 02:50:00 -03',
-                                     status='ativa',
-                                     empresa=empresa
-                                     )
+        vaga2 = Vagas.objects.create(
+            cargo_vaga='Desenvolvedor Júnior',
+            descricao_vaga='Estamos em busca de um Desenvolvedor Júnior motivado e comprometido para integrar nossa equipe de tecnologia. ',
+            requisito_vaga='Conhecimento básico em linguagens de programação como Python, JavaScript ou Java. ',
+            local='Home Office',
+            data_publicacao='2025-11-03 02:50:00 -03',
+            data_atualizacao='2025-11-03 02:50:00 -03',
+            status='ativa',
+            empresa=empresa
+        )
 
+        vaga3 = Vagas.objects.create(
+            cargo_vaga='Desenvolvedor Júnior',
+            descricao_vaga='Estamos em busca de um Desenvolvedor Júnior motivado e comprometido para integrar nossa equipe de tecnologia. ',
+            requisito_vaga='Conhecimento básico em linguagens de programação como Python, JavaScript ou Java. ',
+            local='Home Office',
+            data_publicacao='2025-11-03 02:50:00 -03',
+            data_atualizacao='2025-11-03 02:50:00 -03',
+            status='ativa',
+            empresa=empresa
+        )
+        
         print("User-1", user.email, usuario)
         print("User-2", user2.email, empresa.segmento)
         print("User-3", user3.email, user3.is_admin)
         print("hub1", hub1.nome_hub)
         print("hub2", hub2.nome_hub)
+        print("hub3", hub3.nome_hub)
+        print("hub4", hub4.nome_hub)
+        print("hub5", hub5.nome_hub)
+        print("hub6", hub6.nome_hub)
         print("vaga1", vaga1.cargo_vaga)
         print("vaga2", vaga2.cargo_vaga)
