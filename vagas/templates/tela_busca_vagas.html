@@ -135,11 +135,18 @@
               <div class="card-body">
                 <h5 class="card-title text-primary">{{ vaga.cargo_vaga }}</h5>
 
-                <h6 class="card-subtitle mb-2 text-muted">Empresa: **{{ vaga.empresa.nome_empresa|default:'Não Informada' }}** | Local: {{ vaga.local|default:'Não Especificado' }}</h6>
+                <h6 class="card-subtitle mb-2 text-muted">Empresa: {{ vaga.empresa.nome_empresa|default:'HUB CANASTRA' }} | Local: {{ vaga.local|default:'Não Especificado' }}</h6>
 
                 <p class="card-text">{{ vaga.descricao_vaga|truncatechars:150 }}</p>
-
-                <a href="{% url 'vagas:detalhe_vaga' vaga.id %}" class="btn btn-success btn-sm mt-2">Ver Detalhes</a>
+                {% if user.is_authenticated %}
+                  {% if request.session.incompleto %}
+                    <a href="{% url 'core:cadastro_completo' %}" class="btn btn-primary btn-sm mt-2">Se inscrever</a>
+                  {% else %}
+                    <a href="{% url 'vagas:mensagembonita' %}" class="btn btn-primary btn-sm mt-2">Se inscrever</a>
+                  {% endif %}
+                {% else %}
+                  <a href="{% url 'core:login' %}" class="btn btn-primary btn-sm mt-2">Se inscrever</a>
+                {% endif %}
 
                 <span class="float-end text-muted small mt-3">Publicada em: {{ vaga.data_publicacao|date:'d/m/Y' }}</span>
               </div>

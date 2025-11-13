@@ -119,7 +119,7 @@ class Command(BaseCommand):
             cargo_vaga='Operador de Máquinas Agrícolas',
             descricao_vaga='Responsável por operar tratores, colheitadeiras e outros equipamentos agrícolas durante o plantio e a colheita.',
             requisito_vaga='Experiência comprovada na operação de máquinas agrícolas e conhecimento básico em manutenção preventiva.',
-            local='Fazenda Primavera - Zona Rural',
+            local='Fazenda Primavera',
             data_publicacao='2025-11-03 02:50:00 -03',
             data_atualizacao='2025-11-03 02:50:00 -03',
             status='ativa',
@@ -138,10 +138,10 @@ class Command(BaseCommand):
         )
 
         vaga3 = Vagas.objects.create(
-            cargo_vaga='Desenvolvedor Júnior',
-            descricao_vaga='Estamos em busca de um Desenvolvedor Júnior motivado e comprometido para integrar nossa equipe de tecnologia. ',
-            requisito_vaga='Conhecimento básico em linguagens de programação como Python, JavaScript ou Java. ',
-            local='Home Office',
+            cargo_vaga='Apicultor',
+            descricao_vaga='Estamos em busca de um profissional dedicado para atuar no manejo de colmeias, extração de mel e cuidado com abelhas em fazenda de produção apícola. ',
+            requisito_vaga='Experiência com manejo de abelhas ou interesse em aprender sobre apicultura.',
+            local='Fazenda Mel da Canastra',
             data_publicacao='2025-11-03 02:50:00 -03',
             data_atualizacao='2025-11-03 02:50:00 -03',
             status='ativa',
@@ -159,3 +159,4 @@ class Command(BaseCommand):
         print("hub6", hub6.nome_hub)
         print("vaga1", vaga1.cargo_vaga)
         print("vaga2", vaga2.cargo_vaga)
+        print("vaga3", vaga3.cargo_vaga)

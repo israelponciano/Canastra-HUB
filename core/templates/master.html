@@ -52,7 +52,7 @@
                     <a href="#" class="nav-link-home-dropdown">Admin</a>
                   {% endif %}
                   {% if not request.path == '/perfil/' %}
-                    <a class="nav-link-home-dropdown" href="#">Perfil</a>
+                    {% comment %} <a class="nav-link-home-dropdown" href="#">Perfil</a> {% endcomment %}
                   {% endif %}
                   <a class="nav-link-home-dropdown" href="{% url 'core:logout' %}">Sair</a>
                 </div>

@@ -162,3 +162,8 @@ def detalhe_vaga(request, vaga_id):
     }
 
     return render(request, 'detalhe_vaga.html', contexto)
+
+@login_required
+def mensagembonita(request):
+    messages.success(request, f'Inscrição feita com sucesso!')
+    return redirect('core:home')
