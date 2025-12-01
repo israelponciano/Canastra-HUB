@@ -32,6 +32,8 @@
             <a href="{% url 'vagas:buscar_vagas' %}" class="nav-link">Vagas</a>
             {% if request.session.perfil == 'empresa' %}
               <a href="{% url 'vagas:cadastro_vagas' %}" class="nav-link">Cadastro de Vagas</a>
+              <a href="{% url 'core:cadastro_eventos' %}" class="nav-link">Cadastro de Eventos</a>
+              <a href="{% url 'core:cadastro_treinamentos' %}" class="nav-link">Cadastro de Treinamentos</a>
             {% endif %}
             <a href="{% url 'core:espacos_hub' %}" class="nav-link">Espaços Hub</a>
             <a href="{% url 'core:parceiros' %}" class="nav-link">Parceiros</a>

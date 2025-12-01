@@ -58,6 +58,81 @@ def cadastro(request):
 
     return render(request, 'cadastro.html')
 
+def cadastro_eventos(request):
+    
+    return render(request,'cadastro_eventos.html')
+
+def criar_eventos(request):
+    usuario_email = request.session.get('email_atual')
+
+    if request.method == 'POST':
+        nome_treinamentos = request.POST.get('txtNomeTreinamento')
+        data_treinamento_inicio = request.POST.get('dteInicioTreinamento') 
+        data_treinamento_fim = request.POST.get('dteFimTreinamento') 
+        horario_treinamento = request.POST.get('hrTreinamento') 
+        local_treinamento = request.POST.get('txtLocalTreinamento') 
+        publico_treinamento = request.POST.get('txtPublicoAlvo') 
+        descricao_treinamento = request.POST.get('txtDescricaoTreinamento') 
+        
+        usuario = UsuarioBase.objects.get(email=usuario_email)
+    
+        treinamento = Treinamentos.objects.create(
+            nome_treinamentos = nome_treinamentos,
+            data_treinamento_inicio = data_treinamento_inicio,
+            data_treinamento_fim = data_treinamento_fim,
+            horario_treinamento = horario_treinamento,
+            local_treinamento = local_treinamento,
+            publico_treinamento = publico_treinamento, 
+            descricao_treinamento = descricao_treinamento        
+        )   
+
+        UsuarioTreinamentos.objects.create(
+            treinamento = treinamento,
+            usuario = usuario
+        )
+        messages.success(request, 'Treinamento cadastrado com sucesso')
+        return redirect('core:home')
+
+    return render(request, 'cadastro_evento.html')
+
+def cadastro_treinamentos(request):
+
+    return render(request, 'cadastro_treinamentos.html')
+
+
+def criar_treinamentos(request):
+    usuario_email = request.session.get('email_atual')
+
+    if request.method == 'POST':
+        nome_treinamentos = request.POST.get('txtNomeTreinamento')
+        data_treinamento_inicio = request.POST.get('dteInicioTreinamento') 
+        data_treinamento_fim = request.POST.get('dteFimTreinamento') 
+        horario_treinamento = request.POST.get('hrTreinamento') 
+        local_treinamento = request.POST.get('txtLocalTreinamento') 
+        publico_treinamento = request.POST.get('txtPublicoAlvo') 
+        descricao_treinamento = request.POST.get('txtDescricaoTreinamento') 
+        
+        usuario = UsuarioBase.objects.get(email=usuario_email)
+    
+        treinamento = Treinamentos.objects.create(
+            nome_treinamentos = nome_treinamentos,
+            data_treinamento_inicio = data_treinamento_inicio,
+            data_treinamento_fim = data_treinamento_fim,
+            horario_treinamento = horario_treinamento,
+            local_treinamento = local_treinamento,
+            publico_treinamento = publico_treinamento, 
+            descricao_treinamento = descricao_treinamento        
+        )   
+
+        UsuarioTreinamentos.objects.create(
+            treinamento = treinamento,
+            usuario = usuario
+        )
+        messages.success(request, 'Treinamento cadastrado com sucesso')
+        return redirect('core:home')
+    
+    return render(request,'cadastro_treinamentos.html')
+
 
 def cadastro_usuario(request):
     if request.user.is_authenticated:

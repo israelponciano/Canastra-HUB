@@ -21,7 +21,7 @@ def cadastro_vagas(request):
     estados = Estado.objects.all().order_by('nome_estado')
     return render(request, 'cadastro_vagas.html', {'estados': estados})
 
-
+ 
 def criar_vagas(request):
     usuario_email = request.session.get('email_atual')
 
@@ -42,7 +42,7 @@ def criar_vagas(request):
             descricao_vaga=descricao_vaga,
             requisito_vaga=requisito_vaga,
 
-            empresa=empresa,
+           empresa=empresa,
         )
 
         for curso in cursos:
@@ -55,10 +55,8 @@ def criar_vagas(request):
         return redirect('core:home')
 
     estados = Estado.objects.all().order_by('nome_estado')
-    empresas = Empresa.objects.all().order_by('nome_empresa')
     return render(request, 'cadastro_vagas.html', {
         'estados': estados,
-        # 'empresas': empresas
     })
 
 

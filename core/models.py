@@ -245,3 +245,43 @@ class Hub(models.Model):
 
     def __str__(self):
         return f"{self.nome_hub}"
+
+
+class Eventos(models.Model):
+    nome_evento = models.CharField(max_length=100, blank=True, null=True)
+    data_evento_inicio = models.DateField(blank=True, null=True)
+    data_evento_fim = models.DateField(blank=True, null=True)
+    horario_evento = models.TimeField(blank=True, null=True)
+    local_evento = models.CharField(max_length=255, blank=True, null=True)
+    publico_evento = models.CharField(max_length=255, blank=True, null=True)
+    descricao_evento = models.TextField(max_length=250,blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.nome_evento}"
+
+class UsuarioEventos(models.Model):
+    evento = models.ForeignKey(Eventos, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(UsuarioBase, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.usuario.username} -> {self.evento.nome_evento}"
+
+
+class Treinamentos(models.Model):
+    nome_treinamentos = models.CharField(max_length=100, blank=True, null=True)
+    data_treinamento_inicio = models.DateField(blank=True, null=True)
+    data_treinamento_fim = models.DateField(blank=True, null=True)
+    horario_treinamento = models.TimeField(blank=True, null=True)
+    local_treinamento = models.CharField(max_length=255, blank=True, null=True)
+    publico_treinamento = models.CharField(max_length=255, blank=True, null=True)
+    descricao_treinamento = models.TextField(max_length=250, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.nome_treinamentos}"
+
+class UsuarioTreinamentos(models.Model):
+    treinamento = models.ForeignKey(Treinamentos, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(UsuarioBase, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.usuario.username} -> {self.evento.nome_treinamentos}"
