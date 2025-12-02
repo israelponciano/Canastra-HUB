@@ -19,10 +19,12 @@ urlpatterns = [
     # cadastros de eventos    
     path("cadastro_eventos/", views.cadastro_eventos, name="cadastro_eventos"),
     path("criar_eventos/", views.criar_eventos, name="criar_eventos"),
+    path('buscar_eventos/', views.buscar_eventos, name='buscar_eventos'),
 
     # cadastros de treinamento    
     path("cadastro_treinamentos/", views.cadastro_treinamentos, name="cadastro_treinamentos"),
     path("criar_treinamentos/", views.criar_treinamentos, name="criar_treinamentos"),
+    path('buscar_treinamentos/', views.buscar_treinamentos, name='buscar_treinamentos'),
 
     # tela de hubs 
     path("hubs/", views.hubs, name="hubs"),
