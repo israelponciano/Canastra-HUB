@@ -136,7 +136,7 @@
               <div class="card-body">
                 <h5 class="card-title text-primary">{{ evento.nome_evento }}</h5>
 
-                <h6 class="card-subtitle mb-2 text-muted">Local: {{ evento.local_evento|default:'Não Especificado' }}
+                <h6 class="card-subtitle mb-2 text-muted">Local: {{evento.local_evento|default:'Não Especificado' }}
                                                           |Data: {{evento.data_evento_inicio}}
                                                           |Horário: {{evento.horario_evento}}                                            
                 </h6>
@@ -152,7 +152,7 @@
                   <a href="{% url 'core:login' %}" class="btn btn-primary btn-sm mt-2">Se inscrever</a>
                 {% endif %}
 
-                <span class="float-end text-muted small mt-3">Publicada em: {{  evento.data_evento_inicio|date:'d/m/Y' }}</span>
+                <span class="float-end text-muted small mt-3">Publicada em: {{  evento.data_evento_inicio }}</span>
               </div>
             </div>
           </div>

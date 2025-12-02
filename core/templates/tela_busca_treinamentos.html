@@ -112,6 +112,7 @@
     <div class="row mb-4">
       <div class="col-md-10 offset-md-1">
         <form action="{% url 'core:buscar_treinamentos' %}" method="GET" class="d-flex">
+          <h4>Fique por dentro dos nossos Treinamentos!</h4>
           <input type="text" name="q" class="form-control form-control-lg me-2" placeholder="Buscar por nome, horario ou palavra-chave..." value="{{ termo_busca }}" />
           <button type="submit" class="btn btn-primary">Buscar</button>
         </form>
@@ -122,22 +123,25 @@
       {% if termo_busca %}
         Resultados para: "{{ termo_busca }}"
       {% else %}
-        Todas os Treinamentos Ativos
+        Hoje: 
       {% endif %}
-      <span class="badge bg-secondary">{{ eventos|length }} encontradas</span>
+      <span class="badge bg-secondary">{{ treinamentos|length }} encontradas</span>
     </h2>
 
     <div class="row">
       {% if treinamentos %}
-        {% for treinameto in treinamentos %}
+        {% for treinamento in treinamentos %}
           <div class="col-md-6 mb-4">
             <div class="card shadow-sm h-100">
               <div class="card-body">
-                <h5 class="card-title text-primary">{{ evento.cargo_vaga }}</h5>
+                <h5 class="card-title text-primary">{{ treinamento.nome_treinamento }}</h5>
 
-                <h6 class="card-subtitle mb-2 text-muted">Empresa: {{ vaga.empresa.nome_empresa|default:'HUB CANASTRA' }} | Local: {{ evento.local_evento|default:'Não Especificado' }}</h6>
+                <h6 class="card-subtitle mb-2 text-muted">Local: {{ treinamento.local_treinamento|default:'Não Especificado' }}
+                  |Data: {{treinamento.data_treinamento_inicio}}
+                  |Horário: {{treinamento.horario_treinamento}}
+                </h6>
 
-                <p class="card-text">{{ evento.descricao_evento|truncatechars:150 }}</p>
+                <p class="card-text">{{ treinamento.descricao_treinamento|truncatechars:150 }}</p>
                 {% if user.is_authenticated %}
                   {% if request.session.incompleto %}
                     <a href="{% url 'core:cadastro_completo' %}" class="btn btn-primary btn-sm mt-2">Se inscrever</a>
@@ -148,14 +152,14 @@
                   <a href="{% url 'core:login' %}" class="btn btn-primary btn-sm mt-2">Se inscrever</a>
                 {% endif %}
 
-                <span class="float-end text-muted small mt-3">Publicada em: {{ vaga.data_publicacao|date:'d/m/Y' }}</span>
+                <span class="float-end text-muted small mt-3">Publicada em: {{ treinamento.data_treinamento_inicio|date:'d/m/Y' }}</span>
               </div>
             </div>
           </div>
         {% endfor %}
       {% else %}
         <div class="col-12">
-          <div class="alert alert-info" role="alert">Nenhuma vaga ativa encontrada. Tente outra pesquisa.</div>
+          <div class="alert alert-info" role="alert">Nenhum treinamento encontrado. Tente outra pesquisa.</div>
         </div>
       {% endif %}
     </div>

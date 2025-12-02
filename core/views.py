@@ -102,7 +102,7 @@ def buscar_eventos(request):
     # 1. Receber o termo de busca (query) da URL (ex: /vagas/?q=Desenvolvedor)
     termo_busca = request.GET.get('q', '').strip()
 
-    evento = Eventos.objects.order_by('-data_evento_inicio')
+    eventos= Eventos.objects.order_by('-data_evento_inicio')
 
     # 3. Se houver um termo de busca, aplica o filtro
     if termo_busca:
@@ -110,7 +110,7 @@ def buscar_eventos(request):
         # - No cargo da vaga (cargo_vaga__icontains)
         # - Na descrição da vaga (descricao_vaga__icontains)
         # - Ou no requisito (requisito_vaga__icontains)
-        evento = evento.filter(
+        eventos = eventos.filter(
             models.Q(nome_evento__icontains=termo_busca) |
             models.Q(descricao_evento__icontains=termo_busca) |
             models.Q(local_evento__icontains=termo_busca)
@@ -119,7 +119,7 @@ def buscar_eventos(request):
 
     # 4. Prepara o contexto
     contexto = {
-        'evento': evento,
+        'eventos': eventos,
         'termo_busca': termo_busca,  # Passa o termo de volta para o input na tela
     }
 
@@ -171,12 +171,12 @@ def buscar_treinamentos(request):
     # 1. Receber o termo de busca (query) da URL (ex: /vagas/?q=Desenvolvedor)
     termo_busca = request.GET.get('q', '').strip()
 
-    treinamentos = Treinamentos.objects.order_by('-data_evento_inicio')
+    treinamentos = Treinamentos.objects.order_by('-data_treinamento_inicio')
 
     # 3. Se houver um termo de busca, aplica o filtro
     if termo_busca:
         # filtrar por nome ou descrição 
-        treinamento = treinamento.filter(
+        treinamentos = treinamentos.filter(
             models.Q(nome_treinamento__icontains=termo_busca) |
             models.Q(descricao_treinamento__icontains=termo_busca) |
             models.Q(local_treinamento__icontains=termo_busca)
@@ -185,11 +185,11 @@ def buscar_treinamentos(request):
 
     # 4. Prepara o contexto
     contexto = {
-        'treinamento': treinamento,
+        'treinamentos': treinamentos,
         'termo_busca': termo_busca,
     }
 
-    return render(request, 'tela_busca_eventos.html', contexto)
+    return render(request, 'tela_busca_treinamentos.html', contexto)
 
 
 def cadastro_usuario(request):
