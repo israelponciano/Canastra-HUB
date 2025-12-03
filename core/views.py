@@ -168,7 +168,7 @@ def buscar_treinamentos(request):
     '''
     Lista todas os Treinamentos ativos, com opção de filtrar por termo de busca.
     '''
-    # 1. Receber o termo de busca (query) da URL (ex: /vagas/?q=Desenvolvedor)
+
     termo_busca = request.GET.get('q', '').strip()
 
     treinamentos = Treinamentos.objects.order_by('-data_treinamento_inicio')
@@ -177,7 +177,7 @@ def buscar_treinamentos(request):
     if termo_busca:
         # filtrar por nome ou descrição 
         treinamentos = treinamentos.filter(
-            models.Q(nome_treinamento__icontains=termo_busca) |
+            models.Q(nome_treinamentos__icontains=termo_busca) |
             models.Q(descricao_treinamento__icontains=termo_busca) |
             models.Q(local_treinamento__icontains=termo_busca)
             # Usa .distinct() para evitar duplicatas, se a busca for mais complexa
