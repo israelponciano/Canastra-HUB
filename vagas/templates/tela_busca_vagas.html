@@ -138,7 +138,7 @@
                 <h6 class="card-subtitle mb-2 text-muted">Empresa: {{ vaga.empresa.nome_empresa|default:'HUB CANASTRA' }} | Local: {{ vaga.local|default:'Não Especificado' }}</h6>
 
                 <p class="card-text">{{ vaga.descricao_vaga|truncatechars:150 }}</p>
-                
+
                 {% comment %} {% if user.is_authenticated %}
                   {% if request.session.incompleto %}
                     <a href="{% url 'core:cadastro_completo' %}" class="btn btn-primary btn-sm mt-2">Se inscrever</a>
@@ -150,8 +150,7 @@
                 {% endif %} {% endcomment %}
 
                 {% if user.is_authenticated and not request.session.incompleto %}
-
-                {% if vaga.ja_candidatada %}
+                  {% if vaga.ja_candidatada %}
                     <form action="{% url 'vagas:cancelar_candidatura' vaga.id %}" method="POST" class="mt-2">
                       {% csrf_token %}
                       <button type="submit" class="btn btn-danger btn-sm">Cancelar Inscrição</button>
@@ -162,12 +161,10 @@
                       <button type="submit" class="btn btn-success btn-sm">Se Inscrever</button>
                     </form>
                   {% endif %}
-
                 {% elif user.is_authenticated and request.session.incompleto %}
                   <a href="{% url 'core:cadastro_completo' %}" class="btn btn-warning btn-sm mt-2">Completar Cadastro</a>
-
                 {% else %}
-                  <a href="{% url 'usuario:login' %}" class="btn btn-primary btn-sm mt-2">Login para Inscrever-se</a>
+                  <a href="{% url 'core:login' %}" class="btn btn-primary btn-sm mt-2">Login para Inscrever-se</a>
                 {% endif %}
 
                 <span class="float-end text-muted small mt-3">Publicada em: {{ vaga.data_publicacao|date:'d/m/Y' }}</span>
