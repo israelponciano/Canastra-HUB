@@ -1,3 +1,4 @@
+from django.shortcuts import redirect, get_object_or_404
 from django.shortcuts import render, redirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_http_methods
@@ -8,6 +9,7 @@ from core.models import *
 from vagas.models import *
 from django.contrib import messages
 from django.http import JsonResponse
+from .models import Vagas, UsuarioVaga  # Importe UsuarioVaga aqui
 
 import re
 
@@ -87,8 +89,7 @@ def get_cidades(request):
     print(f"DEBUG: {cidades.count()} cidades encontradas")
 
     cidades_data = [
-        {'id': cidade.id, 'nome': cidade.nome_cidade}
-        for cidade in cidades
+        {'id': cidade.id, 'nome': cidade.nome_cidade} for cidade in cidades
     ]
 
     return JsonResponse({
@@ -109,6 +110,19 @@ def buscar_vagas(request):
     # 2. Começa com todas as vagas ativas
     vagas = Vagas.objects.filter(status='ativa').order_by('-data_publicacao')
 
+    # checagem de vagas ativas feita -> adiciona vagas candidatadas pelo usuario
+    # pegamos os dados do usuário
+    if request.user.is_authenticated:
+        try:
+            usuario_perfil = Usuario.objects.get(user=request.user)
+            candidaturas_do_usuario = UsuarioVaga.objects.filter(
+                usuario=usuario_perfil).values_list('vaga__id', flat=True)
+
+            for vaga in vagas:
+                vaga.ja_candidatada = vaga.id in candidaturas_do_usuario
+        except Usuario.DoesNotExist:
+            pass
+
     # 3. Se houver um termo de busca, aplica o filtro
     if termo_busca:
         # Filtra as vagas onde o termo de busca aparece:
@@ -116,9 +130,8 @@ def buscar_vagas(request):
         # - Na descrição da vaga (descricao_vaga__icontains)
         # - Ou no requisito (requisito_vaga__icontains)
         vagas = vagas.filter(
-            models.Q(cargo_vaga__icontains=termo_busca) |
-            models.Q(descricao_vaga__icontains=termo_busca) |
-            models.Q(requisito_vaga__icontains=termo_busca)
+            models.Q(cargo_vaga__icontains=termo_busca) | models.Q(
+                descricao_vaga__icontains=termo_busca) | models.Q(requisito_vaga__icontains=termo_busca)
             # Usa .distinct() para evitar duplicatas, se a busca for mais complexa
         ).distinct()
 
@@ -132,6 +145,7 @@ def buscar_vagas(request):
     return render(request, 'tela_busca_vagas.html', contexto)
 
 # detalhe da vaga
+
 
 @login_required
 def detalhe_vaga(request, vaga_id):
@@ -161,7 +175,64 @@ def detalhe_vaga(request, vaga_id):
 
     return render(request, 'detalhe_vaga.html', contexto)
 
+
 @login_required
 def mensagembonita(request):
+
     messages.success(request, f'Inscrição feita com sucesso!')
     return redirect('core:home')
+
+# No seu vagas/views.py
+# Assumindo que seu modelo de usuário está em 'usuario.models'
+# Função para registrar a candidatura
+
+
+@login_required
+@require_http_methods(["POST"])
+def candidatar_vaga(request, vaga_id):
+    vaga = get_object_or_404(Vagas, id=vaga_id)
+
+    # CRÍTICO: Obter a instância do seu modelo de perfil Usuario, não o User padrão
+    try:
+        # Tenta obter o objeto de perfil Usuario associado ao usuário logado
+        # Ajuste esta linha se o seu perfil Usuario estiver ligado de forma diferente
+        usuario_perfil = Usuario.objects.get(user=request.user)
+    except Usuario.DoesNotExist:
+        messages.error(request, "Seu perfil de usuário não foi encontrado.")
+        return redirect('vagas:detalhe_vaga', vaga_id=vaga.id)
+
+    # Cria o registro apenas se ele não existir
+    if UsuarioVaga.objects.filter(vaga=vaga, usuario=usuario_perfil).exists():
+        messages.warning(request, "Você já está candidatado a esta vaga.")
+    else:
+        UsuarioVaga.objects.create(vaga=vaga, usuario=usuario_perfil)
+        messages.success(
+            request, f"Candidatura à vaga '{vaga.cargo_vaga}' registrada com sucesso!")
+
+    # Redireciona para a página de detalhes da vaga
+    return redirect('vagas:detalhe_vaga', vaga_id=vaga.id)
+
+
+# Função para cancelar a candidatura
+@login_required
+@require_http_methods(["POST"])
+def cancelar_candidatura(request, vaga_id):
+    vaga = get_object_or_404(Vagas, id=vaga_id)
+
+    try:
+        # Obtém o perfil do usuário
+        usuario_perfil = Usuario.objects.get(user=request.user)
+
+        # Tenta encontrar e deletar a candidatura
+        candidatura = UsuarioVaga.objects.get(
+            vaga=vaga, usuario=usuario_perfil)
+        candidatura.delete()
+        messages.success(
+            request, f"Candidatura à vaga '{vaga.cargo_vaga}' cancelada com sucesso.")
+    except UsuarioVaga.DoesNotExist:
+        messages.error(request, "Erro: Candidatura não encontrada.")
+    except Usuario.DoesNotExist:
+        messages.error(request, "Seu perfil de usuário não foi encontrado.")
+
+    # Redireciona para a página de detalhes da vaga
+    return redirect('vagas:detalhe_vaga', vaga_id=vaga.id)
