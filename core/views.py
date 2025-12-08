@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.http import JsonResponse
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_http_methods 
 from django.utils.crypto import get_random_string
 from django.contrib.auth.hashers import make_password
 from django.core.mail import send_mail
@@ -57,6 +57,139 @@ def espacos_hub(request):
 def cadastro(request):
 
     return render(request, 'cadastro.html')
+
+def cadastro_eventos(request):
+    
+    return render(request,'cadastro_eventos.html')
+
+def criar_eventos(request):
+    usuario_email = request.session.get('email_atual')
+
+    if request.method == 'POST':
+        nome_evento = request.POST.get('txtNomeEvento')
+        data_evento_inicio = request.POST.get('dteInicioEvento') 
+        data_evento_fim = request.POST.get('dteFimEvento') 
+        horario_evento = request.POST.get('hrEvento') 
+        local_evento = request.POST.get('txtLocalEvento') 
+        publico_evento = request.POST.get('txtPublicoAlvoEvento') 
+        descricao_evento = request.POST.get('txtDescricaoEvento') 
+        
+        usuario = UsuarioBase.objects.get(email=usuario_email)
+    
+        evento = Eventos.objects.create(
+            nome_evento = nome_evento,
+            data_evento_inicio = data_evento_inicio,
+            data_evento_fim = data_evento_fim,
+            horario_evento = horario_evento,
+            local_evento = local_evento,
+            publico_evento = publico_evento, 
+            descricao_evento = descricao_evento        
+        )   
+
+        UsuarioEventos.objects.create(
+            evento = evento,
+            usuario = usuario
+        )
+        messages.success(request, 'Evento cadastrado com sucesso')
+        return redirect('core:home')
+
+    return render(request, 'cadastro_evento.html')
+
+def buscar_eventos(request):
+    '''
+    Lista todas os eventos ativos, com opção de filtrar por termo de busca.
+    '''
+    # 1. Receber o termo de busca (query) da URL (ex: /vagas/?q=Desenvolvedor)
+    termo_busca = request.GET.get('q', '').strip()
+
+    eventos= Eventos.objects.order_by('-data_evento_inicio')
+
+    # 3. Se houver um termo de busca, aplica o filtro
+    if termo_busca:
+        # Filtra as vagas onde o termo de busca aparece:
+        # - No cargo da vaga (cargo_vaga__icontains)
+        # - Na descrição da vaga (descricao_vaga__icontains)
+        # - Ou no requisito (requisito_vaga__icontains)
+        eventos = eventos.filter(
+            models.Q(nome_evento__icontains=termo_busca) |
+            models.Q(descricao_evento__icontains=termo_busca) |
+            models.Q(local_evento__icontains=termo_busca)
+            # Usa .distinct() para evitar duplicatas, se a busca for mais complexa
+        ).distinct()
+
+    # 4. Prepara o contexto
+    contexto = {
+        'eventos': eventos,
+        'termo_busca': termo_busca,  # Passa o termo de volta para o input na tela
+    }
+
+    # 5. Renderiza o template de busca
+    return render(request, 'tela_busca_eventos.html', contexto)
+
+def cadastro_treinamentos(request):
+
+    return render(request, 'cadastro_treinamentos.html')
+
+
+def criar_treinamentos(request):
+    usuario_email = request.session.get('email_atual')
+
+    if request.method == 'POST':
+        nome_treinamentos = request.POST.get('txtNomeTreinamento')
+        data_treinamento_inicio = request.POST.get('dteInicioTreinamento') 
+        data_treinamento_fim = request.POST.get('dteFimTreinamento') 
+        horario_treinamento = request.POST.get('hrTreinamento') 
+        local_treinamento = request.POST.get('txtLocalTreinamento') 
+        publico_treinamento = request.POST.get('txtPublicoAlvo') 
+        descricao_treinamento = request.POST.get('txtDescricaoTreinamento') 
+        
+        usuario = UsuarioBase.objects.get(email=usuario_email)
+    
+        treinamento = Treinamentos.objects.create(
+            nome_treinamentos = nome_treinamentos,
+            data_treinamento_inicio = data_treinamento_inicio,
+            data_treinamento_fim = data_treinamento_fim,
+            horario_treinamento = horario_treinamento,
+            local_treinamento = local_treinamento,
+            publico_treinamento = publico_treinamento, 
+            descricao_treinamento = descricao_treinamento        
+        )   
+
+        UsuarioTreinamentos.objects.create(
+            treinamento = treinamento,
+            usuario = usuario
+        )
+        messages.success(request, 'Treinamento cadastrado com sucesso')
+        return redirect('core:home')
+    
+    return render(request,'cadastro_treinamentos.html')
+
+def buscar_treinamentos(request):
+    '''
+    Lista todas os Treinamentos ativos, com opção de filtrar por termo de busca.
+    '''
+
+    termo_busca = request.GET.get('q', '').strip()
+
+    treinamentos = Treinamentos.objects.order_by('-data_treinamento_inicio')
+
+    # 3. Se houver um termo de busca, aplica o filtro
+    if termo_busca:
+        # filtrar por nome ou descrição 
+        treinamentos = treinamentos.filter(
+            models.Q(nome_treinamentos__icontains=termo_busca) |
+            models.Q(descricao_treinamento__icontains=termo_busca) |
+            models.Q(local_treinamento__icontains=termo_busca)
+            # Usa .distinct() para evitar duplicatas, se a busca for mais complexa
+        ).distinct()
+
+    # 4. Prepara o contexto
+    contexto = {
+        'treinamentos': treinamentos,
+        'termo_busca': termo_busca,
+    }
+
+    return render(request, 'tela_busca_treinamentos.html', contexto)
 
 
 def cadastro_usuario(request):
