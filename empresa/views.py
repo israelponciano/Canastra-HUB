@@ -9,6 +9,10 @@ from django.http import JsonResponse
 
 import re
 
+def validar_email(email: str) -> bool:
+    padrao = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    return re.match(padrao, email) is not None
+
 
 def limpar_numeros(valor):
     # Remove tudo que não for dígito
@@ -53,6 +57,9 @@ def criar_empresa(request):
         cnpj = limpar_numeros(request.POST.get('txtCnpj'))
         razao_social = request.POST.get('txtRazaoSocial')
 
+        if not validar_email(email):
+            messages.error(request, 'Email inválido.')
+            return render(request, 'cadastro_empresa.html', {'estados': estados, 'hubs': hubs})
         # Validar se estado e cidade existem
         if not Estado.objects.filter(id=estado_id).exists():
             messages.error(request, 'Estado inválido.')

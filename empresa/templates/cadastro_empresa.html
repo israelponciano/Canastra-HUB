@@ -33,6 +33,20 @@
       background-color: #1a9e4b;
     }
   </style>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const senha = document.querySelector('input[name="txtSenha"]');
+    const confirmar = document.querySelector('input[name="confirmar_senha"]');
+    
+    confirmar.addEventListener("input", function () {
+        if (confirmar.value !== senha.value) {
+            confirmar.setCustomValidity("As senhas não coincidem.");
+        } else {
+            confirmar.setCustomValidity("");
+        }
+    });
+});
+</script>
 
   <div class="form-container">
     <h2 align="center">Cadastro de Empresa</h2>
@@ -185,7 +199,15 @@
       </div>
     </form>
   </div>
-
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const inputs = document.querySelectorAll("input[type='text'], input[type='email'], input[type='password'], input[type='tel']");
+    
+    inputs.forEach(input => {
+        input.setAttribute("maxlength", "100");
+    });
+});
+</script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function() {
