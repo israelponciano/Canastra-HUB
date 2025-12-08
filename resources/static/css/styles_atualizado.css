@@ -1083,8 +1083,11 @@ p {
 
 .footer-grid {
    display: grid;
-   grid-template-columns: 2fr 1fr 1fr;
-   gap: 3rem;
+   max-width: 1000px;
+   margin: 0 auto;
+   grid-template-columns: 1fr 1fr;
+   justify-content: center;
+   text-align: center;
    margin-bottom: 3rem;
 }
 
@@ -1096,6 +1099,7 @@ p {
    display: flex;
    align-items: center;
    gap: 0.5rem;
+   justify-content: center;
    margin-bottom: 1.5rem;
 }
 
@@ -1117,11 +1121,10 @@ p {
    /* espaçamento padrão entre os logos */
 }
 
-
-
 .social-links {
    display: flex;
    gap: 1rem;
+   justify-content: center;
 }
 
 .social-link {
@@ -1145,6 +1148,8 @@ p {
 .footer-links h3,
 .footer-contact h3 {
    color: white;
+   justify-content: center;
+   text-align: center;
    font-size: 1.25rem;
    margin-bottom: 1.5rem;
 }
@@ -1172,6 +1177,8 @@ p {
 .contact-item {
    display: flex;
    align-items: flex-start;
+   justify-content: center;
+   text-align: center;
    gap: 0.75rem;
    margin-bottom: 1rem;
 }
@@ -1192,6 +1199,103 @@ p {
    color: rgba(255, 255, 255, 0.6);
    margin: 0;
 }
+
+/* FOOTER MOBILE MELHORADO */
+@media (max-width: 768px) {
+
+   .footer {
+      padding: 2.5rem 0 1.5rem;
+   }
+
+   .footer-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      /* Menos espaço entre as seções */
+      text-align: center;
+      max-width: 90%;
+   }
+
+   /* Logos menores e com menos espaço */
+   .footer-logo {
+      gap: 20px !important;
+      margin-bottom: 1rem;
+   }
+
+   .footer-logo img {
+      height: 60px !important;
+   }
+
+   /* Descrição mais compacta */
+   .footer-description {
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+      padding: 0 1rem;
+   }
+
+   /* Social icons menores */
+   .social-links {
+      gap: 0.75rem;
+   }
+
+   .social-link {
+      width: 2.2rem;
+      height: 2.2rem;
+      font-size: 1rem;
+   }
+
+   /* Contato mais enxuto */
+   .contact-item {
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+   }
+
+   .contact-item a,
+   .footer-contact a {
+      font-size: 0.95rem;
+   }
+
+   /* Títulos menores */
+   .footer-contact h3 {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+   }
+
+   .footer-bottom {
+      padding-top: 1.5rem;
+   }
+
+   .footer-bottom p {
+      font-size: 0.85rem;
+   }
+}
+
+@media (max-width: 768px) {
+
+   /* A grid vira uma coluna e centraliza os itens */
+   .footer-grid {
+      grid-template-columns: 1fr;
+      justify-items: center;
+      /* CENTRALIZA os blocos filhos */
+      text-align: center;
+   }
+
+   /* Garante que cada bloco em si fique centralizado */
+   .footer-brand,
+   .footer-contact {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      /* centraliza tudo dentro */
+   }
+
+   /* Corrige o alinhamento dos itens de contato */
+   .contact-item {
+      justify-content: center !important;
+      text-align: center !important;
+   }
+}
+
 
 /* Responsive Design */
 @media (max-width: 768px) {
