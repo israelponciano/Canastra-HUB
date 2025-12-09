@@ -235,13 +235,14 @@ class Idioma(models.Model):
 
 class Hub(models.Model):
     nome_hub = models.CharField(max_length=100)
-    descricao = models.CharField(max_length=250)
-    foto = models.ImageField(upload_to="fotos_hub/",
+    descricao_hub = models.CharField(max_length=250)
+    foto_hub = models.ImageField(upload_to="fotos_hub/",
                              validators=[FileExtensionValidator(
                                  allowed_extensions=["jpg", "png", "jpeg"])],
                              null=True,
                              blank=True,
                              default=None)
+    isActive = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.nome_hub}"

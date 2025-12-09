@@ -3,9 +3,6 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods 
-from django.utils.crypto import get_random_string
-from django.contrib.auth.hashers import make_password
-from django.core.mail import send_mail
 from core.models import *
 
 # Create your views here.

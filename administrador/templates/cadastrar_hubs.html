@@ -1,0 +1,47 @@
+{% extends 'master.html' %}
+{% load static %}
+{% block conteudo %}
+  <main class="efeito" id="efeito">
+    <div class="container">
+      <div class="col">
+        <h2 class="mt-3 section-title">Cadastrar <span style="color: rgb(82, 120, 255);">Robô</span></h2>
+      </div>
+      <div class="container px-4 rounded border">
+        <form action="{% url 'administrador:cadastrarHubs' %}" method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="row py-3">
+            <div class="col">
+              <label><h6>Nome do Hub:</h6></label>
+              <input class="form-control form-control-sm mt-2" type="text" id="txtNomeHub" name="txtNomeHub" placeholder="Nome do Robô" required />
+            </div>
+
+          </div>
+          <div class="row py-3">
+            <div class="col">
+              <label><h6>Descrição do Hub</h6></label>
+              <textarea class="form-control" name="txtDescricaoHub" id="txtDescricaoHub" maxlength="250" rows="8" cols="100" placeholder="Informe uma descrição de até no máximo 250 caracteres..." required></textarea>
+            </div>
+          </div>
+
+          <div class="row py-3">
+            <div class="col">
+              <label><h6>Foto:</h6></label>
+              <input class="form-control form-control-sm mt-2" type="file" name="fleFotoHub" id="fleFotoHub" required />
+            </div>
+          </div>
+
+          <div class="row py-3">
+            <div class="col text-end">
+              <button class="btn-primary-admin" type="submit">
+                <b>
+                  Cadastrar
+                  <span style="color: rgb(82, 120, 255);">Robô</span>
+                </b>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+{% endblock %}
