@@ -4,15 +4,15 @@
   <main class="efeito" id="efeito">
     <div class="container">
       <div class="col">
-        <h2 class="mt-3 section-title">Cadastrar <span style="color: rgb(82, 120, 255);">Robô</span></h2>
+        <h2 class="mt-3 section-title">Cadastrar <span style="color: #16a34a;">Hubs</span></h2>
       </div>
       <div class="container px-4 rounded border">
-        <form action="{% url 'administrador:cadastrarHubs' %}" method="POST" enctype="multipart/form-data">
+        <form action="{% url 'administrador:cadastrarHub' %}" method="POST" enctype="multipart/form-data">
           {% csrf_token %}
           <div class="row py-3">
             <div class="col">
               <label><h6>Nome do Hub:</h6></label>
-              <input class="form-control form-control-sm mt-2" type="text" id="txtNomeHub" name="txtNomeHub" placeholder="Nome do Robô" required />
+              <input class="form-control form-control-sm mt-2" type="text" id="txtNomeHub" name="txtNomeHub" placeholder="Nome do Hub" required />
             </div>
 
           </div>
@@ -35,7 +35,7 @@
               <button class="btn-primary-admin" type="submit">
                 <b>
                   Cadastrar
-                  <span style="color: rgb(82, 120, 255);">Robô</span>
+                  <span style="color: #16a34a;">Hub</span>
                 </b>
               </button>
             </div>

@@ -17,13 +17,14 @@
          {% for hub in hubs_lista %}
          <!-- Linha desktop - 8 colunas -->
          <div class="admin-row admin-row-hubs">
+            <div class="admin-cell id">{{ hub.id }}</div>
             <div class="admin-cell nome">{{ hub.nome_hub }}</div>
             <div class="admin-cell descricao">{{ hub.descricao_hub }}</div>
             <div class="admin-cell">
-               {% if hub.imagem %}
+               {% if hub.foto_hub %}
                   <img src="{{ hub.foto_hub.url }}" class="admin-thumb" alt="{{ hub.nome_hub }}" />
                {% else %}
-                  <span class="no-image">Sem imagem</span>
+                  <span class="no-image">Sem Imagem</span>
                {% endif %}
             </div>
 
@@ -31,17 +32,17 @@
                <div class="admin-actions">
                   <button class="admin-btn openModal"
                     data-id="{{ hub.id }}"
-                    data-nome="{{ hub.nome_hub }}"
-                    data-descricao="{{ hub.descricao_hub }}"
+                    data-nome_hub="{{ hub.nome_hub }}"
+                    data-descricao_hub="{{ hub.descricao_hub }}"
                     {% if hub.foto_hub %}
-                        data-imagem="{{ hub.foto_hub.url }}"
+                        data-foto_hub="{{ hub.foto_hub.url }}"
                     {% else %}
-                        data-imagem=""
+                        data-foto_hub=""
                     {% endif %}
-                    <img src="{% static 'img/update.png' %}" alt="Editar" />
+                    <img src="{% static 'img/update.png' %}" alt="Editar"/>
                   </button>
-                  {%if hub.is_active%}
-                  <button class="admin-btn admin-btn-danger" onclick="confirmarExclusao('{% url 'administrador:deletaHub' hub.id %}')">
+                  {%if hub.isActive %}
+                  <button class="admin-btn admin-btn-danger" onclick=confirmarExclusao("{% url 'administrador:deletaHub' hub.id %}")>
                      <img src="{% static 'img/delete.png' %}" alt="Desativar" />
                   </button>
                   {%else%}
@@ -52,92 +53,21 @@
                </div>
             </div>
             <div class="admin-cell text-center">
-               {% if hub.is_active %}
+               {% if hub.isActive%}
                <img src="{% static 'img/status_green.png' %}" width='18px' alt="Ativo">
                {% else %}
                <img src="{% static 'img/status_red.png' %}" width='18px' alt="Desativado">
                {% endif %}
             </div>
          </div>
-
-         <!-- Card mobile -->
-         <div class="mobile-card">
-            <div class="mobile-card-header">
-               <div>
-                  <div class="mobile-card-title">
-                     {{ hub.nome }}
-                     {% if hub.is_active %}
-                     <img style="margin-left: 10px; margin-top: -6px;" src="{% static 'img/status_green.png' %}" width='18px' alt="Ativo">
-                     {% else %}
-                     <img style="margin-left: 10px; margin-top: -6px;" src="{% static 'img/status_red.png' %}" width='18px' alt="Desativado">
-                     {% endif %}
-                  </div>
-                  <div class="mobile-card-key">{{ hub.nome_key }}</div>
-               </div>
-               {% if hub.imagem %}
-                  <img src="{{ hub.imagem.url }}" class="mobile-card-img" alt="{{ hub.nome }}" />
-               {% else %}
-                  <div class="mobile-card-no-img">Sem img</div>
-               {% endif %}
-            </div>
-            
-            <div class="mobile-card-body">
-               <div class="mobile-card-desc">{{ hub.descricao }}</div>
-               
-               <div class="mobile-card-downloads">
-                  <a class="mobile-download-btn" href="{{ hub.lamina.url }}" download>
-                     <img src="{% static 'img/file.png' %}" alt="Download" width="14" />
-                     Lâmina
-                  </a>
-                  <a class="mobile-download-btn" href="{{ hub.mq5.url }}" download>
-                     <img src="{% static 'img/bot.png' %}" alt="Download" width="14" />
-                     EX5
-                  </a>
-               </div>
-            </div>
-
-            <div class="mobile-card-footer">
-               <button class="admin-btn openModal"
-                  data-id="{{ hub.id }}"
-                  data-nome="{{ hub.nome }}"
-                  data-nome-key="{{ hub.nome_key }}"
-                  data-descricao="{{ hub.descricao }}"
-                  {% if hub.imagem %}
-                  data-imagem="{{ hub.imagem.url }}"
-                  {% else %}
-                  data-imagem=""
-                  {% endif %}
-                  data-lamina="{{ hub.lamina.url }}"
-                  data-mq5="{{ hub.mq5.url }}">
-                  <img src="{% static 'img/update.png' %}" alt="Editar" />
-                  <span>Editar</span>
-               </button>
-               {%if hub.is_active%}
-               <button class="admin-btn admin-btn-danger" onclick="confirmarExclusao('{% url 'administrador:deletahub' j.id %}')">
-                  <img src="{% static 'img/delete.png' %}" alt="Desativar" />
-                  <span>Desativar</span>
-               </button>
-               {%else%}
-               <button class="admin-btn admin-btn-success" onclick="confirmarExclusao('{% url 'administrador:deletahub' hub.id %}')">
-                  <img src="{% static 'img/active.png' %}" alt="Ativar" />
-                  <span>Ativar</span>
-               </button>
-               {%endif%}
-            </div>
-         </div>
-         {% empty %}
-         <div class="admin-empty">
-            <p>Nenhum robô cadastrado.</p>
-         </div>
          {% endfor %}
-      </div>
-   </section>
-</main>
-
-<!-- Modal de Edição -->
-<div class="modal" id="modal">
-   <div class="modal-content">
-      <div class="modal-header">
+      </section>
+   </main>
+   
+   <!-- Modal de Edição -->
+   <div class="modal" id="modal">
+      <div class="modal-content">
+         <div class="modal-header">
          <h2>Editar Hub</h2>
          <button class="close" id="closeModal">&times;</button>
       </div>
@@ -156,58 +86,59 @@
          </div>
          
          <div class="form-group">
-            <label for="fileImagem">Alterar Foto</label>
+            <label for="filefoto_hub">Alterar Foto</label>
             <input type="file" id="fleFotoHub" name="fleFotoHub">
          </div>
-                  
+         
          <button type="submit" name="acao" value="alterar">Salvar Alterações</button>
       </form>
    </div>
 </div>
+{% endblock %}
 
 <script>
    const openBtns = document.querySelectorAll('.openModal');
    const closeBtn = document.getElementById('closeModal');
    const modal = document.getElementById('modal');
    const form = document.getElementById('contactForm');
-
+   
    // Inputs dentro do modal
-   const inputId = document.getElementById('id');
+   const inputId = document.getElementById('idHub');
    const inputNome = document.getElementById('txtNomeHub');
    const inputDescricao = document.getElementById('txtDescricaoHub');
-
+   
    // Função para abrir modal
    function openModal() {
-        modal.classList.add("show");
-        modal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
+      modal.classList.add("show");
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
    }
-
+   
    // Função para fechar modal com animação
    function closeModal() {
       modal.classList.add("closing");
 
       modal.addEventListener("animationend", () => {
-        modal.classList.remove("show", "closing");
-        modal.style.display = 'none';
-        document.body.style.overflow = '';
-        form.reset();
+         modal.classList.remove("show", "closing");
+         modal.style.display = 'none';
+         document.body.style.overflow = '';
+         form.reset();
       }, { once: true });
    }
-
+   
    // Eventos para abrir modal
    openBtns.forEach(btn => {
       btn.addEventListener('click', () => {
-        const id = btn.dataset.id;
-        const nome = btn.dataset.nome;
-        const descricao = btn.dataset.descricao;
-
-        inputId.value = id;
-        inputNome.value = nome;
-        inputNomeKey.value = nomeKey;
-        inputDescricao.value = descricao;
-
-        openModal();
+         const id = btn.dataset.id;
+         const nome = btn.dataset.nome;
+         const descricao = btn.dataset.descricao;
+         
+         inputId.value = id;
+         inputNome.value = nome;
+         inputNomeKey.value = nomeKey;
+         inputDescricao.value = descricao;
+         
+         openModal();
       });
    });
 
@@ -234,4 +165,4 @@
       }
    }
 </script>
-{% endblock %}
+

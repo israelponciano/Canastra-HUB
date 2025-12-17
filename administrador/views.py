@@ -5,6 +5,14 @@ from django.contrib.auth.decorators import login_required
 from core.models import * 
 
 # Create your views here.
+@login_required
+def gerenciarHubs(request):
+    if (request.user.is_admin != True):
+        messages.error(request, "Acesso negado")
+        return redirect('core:home')
+    
+    hubs_lista = Hub.objects.order_by('-isActive')
+    return render(request, "gerenciarHubs.html", {'hubs_lista': hubs_lista})
 
 @login_required
 def cadastrarHub(request):
@@ -13,9 +21,15 @@ def cadastrarHub(request):
         return redirect('core:home')
     
     if request.method == 'POST':
+        id = request.POST.get('idhub')
         nome_hub = request.POST.get('txtNomeHub')
-        foto_hub = request.FILES.get("fleFotoHubs")  
-        descricao_hub= request.POST.get("txtDescricaoHub")  
+        foto_hub = request.FILES.get("fleFotoHub")  
+        descricao_hub= request.POST.get("txtDescricaoHub") 
+        
+        hub = Hub.objects.get(id=id)
+        if Hub.objects.filter(nome_hub=nome_hub).exclude(id=hub.id).exists():
+            messages.error(request, "Hub já Cadastrado no sistema")
+            return redirect('administrador:gerenciarHubs') 
 
         hubs = Hub.objects.create(    
         nome_hub=nome_hub,
@@ -62,28 +76,20 @@ def alterarHub(request):
     messages.error(request, "Não foi possivel acessar")
     return redirect('administrador:gerenciarHubs')
 
-@login_required
-def gerenciarHubs(request):
-    if (request.user.is_admin != True):
-        messages.error(request, "Acesso negado")
-        return redirect('core:home')
-    
-    hubs_lista = Hub.objects.order_by('-is_active')
-    return render(request, "gerenciarHubs.html", {'hubs_lista': hubs_lista})
 
 
 @login_required
-def deletaHubs(request, hubs_id):
+def deletaHub(request, hubs_id):
     if (request.user.is_admin != True):
         messages.error(request, "Acesso negado")
         return redirect('core:home')
     hub = Hub.objects.get(id=hubs_id)
-    if hub.is_active:
-        hub.is_active = False
+    if hub.isActive:
+        hub.isActive = False
         hub.save()
         messages.success(request, "Hub Desativado com sucesso!")
     else:
-        hub.is_active = True
+        hub.isActive = True
         hub.save()
         messages.success(request, "Hub Ativado com sucesso!")
     return redirect('administrador:gerenciarHubs')

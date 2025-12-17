@@ -5,6 +5,8 @@ from . import views
 app_name = 'administrador'
 
 urlpatterns = [
-    path("cadastro_hubs/", views.cadastro_hubs, name="cadastro_hubs"),
-    # path("gerenciar_hubs/", views.cadastro_hubs, name="cadastro_hubs"),
+    path("cadastrarHub/", views.cadastrarHub, name="cadastrarHub"),
+    path("gerenciarHubs/", views.gerenciarHubs, name="gerenciarHubs"),
+    path("alterarHub/", views.alterarHub, name="alterarHub"),
+    path("deletaHub/<int:hubs_id>", views.deletaHub, name="deletaHub"),
 ]
