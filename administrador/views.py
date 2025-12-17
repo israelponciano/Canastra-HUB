@@ -5,6 +5,17 @@ from django.contrib.auth.decorators import login_required
 from core.models import * 
 
 # Create your views here.
+
+
+
+@login_required
+def areaAdm(request):
+    if (request.user.is_admin != True):
+        messages.error(request, "Acesso negado")
+        return redirect('core:home')
+    
+    return render(request, "areaAdm.html")
+
 @login_required
 def gerenciarHubs(request):
     if (request.user.is_admin != True):

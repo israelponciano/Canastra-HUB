@@ -1,26 +1,29 @@
-{% extends 'master.html' %}
+{% extends 'masterAdm.html' %}
 {% load static %}
 {% block conteudo %}
 
 <main class="efeito" id="efeito">
    <section id="gerenciar-hubs">
-      <h2 class="section-title">Gerenciar <span>Hubs<span></h2>
+      <h2 class="section-title">Gerenciar <span>Hubs</span></h2>
 
       <div class="admin-card">
-         <!-- Header da tabela (desktop) - 8 colunas -->
+         <!-- Header da tabela (desktop) - 6 colunas -->
          <div class="admin-header admin-header-hubs">
+            <div>ID</div>
             <div>Nome</div>
             <div>Descrição</div>
             <div>Foto</div>
+            <div>Ações</div>
+            <div>Status</div>
          </div>
 
          {% for hub in hubs_lista %}
-         <!-- Linha desktop - 8 colunas -->
+         <!-- Linha desktop - 6 colunas -->
          <div class="admin-row admin-row-hubs">
             <div class="admin-cell id">{{ hub.id }}</div>
             <div class="admin-cell nome">{{ hub.nome_hub }}</div>
             <div class="admin-cell descricao">{{ hub.descricao_hub }}</div>
-            <div class="admin-cell">
+            <div class="admin-cell foto">
                {% if hub.foto_hub %}
                   <img src="{{ hub.foto_hub.url }}" class="admin-thumb" alt="{{ hub.nome_hub }}" />
                {% else %}
@@ -28,55 +31,61 @@
                {% endif %}
             </div>
 
-            <div class="admin-cell">
+            <div class="admin-cell acoes">
                <div class="admin-actions">
                   <button class="admin-btn openModal"
-                    data-id="{{ hub.id }}"
-                    data-nome_hub="{{ hub.nome_hub }}"
-                    data-descricao_hub="{{ hub.descricao_hub }}"
-                    {% if hub.foto_hub %}
+                     data-id="{{ hub.id }}"
+                     data-nome_hub="{{ hub.nome_hub }}"
+                     data-descricao_hub="{{ hub.descricao_hub }}"
+                     {% if hub.foto_hub %}
                         data-foto_hub="{{ hub.foto_hub.url }}"
-                    {% else %}
+                     {% else %}
                         data-foto_hub=""
-                    {% endif %}
-                    <img src="{% static 'img/update.png' %}" alt="Editar"/>
+                     {% endif %}>
+                     <img src="{% static 'img/update.png' %}" alt="Editar"/>
                   </button>
-                  {%if hub.isActive %}
-                  <button class="admin-btn admin-btn-danger" onclick=confirmarExclusao("{% url 'administrador:deletaHub' hub.id %}")>
+                  {% if hub.isActive %}
+                  <button class="admin-btn admin-btn-danger" onclick="confirmarExclusao('{% url 'administrador:deletaHub' hub.id %}')">
                      <img src="{% static 'img/delete.png' %}" alt="Desativar" />
                   </button>
-                  {%else%}
+                  {% else %}
                   <button class="admin-btn admin-btn-success" onclick="confirmarExclusao('{% url 'administrador:deletaHub' hub.id %}')">
                      <img src="{% static 'img/active.png' %}" alt="Ativar" />
                   </button>
-                  {%endif%}
+                  {% endif %}
                </div>
             </div>
-            <div class="admin-cell text-center">
-               {% if hub.isActive%}
-               <img src="{% static 'img/status_green.png' %}" width='18px' alt="Ativo">
+
+            <div class="admin-cell status text-center">
+               {% if hub.isActive %}
+               <img src="{% static 'img/status_green.png' %}" width="18px" alt="Ativo">
                {% else %}
-               <img src="{% static 'img/status_red.png' %}" width='18px' alt="Desativado">
+               <img src="{% static 'img/status_red.png' %}" width="18px" alt="Desativado">
                {% endif %}
             </div>
          </div>
+         {% empty %}
+         <div class="admin-row admin-row-empty">
+            <div class="admin-cell">Nenhum hub cadastrado.</div>
+         </div>
          {% endfor %}
-      </section>
-   </main>
-   
-   <!-- Modal de Edição -->
-   <div class="modal" id="modal">
-      <div class="modal-content">
-         <div class="modal-header">
+      </div>
+   </section>
+</main>
+
+<!-- Modal de Edição -->
+<div class="modal" id="modal">
+   <div class="modal-content">
+      <div class="modal-header">
          <h2>Editar Hub</h2>
          <button class="close" id="closeModal">&times;</button>
       </div>
       <form id="contactForm" action="{% url 'administrador:alterarHub' %}" method="POST" enctype="multipart/form-data">
          {% csrf_token %}
-         <input type="hidden" id="id" name="idhub">
+         <input type="hidden" id="idHub" name="idhub">
          
          <div class="form-group">
-            <label for="txtNome">Nome do Hub</label>
+            <label for="txtNomeHub">Nome do Hub</label>
             <input type="text" id="txtNomeHub" name="txtNomeHub" required>
          </div>
          
@@ -84,21 +93,35 @@
             <label for="txtDescricaoHub">Descrição</label>
             <textarea class="form-control" name="txtDescricaoHub" id="txtDescricaoHub" maxlength="250" rows="4"></textarea>
          </div>
-         
+
          <div class="form-group">
-            <label for="filefoto_hub">Alterar Foto</label>
-            <input type="file" id="fleFotoHub" name="fleFotoHub">
+            <label>Foto Atual</label>
+            <div id="fotoAtualContainer">
+               <img id="fotoAtualPreview" src="" alt="Foto atual" class="admin-thumb-preview" style="display: none;">
+               <span id="semFotoAtual" class="no-image">Sem imagem</span>
+            </div>
          </div>
          
-         <button type="submit" name="acao" value="alterar">Salvar Alterações</button>
+         <div class="form-group">
+            <label for="fleFotoHub">Alterar Foto</label>
+            <input type="file" id="fleFotoHub" name="fleFotoHub" accept="image/*">
+         </div>
+         
+         <div class="form-actions">
+            <button type="button" class="btn-cancelar" id="btnCancelar">Cancelar</button>
+            <button type="submit" class="btn-salvar" name="acao" value="alterar">Salvar Alterações</button>
+         </div>
       </form>
    </div>
 </div>
+
 {% endblock %}
 
+{% block scripts %}
 <script>
    const openBtns = document.querySelectorAll('.openModal');
    const closeBtn = document.getElementById('closeModal');
+   const btnCancelar = document.getElementById('btnCancelar');
    const modal = document.getElementById('modal');
    const form = document.getElementById('contactForm');
    
@@ -106,6 +129,8 @@
    const inputId = document.getElementById('idHub');
    const inputNome = document.getElementById('txtNomeHub');
    const inputDescricao = document.getElementById('txtDescricaoHub');
+   const fotoAtualPreview = document.getElementById('fotoAtualPreview');
+   const semFotoAtual = document.getElementById('semFotoAtual');
    
    // Função para abrir modal
    function openModal() {
@@ -123,6 +148,9 @@
          modal.style.display = 'none';
          document.body.style.overflow = '';
          form.reset();
+         // Reset da preview de foto
+         fotoAtualPreview.style.display = 'none';
+         semFotoAtual.style.display = 'inline';
       }, { once: true });
    }
    
@@ -130,20 +158,33 @@
    openBtns.forEach(btn => {
       btn.addEventListener('click', () => {
          const id = btn.dataset.id;
-         const nome = btn.dataset.nome;
-         const descricao = btn.dataset.descricao;
+         const nome = btn.dataset.nome_hub;
+         const descricao = btn.dataset.descricao_hub;
+         const foto = btn.dataset.foto_hub;
          
          inputId.value = id;
          inputNome.value = nome;
-         inputNomeKey.value = nomeKey;
          inputDescricao.value = descricao;
+         
+         // Mostrar foto atual se existir
+         if (foto) {
+            fotoAtualPreview.src = foto;
+            fotoAtualPreview.style.display = 'block';
+            semFotoAtual.style.display = 'none';
+         } else {
+            fotoAtualPreview.style.display = 'none';
+            semFotoAtual.style.display = 'inline';
+         }
          
          openModal();
       });
    });
 
-   // Evento do botão fechar
+   // Evento do botão fechar (X)
    closeBtn.addEventListener('click', closeModal);
+
+   // Evento do botão cancelar
+   btnCancelar.addEventListener('click', closeModal);
 
    // Fecha ao clicar fora do conteúdo
    window.addEventListener('click', (e) => {
@@ -159,10 +200,11 @@
       }
    });
 
+   // Confirmação de exclusão/ativação
    function confirmarExclusao(url) {
       if (confirm("Tem certeza que deseja excluir/ativar este Hub?")) {
-        window.location.href = url;
+         window.location.href = url;
       }
    }
 </script>
-
+{% endblock %}

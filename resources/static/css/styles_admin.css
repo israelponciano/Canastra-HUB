@@ -1,0 +1,1303 @@
+/* =============================================
+   STYLES ADMIN - CSS COMPLETO
+   Sistema de administração Hub Canastra
+   ============================================= */
+
+/* =============================================
+   CSS VARIABLES - DESIGN SYSTEM
+   ============================================= */
+:root {
+   /* Colors - HSL values for easy theming */
+   --primary: 142 76% 36%;
+   --primary-dark: 142 76% 26%;
+   --primary-light: 142 76% 46%;
+   --accent: 0 84% 60%;
+   --accent-light: 0 84% 70%;
+
+   /* Neutral colors */
+   --background: 0 0% 100%;
+   --foreground: 222 84% 5%;
+   --muted: 210 40% 96%;
+   --muted-foreground: 215 16% 47%;
+   --border: 214 32% 91%;
+   --card: 0 0% 100%;
+
+   /* Status colors */
+   --success: 142 76% 36%;
+   --danger: 0 84% 60%;
+   --warning: 45 93% 47%;
+   --info: 200 80% 50%;
+
+   /* Shadows */
+   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+   --shadow-soft: 0 10px 30px -10px hsl(var(--primary) / 0.3);
+
+   /* Transitions */
+   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+   --transition-fast: all 0.15s ease-out;
+
+   /* Typography */
+   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* =============================================
+   BASE STYLES
+   ============================================= */
+* {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+}
+
+html {
+   scroll-behavior: smooth;
+}
+
+body {
+   font-family: var(--font-sans);
+   line-height: 1.5;
+   color: hsl(var(--foreground));
+   background-color: hsl(var(--muted));
+   overflow-x: hidden;
+}
+
+/* Typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+   font-weight: 700;
+   line-height: 1.2;
+   margin-bottom: 1rem;
+}
+
+h1 {
+   font-size: 3rem;
+}
+
+h2 {
+   font-size: 2.5rem;
+}
+
+h3 {
+   font-size: 2rem;
+}
+
+h4 {
+   font-size: 1.5rem;
+}
+
+h5 {
+   font-size: 1.25rem;
+}
+
+h6 {
+   font-size: 1rem;
+}
+
+p {
+   margin-bottom: 1rem;
+   color: hsl(var(--muted-foreground));
+}
+
+a {
+   text-decoration: none;
+   color: inherit;
+}
+
+/* =============================================
+   FLOATING TRIANGLES BACKGROUND
+   ============================================= */
+#floating-triangles {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   pointer-events: none;
+   z-index: -1;
+   overflow: hidden;
+}
+
+.triangle {
+   position: absolute;
+   width: 0;
+   height: 0;
+   opacity: 0.15;
+   animation: float 6s ease-in-out infinite;
+}
+
+.triangle:nth-child(1) {
+   border-left: 30px solid transparent;
+   border-right: 30px solid transparent;
+   border-bottom: 52px solid hsl(var(--accent));
+   top: 10%;
+   left: 10%;
+   animation-delay: 0s;
+}
+
+.triangle:nth-child(2) {
+   border-left: 20px solid transparent;
+   border-right: 20px solid transparent;
+   border-bottom: 35px solid hsl(var(--accent));
+   top: 60%;
+   right: 20%;
+   animation-delay: 2s;
+}
+
+.triangle:nth-child(3) {
+   border-left: 25px solid transparent;
+   border-right: 25px solid transparent;
+   border-bottom: 43px solid hsl(var(--accent));
+   bottom: 20%;
+   left: 70%;
+   animation-delay: 4s;
+}
+
+@keyframes float {
+
+   0%,
+   100% {
+      transform: translateY(0px) rotate(0deg);
+   }
+
+   50% {
+      transform: translateY(-20px) rotate(5deg);
+   }
+}
+
+/* =============================================
+   CONTAINER
+   ============================================= */
+.container {
+   max-width: 1200px;
+   margin: 0 auto;
+   padding: 0 1rem;
+}
+
+/* =============================================
+   UTILITY CLASSES
+   ============================================= */
+.text-primary {
+   color: hsl(var(--primary)) !important;
+}
+
+.text-accent {
+   color: hsl(var(--accent));
+}
+
+.text-center {
+   text-align: center;
+}
+
+.text-end {
+   text-align: right;
+}
+
+.desktop-only {
+   display: block;
+}
+
+.mobile-only {
+   display: none;
+}
+
+/* =============================================
+   NAVIGATION
+   ============================================= */
+#navbar {
+   position: sticky;
+   top: 0;
+   background: rgba(255, 255, 255, 0.95);
+   backdrop-filter: blur(10px);
+   border-bottom: 1px solid hsl(var(--border));
+   z-index: 1000;
+}
+
+.nav-content {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   height: 4rem;
+}
+
+.logo {
+   display: flex;
+   align-items: center;
+   gap: 0.5rem;
+}
+
+.logo a {
+   display: flex;
+   align-items: center;
+}
+
+.logo img {
+   border-radius: 0.5rem;
+   transition: var(--transition);
+}
+
+.logo img:hover {
+   transform: scale(1.05);
+}
+
+.logo-icon {
+   background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-light)));
+   padding: 0.5rem;
+   border-radius: 0.5rem;
+   font-size: 1.5rem;
+}
+
+.logo-text {
+   font-size: 1.25rem;
+   font-weight: 700;
+   color: hsl(var(--primary));
+}
+
+/* Nav Links */
+.nav-links {
+   display: flex;
+   gap: 2rem;
+}
+
+.nav-link {
+   color: hsl(var(--foreground));
+   text-decoration: none;
+   font-weight: 500;
+   position: relative;
+   transition: var(--transition);
+   padding: 0.5rem 0;
+}
+
+.nav-link:hover {
+   color: hsl(var(--primary));
+}
+
+.nav-link::after {
+   content: '';
+   position: absolute;
+   width: 0;
+   height: 2px;
+   bottom: 0;
+   left: 0;
+   background: hsl(var(--primary));
+   transition: var(--transition);
+}
+
+.nav-link:hover::after {
+   width: 100%;
+}
+
+/* Nav Actions - Desktop */
+.nav-actions-pc {
+   display: none;
+}
+
+/* Nav Actions - Mobile */
+.nav-actions-mobile {
+   display: flex;
+   align-items: center;
+   gap: 1rem;
+}
+
+@media (min-width: 768px) {
+   .nav-actions-pc {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+   }
+
+   .nav-actions-mobile {
+      display: none;
+   }
+}
+
+/* =============================================
+   PROFILE DROPDOWN
+   ============================================= */
+.profile-dropdown {
+   position: relative;
+   display: inline-block;
+   cursor: pointer;
+}
+
+.profile-img {
+   width: 50px;
+   height: 50px;
+   border-radius: 50%;
+   object-fit: cover;
+   border: 2px solid hsl(var(--border));
+   transition: var(--transition);
+}
+
+.profile-img:hover {
+   border-color: hsl(var(--primary));
+   transform: scale(1.05);
+}
+
+@media (max-width: 767px) {
+   .profile-img {
+      display: none;
+   }
+}
+
+.dropdown-content {
+   position: absolute;
+   right: 0;
+   top: 100%;
+   background-color: hsl(var(--card));
+   min-width: 150px;
+   box-shadow: var(--shadow-lg);
+   z-index: 1000;
+   border-radius: 0.5rem;
+   overflow: hidden;
+   opacity: 0;
+   transform: translateY(10px);
+   pointer-events: none;
+   transition: opacity 0.2s ease, transform 0.3s ease;
+}
+
+.profile-dropdown:hover .dropdown-content {
+   opacity: 1;
+   transform: translateY(0);
+   pointer-events: auto;
+}
+
+.dropdown-content a,
+.nav-link-home-dropdown {
+   display: block;
+   padding: 0.75rem 1rem;
+   text-decoration: none;
+   color: hsl(var(--foreground));
+   background-color: hsl(var(--card));
+   transition: var(--transition);
+   font-weight: 500;
+}
+
+.dropdown-content a:hover,
+.nav-link-home-dropdown:hover {
+   background-color: hsl(var(--primary) / 0.1);
+   color: hsl(var(--primary));
+}
+
+/* =============================================
+   MOBILE MENU
+   ============================================= */
+.mobile-menu-btn {
+   background: none;
+   border: none;
+   font-size: 1.5rem;
+   cursor: pointer;
+   padding: 0.5rem;
+   border-radius: 0.5rem;
+   transition: var(--transition);
+   color: hsl(var(--foreground));
+}
+
+.mobile-menu-btn:hover {
+   background: hsl(var(--muted));
+}
+
+.mobile-menu {
+   display: none;
+   padding: 1rem 0;
+   border-top: 1px solid hsl(var(--border));
+   animation: slideDown 0.3s ease-out;
+}
+
+.mobile-menu.active {
+   display: block;
+}
+
+.mobile-nav-links {
+   display: flex;
+   flex-direction: column;
+   gap: 0.5rem;
+}
+
+.mobile-nav-links .nav-link {
+   padding: 0.75rem 0;
+   border-bottom: 1px solid hsl(var(--border));
+}
+
+.mobile-nav-links .nav-link:last-child {
+   border-bottom: none;
+}
+
+.mobile-nav-links .btn {
+   margin-top: 1rem;
+   width: 100%;
+}
+
+@keyframes slideDown {
+   from {
+      opacity: 0;
+      transform: translateY(-10px);
+   }
+
+   to {
+      opacity: 1;
+      transform: translateY(0);
+   }
+}
+
+/* =============================================
+   BUTTON COMPONENTS
+   ============================================= */
+.btn {
+   display: inline-flex !important;
+   align-items: center !important;
+   justify-content: center !important;
+   padding: 0.75rem 1.5rem !important;
+   border: none !important;
+   border-radius: 0.5rem !important;
+   font-weight: 600 !important;
+   text-decoration: none !important;
+   cursor: pointer !important;
+   transition: var(--transition) !important;
+   font-size: 1rem !important;
+   gap: 0.5rem !important;
+}
+
+.btn-primary,
+.btn-primary-admin {
+   background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-light))) !important;
+   color: white !important;
+   border: none;
+   padding: 0.75rem 1.5rem;
+   border-radius: 0.5rem;
+   font-weight: 600;
+   cursor: pointer;
+   transition: var(--transition);
+   font-size: 1rem;
+}
+
+.btn-primary:hover,
+.btn-primary-admin:hover {
+   transform: translateY(-2px) !important;
+   box-shadow: var(--shadow-lg) !important;
+}
+
+.btn-secondary {
+   background: rgba(255, 255, 255, 0.9) !important;
+   color: hsl(var(--foreground)) !important;
+   backdrop-filter: blur(10px) !important;
+}
+
+.btn-secondary:hover {
+   background: white !important;
+   transform: translateY(-2px) !important;
+}
+
+.btn-outline {
+   background: transparent !important;
+   color: hsl(var(--foreground)) !important;
+   border: 2px solid hsl(var(--border)) !important;
+}
+
+.btn-outline:hover {
+   background: hsl(var(--primary)) !important;
+   color: white !important;
+   border-color: hsl(var(--primary)) !important;
+}
+
+.btn-accent {
+   background: hsl(var(--accent)) !important;
+   color: white !important;
+}
+
+.btn-accent:hover {
+   transform: translateY(-2px) scale(1.02) !important;
+   box-shadow: var(--shadow-lg) !important;
+}
+
+.btn-lg {
+   padding: 1rem 2rem !important;
+   font-size: 1.1rem !important;
+}
+
+/* =============================================
+   MAIN CONTAINER - ADMIN PAGE
+   ============================================= */
+.efeito {
+   max-width: 1400px;
+   margin: 0 auto;
+   padding: 2rem;
+   min-height: calc(100vh - 4rem);
+}
+
+/* =============================================
+   SECTION TITLE
+   ============================================= */
+.section-title {
+   font-size: 2rem;
+   font-weight: 700;
+   color: hsl(var(--foreground));
+   margin-bottom: 2rem;
+   text-align: center;
+   position: relative;
+   padding-bottom: 1rem;
+}
+
+.section-title::after {
+   content: '';
+   position: absolute;
+   bottom: 0;
+   left: 50%;
+   transform: translateX(-50%);
+   width: 80px;
+   height: 4px;
+   background: hsl(var(--primary));
+   border-radius: 2px;
+}
+
+.section-title span {
+   color: hsl(var(--primary));
+}
+
+/* =============================================
+   GERENCIAR HUBS - TABLE STYLES
+   ============================================= */
+#gerenciar-hubs {
+   background: hsl(var(--card));
+   border-radius: 1rem;
+   padding: 2rem;
+   box-shadow: var(--shadow-md);
+}
+
+/* Admin Card (Table Container) */
+.admin-card {
+   overflow-x: auto;
+}
+
+/* Admin Header (Table Header) */
+.admin-header {
+   display: grid;
+   background: hsl(var(--primary));
+   color: white;
+   font-weight: 600;
+   border-radius: 0.5rem 0.5rem 0 0;
+   padding: 1rem;
+   text-align: center;
+   font-size: 0.95rem;
+   text-transform: uppercase;
+   letter-spacing: 0.5px;
+}
+
+.admin-header-hubs {
+   grid-template-columns: 60px 1fr 2fr 100px 120px 80px;
+   gap: 1rem;
+}
+
+.admin-header div {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+
+/* Admin Row (Table Rows) */
+.admin-row {
+   display: grid;
+   padding: 1rem;
+   border-bottom: 1px solid hsl(var(--border));
+   align-items: center;
+   transition: var(--transition);
+   background: hsl(var(--card));
+}
+
+.admin-row:hover {
+   background: hsl(var(--muted));
+}
+
+.admin-row:last-child {
+   border-bottom: none;
+   border-radius: 0 0 0.5rem 0.5rem;
+}
+
+.admin-row-hubs {
+   grid-template-columns: 60px 1fr 2fr 100px 120px 80px;
+   gap: 1rem;
+}
+
+.admin-row-empty {
+   display: flex;
+   justify-content: center;
+   padding: 3rem;
+   color: hsl(var(--muted-foreground));
+   font-style: italic;
+}
+
+/* Admin Cells */
+.admin-cell {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   text-align: center;
+   font-size: 0.95rem;
+   color: hsl(var(--foreground));
+}
+
+.admin-cell.id {
+   font-weight: 700;
+   color: hsl(var(--primary));
+   background: hsl(var(--primary) / 0.1);
+   border-radius: 0.5rem;
+   padding: 0.25rem 0.5rem;
+}
+
+.admin-cell.nome {
+   font-weight: 600;
+}
+
+.admin-cell.descricao {
+   text-align: left;
+   justify-content: flex-start;
+   color: hsl(var(--muted-foreground));
+   font-size: 0.9rem;
+   line-height: 1.4;
+   display: -webkit-box;
+   -webkit-line-clamp: 2;
+   -webkit-box-orient: vertical;
+   overflow: hidden;
+}
+
+/* Thumbnail Images */
+.admin-thumb {
+   width: 60px;
+   height: 60px;
+   object-fit: cover;
+   border-radius: 0.5rem;
+   border: 2px solid hsl(var(--border));
+   transition: var(--transition);
+}
+
+.admin-thumb:hover {
+   transform: scale(1.1);
+   box-shadow: var(--shadow-md);
+}
+
+.admin-thumb-preview {
+   max-width: 150px;
+   max-height: 150px;
+   object-fit: cover;
+   border-radius: 0.5rem;
+   border: 2px solid hsl(var(--border));
+}
+
+.no-image {
+   display: inline-block;
+   padding: 0.5rem 0.75rem;
+   background: hsl(var(--muted));
+   color: hsl(var(--muted-foreground));
+   border-radius: 0.5rem;
+   font-size: 0.8rem;
+   font-style: italic;
+}
+
+/* Admin Actions (Buttons) */
+.admin-actions {
+   display: flex;
+   gap: 0.5rem;
+   justify-content: center;
+}
+
+.admin-btn {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   width: 40px;
+   height: 40px;
+   border: none;
+   border-radius: 0.5rem;
+   cursor: pointer;
+   transition: var(--transition);
+   background: hsl(var(--muted));
+}
+
+.admin-btn:hover {
+   transform: translateY(-2px);
+   box-shadow: var(--shadow-md);
+}
+
+.admin-btn img {
+   width: 20px;
+   height: 20px;
+   object-fit: contain;
+}
+
+.admin-btn-danger {
+   background: hsl(var(--danger) / 0.1);
+}
+
+.admin-btn-danger:hover {
+   background: hsl(var(--danger));
+}
+
+.admin-btn-danger:hover img {
+   filter: brightness(0) invert(1);
+}
+
+.admin-btn-success {
+   background: hsl(var(--success) / 0.1);
+}
+
+.admin-btn-success:hover {
+   background: hsl(var(--success));
+}
+
+.admin-btn-success:hover img {
+   filter: brightness(0) invert(1);
+}
+
+/* Status Cell */
+.admin-cell.status img {
+   transition: var(--transition);
+}
+
+.admin-cell.status img:hover {
+   transform: scale(1.2);
+}
+
+/* =============================================
+   CADASTRAR HUB - FORM PAGE
+   ============================================= */
+#cadastrar-hub {
+   background: hsl(var(--card));
+   border-radius: 1rem;
+   padding: 2rem;
+   box-shadow: var(--shadow-md);
+   max-width: 700px;
+   margin: 0 auto;
+}
+
+/* =============================================
+   MODAL STYLES
+   ============================================= */
+.modal {
+   display: none;
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background: rgba(0, 0, 0, 0.6);
+   backdrop-filter: blur(4px);
+   z-index: 1000;
+   justify-content: center;
+   align-items: center;
+   padding: 1rem;
+}
+
+.modal.show {
+   animation: fadeIn 0.3s ease-out;
+}
+
+.modal.closing {
+   animation: fadeOut 0.3s ease-out;
+}
+
+.modal-content {
+   background: hsl(var(--card));
+   border-radius: 1rem;
+   width: 100%;
+   max-width: 500px;
+   max-height: 90vh;
+   overflow-y: auto;
+   box-shadow: var(--shadow-lg);
+   animation: slideUp 0.3s ease-out;
+}
+
+.modal.closing .modal-content {
+   animation: slideDownModal 0.3s ease-out;
+}
+
+.modal-header {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 1.5rem;
+   border-bottom: 1px solid hsl(var(--border));
+   background: hsl(var(--primary));
+   border-radius: 1rem 1rem 0 0;
+}
+
+.modal-header h2 {
+   color: white;
+   font-size: 1.25rem;
+   margin: 0;
+}
+
+.close {
+   background: rgba(255, 255, 255, 0.2);
+   border: none;
+   color: white;
+   font-size: 1.5rem;
+   width: 36px;
+   height: 36px;
+   border-radius: 50%;
+   cursor: pointer;
+   transition: var(--transition);
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+
+.close:hover {
+   background: rgba(255, 255, 255, 0.3);
+   transform: rotate(90deg);
+}
+
+/* =============================================
+   FORM STYLES
+   ============================================= */
+#contactForm,
+.admin-form {
+   padding: 1.5rem;
+}
+
+#cadastrar-hub .admin-form {
+   padding: 0;
+}
+
+.form-group {
+   margin-bottom: 1.5rem;
+}
+
+.form-label {
+   display: block;
+   font-weight: 600;
+   color: hsl(var(--foreground));
+   margin-bottom: 0.5rem;
+   font-size: 0.95rem;
+}
+
+.form-group label {
+   display: block;
+   font-weight: 600;
+   color: hsl(var(--foreground));
+   margin-bottom: 0.5rem;
+   font-size: 0.95rem;
+}
+
+.form-group label h6 {
+   margin: 0;
+   font-size: 0.95rem;
+   font-weight: 600;
+}
+
+.form-control,
+.form-input {
+   width: 100%;
+   padding: 0.75rem 1rem;
+   border: 2px solid hsl(var(--border));
+   border-radius: 0.5rem;
+   font-size: 1rem;
+   font-family: inherit;
+   transition: var(--transition);
+   background: hsl(var(--background));
+}
+
+.form-control:focus,
+.form-input:focus {
+   outline: none;
+   border-color: hsl(var(--primary));
+   box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1);
+}
+
+.form-control-sm {
+   padding: 0.5rem 0.75rem;
+   font-size: 0.9rem;
+}
+
+textarea.form-control {
+   resize: vertical;
+   min-height: 120px;
+}
+
+input[type="file"].form-control {
+   padding: 0.5rem;
+   cursor: pointer;
+}
+
+input[type="file"].form-control::file-selector-button {
+   background: hsl(var(--primary));
+   color: white;
+   border: none;
+   padding: 0.5rem 1rem;
+   border-radius: 0.25rem;
+   cursor: pointer;
+   font-weight: 500;
+   margin-right: 1rem;
+   transition: var(--transition);
+}
+
+input[type="file"].form-control::file-selector-button:hover {
+   background: hsl(var(--primary-dark));
+}
+
+/* Form Hint */
+.form-hint {
+   display: block;
+   font-size: 0.85rem;
+   color: hsl(var(--muted-foreground));
+   margin-top: 0.5rem;
+}
+
+/* Form Error */
+.form-error {
+   display: block;
+   color: hsl(var(--danger));
+   font-size: 0.875rem;
+   font-weight: 500;
+   margin-top: 0.25rem;
+}
+
+#fotoAtualContainer {
+   margin-top: 0.5rem;
+}
+
+/* =============================================
+   FORM ACTION BUTTONS
+   ============================================= */
+.form-actions {
+   display: flex;
+   gap: 1rem;
+   margin-top: 2rem;
+   padding-top: 1.5rem;
+   border-top: 1px solid hsl(var(--border));
+}
+
+.btn-cancelar,
+.btn-salvar {
+   flex: 1;
+   padding: 0.875rem 1.5rem;
+   border: none;
+   border-radius: 0.5rem;
+   font-size: 1rem;
+   font-weight: 600;
+   cursor: pointer;
+   transition: var(--transition);
+   text-align: center;
+   text-decoration: none;
+}
+
+.btn-cancelar {
+   background: hsl(var(--muted));
+   color: hsl(var(--foreground));
+}
+
+.btn-cancelar:hover {
+   background: hsl(var(--border));
+}
+
+.btn-salvar {
+   background: hsl(var(--primary));
+   color: white;
+}
+
+.btn-salvar:hover {
+   background: hsl(var(--primary-dark));
+   transform: translateY(-2px);
+   box-shadow: var(--shadow-md);
+}
+
+/* =============================================
+   ALERTS
+   ============================================= */
+.alert {
+   padding: 1rem 1.5rem;
+   border-radius: 0.5rem;
+   margin-bottom: 1.5rem;
+   font-weight: 500;
+}
+
+.alert-success {
+   background: hsl(var(--success) / 0.1);
+   color: hsl(var(--success));
+   border: 1px solid hsl(var(--success) / 0.3);
+}
+
+.alert-danger {
+   background: hsl(var(--danger) / 0.1);
+   color: hsl(var(--danger));
+   border: 1px solid hsl(var(--danger) / 0.3);
+}
+
+.alert-warning {
+   background: hsl(var(--warning) / 0.1);
+   color: hsl(var(--warning));
+   border: 1px solid hsl(var(--warning) / 0.3);
+}
+
+.alert-info {
+   background: hsl(var(--info) / 0.1);
+   color: hsl(var(--info));
+   border: 1px solid hsl(var(--info) / 0.3);
+}
+
+/* =============================================
+   BOOTSTRAP COMPATIBILITY CLASSES
+   ============================================= */
+.row {
+   display: flex;
+   flex-wrap: wrap;
+   margin-left: -0.5rem;
+   margin-right: -0.5rem;
+}
+
+.col {
+   flex: 1;
+   padding-left: 0.5rem;
+   padding-right: 0.5rem;
+}
+
+.py-3 {
+   padding-top: 1rem;
+   padding-bottom: 1rem;
+}
+
+.px-4 {
+   padding-left: 1.5rem;
+   padding-right: 1.5rem;
+}
+
+.mt-2 {
+   margin-top: 0.5rem;
+}
+
+.mt-3 {
+   margin-top: 1rem;
+}
+
+.rounded {
+   border-radius: 0.5rem;
+}
+
+.border {
+   border: 1px solid hsl(var(--border));
+}
+
+/* =============================================
+   ANIMATIONS
+   ============================================= */
+@keyframes fadeIn {
+   from {
+      opacity: 0;
+   }
+
+   to {
+      opacity: 1;
+   }
+}
+
+@keyframes fadeOut {
+   from {
+      opacity: 1;
+   }
+
+   to {
+      opacity: 0;
+   }
+}
+
+@keyframes slideUp {
+   from {
+      opacity: 0;
+      transform: translateY(30px);
+   }
+
+   to {
+      opacity: 1;
+      transform: translateY(0);
+   }
+}
+
+@keyframes slideDownModal {
+   from {
+      opacity: 1;
+      transform: translateY(0);
+   }
+
+   to {
+      opacity: 0;
+      transform: translateY(30px);
+   }
+}
+
+/* =============================================
+   RESPONSIVE DESIGN
+   ============================================= */
+@media (max-width: 992px) {
+
+   .admin-header-hubs,
+   .admin-row-hubs {
+      grid-template-columns: 50px 1fr 1.5fr 80px 100px 60px;
+      gap: 0.75rem;
+   }
+
+   .admin-cell.descricao {
+      -webkit-line-clamp: 1;
+   }
+}
+
+@media (max-width: 768px) {
+
+   /* Utilities */
+   .desktop-only {
+      display: none;
+   }
+
+   .mobile-only {
+      display: block;
+   }
+
+   /* Typography */
+   h1 {
+      font-size: 2.5rem;
+   }
+
+   h2 {
+      font-size: 2rem;
+   }
+
+   h3 {
+      font-size: 1.5rem;
+   }
+
+   /* Navigation */
+   .nav-links {
+      display: none;
+   }
+
+   /* Main content */
+   .efeito {
+      padding: 1rem;
+   }
+
+   #gerenciar-hubs,
+   #cadastrar-hub {
+      padding: 1.5rem;
+   }
+
+   .section-title {
+      font-size: 1.5rem;
+   }
+
+   /* Esconder header em mobile */
+   .admin-header {
+      display: none;
+   }
+
+   /* Layout de cards em mobile */
+   .admin-row-hubs {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      border: 1px solid hsl(var(--border));
+      border-radius: 0.75rem;
+      background: hsl(var(--card));
+      position: relative;
+   }
+
+   .admin-row:hover {
+      background: hsl(var(--card));
+      box-shadow: var(--shadow-md);
+   }
+
+   .admin-cell {
+      justify-content: flex-start;
+      text-align: left;
+   }
+
+   .admin-cell.id {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+   }
+
+   .admin-cell.nome {
+      font-size: 1.1rem;
+      order: -1;
+   }
+
+   .admin-cell.descricao {
+      -webkit-line-clamp: 3;
+   }
+
+   .admin-cell.foto {
+      justify-content: center;
+   }
+
+   .admin-thumb {
+      width: 80px;
+      height: 80px;
+   }
+
+   .admin-cell.acoes {
+      justify-content: center;
+      padding-top: 0.5rem;
+      border-top: 1px solid hsl(var(--border));
+   }
+
+   .admin-cell.status {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+   }
+
+   /* Modal ajustes */
+   .modal-content {
+      max-height: 95vh;
+   }
+
+   .form-actions {
+      flex-direction: column;
+   }
+
+   /* Bootstrap rows */
+   .row {
+      flex-direction: column;
+   }
+}
+
+@media (max-width: 480px) {
+   .efeito {
+      padding: 0.5rem;
+   }
+
+   #gerenciar-hubs,
+   #cadastrar-hub {
+      padding: 1rem;
+      border-radius: 0.75rem;
+   }
+
+   .section-title {
+      font-size: 1.25rem;
+   }
+
+   .admin-btn {
+      width: 44px;
+      height: 44px;
+   }
+
+   .admin-btn img {
+      width: 22px;
+      height: 22px;
+   }
+
+   .btn {
+      padding: 0.625rem 1.25rem !important;
+      font-size: 0.9rem !important;
+   }
+
+   .btn-cancelar,
+   .btn-salvar {
+      padding: 0.75rem 1rem;
+   }
+}

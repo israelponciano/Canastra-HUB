@@ -53,7 +53,7 @@
                 <img src="{{ request.session.foto|default:'/static/img/perfil_base.png' }}" alt="Foto de perfil" class="profile-img" id="profileDropdownBtn" />
                 <div class="dropdown-content" id="profileDropdown">
                   {% if request.session.is_admin %}
-                    <a href="#" class="nav-link-home-dropdown">Admin</a>
+                    <a href="{% url 'administrador:areaAdm' %}" class="nav-link-home-dropdown">Admin</a>
                   {% endif %}
                   {% if not request.path == '/perfil/' %}
                     {% comment %} <a class="nav-link-home-dropdown" href="#">Perfil</a> {% endcomment %}

@@ -5,6 +5,7 @@ from . import views
 app_name = 'administrador'
 
 urlpatterns = [
+    path("", views.areaAdm, name="areaAdm"),
     path("cadastrarHub/", views.cadastrarHub, name="cadastrarHub"),
     path("gerenciarHubs/", views.gerenciarHubs, name="gerenciarHubs"),
     path("alterarHub/", views.alterarHub, name="alterarHub"),
