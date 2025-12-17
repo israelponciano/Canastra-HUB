@@ -246,6 +246,25 @@ class Hub(models.Model):
 
     def __str__(self):
         return f"{self.nome_hub}"
+    
+
+class Noticia(models.Model):
+    titulo_noticia = models.CharField(max_length=250)
+    descricao_noticia = models.CharField(max_length=250)
+    fonte = models.CharField(max_length=50)
+    url = models.URLField(blank=True, null=True)
+    isActive = models.BooleanField(default=True)
+    isHome = models.BooleanField(default=True)
+    imagem_noticia = models.ImageField(upload_to="fotos_noticia/",
+                             validators=[FileExtensionValidator(
+                                 allowed_extensions=["jpg", "png", "jpeg"])],
+                             null=True,
+                             blank=True,
+                             default=None)
+
+class NoticiaHub(models.Model):
+    noticia = models.ForeignKey(Noticia, on_delete=models.CASCADE)
+    hub = models.ForeignKey(Hub, on_delete=models.CASCADE)
 
 
 class Eventos(models.Model):

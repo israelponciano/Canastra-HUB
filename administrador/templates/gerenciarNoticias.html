@@ -1,0 +1,238 @@
+{% extends 'masterAdm.html' %}
+{% load static %}
+{% block conteudo %}
+
+<main class="efeito" id="efeito">
+   <section id="gerenciar-noticias">
+      <h2 class="section-title">Gerenciar <span>Notícias</span></h2>
+
+      <div class="admin-card">
+         <!-- Header da tabela (desktop) - 8 colunas -->
+         <div class="admin-header admin-header-noticias">
+            <div>ID</div>
+            <div>Título</div>
+            <div>Descrição</div>
+            <div>Fonte</div>
+            <div>URL</div>
+            <div>Foto</div>
+            <div>Ações</div>
+            <div>Status</div>
+         </div>
+
+         {% for noticia in noticias_lista %}
+         <!-- Linha desktop - 8 colunas -->
+         <div class="admin-row admin-row-noticias">
+            <div class="admin-cell id">{{ noticia.id }}</div>
+            <div class="admin-cell titulo">{{ noticia.titulo_noticia }}</div>
+            <div class="admin-cell descricao">{{ noticia.descricao_noticia }}</div>
+            <div class="admin-cell fonte">{{ noticia.fonte }}</div>
+            <div class="admin-cell url">
+               {% if noticia.url %}
+                  <a href="{{ noticia.url }}" target="_blank" class="url-link">Ver</a>
+               {% else %}
+                  <span class="no-url">-</span>
+               {% endif %}
+            </div>
+            <div class="admin-cell foto">
+               {% if noticia.imagem_noticia %}
+                  <img src="{{ noticia.imagem_noticia.url }}" class="admin-thumb" alt="{{ noticia.titulo_noticia }}" />
+               {% else %}
+                  <span class="no-image">Sem Imagem</span>
+               {% endif %}
+            </div>
+
+            <div class="admin-cell acoes">
+               <div class="admin-actions">
+                  <button class="admin-btn openModal"
+                     data-id="{{ noticia.id }}"
+                     data-titulo_noticia="{{ noticia.titulo_noticia }}"
+                     data-descricao_noticia="{{ noticia.descricao_noticia }}"
+                     data-fonte="{{ noticia.fonte }}"
+                     data-url="{{ noticia.url|default:'' }}"
+                     {% if noticia.imagem_noticia %}
+                        data-imagem_noticia="{{ noticia.imagem_noticia.url }}"
+                     {% else %}
+                        data-imagem_noticia=""
+                     {% endif %}>
+                     <img src="{% static 'img/update.png' %}" alt="Editar"/>
+                  </button>
+                  {% if noticia.isActive %}
+                  <button class="admin-btn admin-btn-danger" onclick="confirmarExclusao('{% url 'administrador:deletaNoticia' noticia.id %}')">
+                     <img src="{% static 'img/delete.png' %}" alt="Desativar" />
+                  </button>
+                  {% else %}
+                  <button class="admin-btn admin-btn-success" onclick="confirmarExclusao('{% url 'administrador:deletaNoticia' noticia.id %}')">
+                     <img src="{% static 'img/active.png' %}" alt="Ativar" />
+                  </button>
+                  {% endif %}
+               </div>
+            </div>
+
+            <div class="admin-cell status text-center">
+               {% if noticia.isActive %}
+               <img src="{% static 'img/status_green.png' %}" width="18px" alt="Ativo">
+               {% else %}
+               <img src="{% static 'img/status_red.png' %}" width="18px" alt="Desativado">
+               {% endif %}
+            </div>
+         </div>
+         {% empty %}
+         <div class="admin-row admin-row-empty">
+            <div class="admin-cell">Nenhuma notícia cadastrada.</div>
+         </div>
+         {% endfor %}
+      </div>
+   </section>
+</main>
+
+<!-- Modal de Edição -->
+<div class="modal" id="modal">
+   <div class="modal-content">
+      <div class="modal-header">
+         <h2>Editar Notícia</h2>
+         <button class="close" id="closeModal">&times;</button>
+      </div>
+      <form id="contactForm" action="{% url 'administrador:alterarNoticias' %}" method="POST" enctype="multipart/form-data">
+         {% csrf_token %}
+         <input type="hidden" id="idNoticia" name="idnoticia">
+         
+         <div class="form-group">
+            <label for="txtTituloNoticia">Título da Notícia</label>
+            <input type="text" id="txtTituloNoticia" name="txtTituloNoticia" maxlength="250" required>
+         </div>
+         
+         <div class="form-group">
+            <label for="txtDescricaoNoticia">Descrição</label>
+            <textarea class="form-control" name="txtDescricaoNoticia" id="txtDescricaoNoticia" maxlength="250" rows="4" required></textarea>
+         </div>
+
+         <div class="form-group">
+            <label for="txtFonte">Fonte</label>
+            <input type="text" id="txtFonte" name="txtFonte" maxlength="50" required>
+         </div>
+
+         <div class="form-group">
+            <label for="txtUrl">URL</label>
+            <input type="url" id="txtUrl" name="txtUrl" placeholder="https://exemplo.com">
+         </div>
+
+         <div class="form-group">
+            <label>Foto Atual</label>
+            <div id="fotoAtualContainer">
+               <img id="fotoAtualPreview" src="" alt="Foto atual" class="admin-thumb-preview" style="display: none;">
+               <span id="semFotoAtual" class="no-image">Sem imagem</span>
+            </div>
+         </div>
+         
+         <div class="form-group">
+            <label for="fleImagemNoticia">Alterar Foto</label>
+            <input type="file" id="fleImagemNoticia" name="fleImagemNoticia" accept="image/jpeg,image/jpg,image/png">
+         </div>
+         
+         <div class="form-actions">
+            <button type="button" class="btn-cancelar" id="btnCancelar">Cancelar</button>
+            <button type="submit" class="btn-salvar" name="acao" value="alterar">Salvar Alterações</button>
+         </div>
+      </form>
+   </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+   const openBtns = document.querySelectorAll('.openModal');
+   const closeBtn = document.getElementById('closeModal');
+   const btnCancelar = document.getElementById('btnCancelar');
+   const modal = document.getElementById('modal');
+   const form = document.getElementById('contactForm');
+   
+   // Inputs dentro do modal
+   const inputId = document.getElementById('idNoticia');
+   const inputTitulo = document.getElementById('txtTituloNoticia');
+   const inputDescricao = document.getElementById('txtDescricaoNoticia');
+   const inputFonte = document.getElementById('txtFonte');
+   const inputUrl = document.getElementById('txtUrl');
+   const fotoAtualPreview = document.getElementById('fotoAtualPreview');
+   const semFotoAtual = document.getElementById('semFotoAtual');
+   
+   // Função para abrir modal
+   function openModal() {
+      modal.classList.add("show");
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+   }
+   
+   // Função para fechar modal com animação
+   function closeModal() {
+      modal.classList.add("closing");
+
+      modal.addEventListener("animationend", () => {
+         modal.classList.remove("show", "closing");
+         modal.style.display = 'none';
+         document.body.style.overflow = '';
+         form.reset();
+         // Reset da preview de foto
+         fotoAtualPreview.style.display = 'none';
+         semFotoAtual.style.display = 'inline';
+      }, { once: true });
+   }
+   
+   // Eventos para abrir modal
+   openBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+         const id = btn.dataset.id;
+         const titulo = btn.dataset.titulo_noticia;
+         const descricao = btn.dataset.descricao_noticia;
+         const fonte = btn.dataset.fonte;
+         const url = btn.dataset.url;
+         const foto = btn.dataset.imagem_noticia;
+         
+         inputId.value = id;
+         inputTitulo.value = titulo;
+         inputDescricao.value = descricao;
+         inputFonte.value = fonte;
+         inputUrl.value = url;
+         
+         // Mostrar foto atual se existir
+         if (foto) {
+            fotoAtualPreview.src = foto;
+            fotoAtualPreview.style.display = 'block';
+            semFotoAtual.style.display = 'none';
+         } else {
+            fotoAtualPreview.style.display = 'none';
+            semFotoAtual.style.display = 'inline';
+         }
+         
+         openModal();
+      });
+   });
+
+   // Evento do botão fechar (X)
+   closeBtn.addEventListener('click', closeModal);
+
+   // Evento do botão cancelar
+   btnCancelar.addEventListener('click', closeModal);
+
+   // Fecha ao clicar fora do conteúdo
+   window.addEventListener('click', (e) => {
+      if (e.target === modal) {
+         closeModal();
+      }
+   });
+
+   // Fecha com ESC
+   document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('show')) {
+         closeModal();
+      }
+   });
+
+   // Confirmação de exclusão/ativação
+   function confirmarExclusao(url) {
+      if (confirm("Tem certeza que deseja excluir/ativar esta Notícia?")) {
+         window.location.href = url;
+      }
+   }
+</script>
+{% endblock %}

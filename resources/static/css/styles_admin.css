@@ -588,6 +588,35 @@ a {
    letter-spacing: 0.5px;
 }
 
+.admin-header-noticias {
+   display: grid;
+   grid-template-columns: 60px 1.5fr 2fr 120px 100px 80px 100px 80px;
+   gap: 1rem;
+   align-items: center;
+}
+
+.admin-row-noticias {
+   display: grid;
+   grid-template-columns: 60px 1.5fr 2fr 120px 100px 80px 100px 80px;
+   gap: 1rem;
+   align-items: center;
+}
+
+/* Estilo para o link de URL */
+.url-link {
+   color: #2ecc71;
+   text-decoration: none;
+   font-weight: 500;
+}
+
+.url-link:hover {
+   text-decoration: underline;
+}
+
+.no-url {
+   color: #95a5a6;
+}
+
 .admin-header-hubs {
    grid-template-columns: 60px 1fr 2fr 100px 120px 80px;
    gap: 1rem;
@@ -761,6 +790,294 @@ a {
 .admin-cell.status img:hover {
    transform: scale(1.2);
 }
+
+/* =============================================
+   CADASTRAR NOTÍCIA - FORM PAGE
+   ============================================= */
+#cadastrar-noticia {
+   background: hsl(var(--card));
+   border-radius: 1rem;
+   padding: 2rem;
+   box-shadow: var(--shadow-md);
+   max-width: 900px;
+   margin: 0 auto;
+}
+
+/* =============================================
+   CHECKBOX STYLES
+   ============================================= */
+.checkbox-group {
+   display: flex;
+   flex-direction: column;
+   gap: 0.75rem;
+   margin-top: 0.5rem;
+   padding: 1rem;
+   background: hsl(var(--muted));
+   border-radius: 0.5rem;
+   border: 1px solid hsl(var(--border));
+}
+
+.checkbox-label {
+   display: flex;
+   align-items: center;
+   gap: 0.75rem;
+   cursor: pointer;
+   font-size: 0.95rem;
+   color: hsl(var(--foreground));
+   padding: 0.5rem;
+   border-radius: 0.375rem;
+   transition: var(--transition);
+}
+
+.checkbox-label:hover {
+   background: hsl(var(--background));
+}
+
+.checkbox-label input[type="checkbox"] {
+   width: 20px;
+   height: 20px;
+   cursor: pointer;
+   accent-color: hsl(var(--primary));
+   border: 2px solid hsl(var(--border));
+   border-radius: 0.25rem;
+   transition: var(--transition);
+}
+
+.checkbox-label input[type="checkbox"]:checked {
+   background: hsl(var(--primary));
+}
+
+.checkbox-label input[type="checkbox"]:hover {
+   border-color: hsl(var(--primary));
+   transform: scale(1.05);
+}
+
+.checkbox-label span {
+   user-select: none;
+   font-weight: 500;
+}
+
+/* =============================================
+   FORM GROUP - LAYOUT ESPECÍFICO
+   ============================================= */
+#cadastrar-noticia .form-group,
+#cadastrar-hub .form-group {
+   margin-bottom: 1.75rem;
+}
+
+#cadastrar-noticia .form-label,
+#cadastrar-hub .form-label {
+   font-size: 1rem;
+   font-weight: 600;
+   color: hsl(var(--foreground));
+   margin-bottom: 0.75rem;
+   display: block;
+}
+
+/* Input URL específico */
+input[type="url"].form-control {
+   font-family: 'Courier New', monospace;
+   font-size: 0.9rem;
+}
+
+/* Textarea com contador de caracteres */
+.form-group textarea + .form-hint {
+   text-align: right;
+   font-style: italic;
+}
+
+/* =============================================
+   RESPONSIVE - CADASTRAR NOTÍCIA
+   ============================================= */
+@media (max-width: 768px) {
+   #cadastrar-noticia {
+      padding: 1.5rem;
+      max-width: 100%;
+   }
+
+   .checkbox-group {
+      padding: 0.75rem;
+   }
+
+   .checkbox-label {
+      font-size: 0.9rem;
+      padding: 0.375rem;
+   }
+
+   .checkbox-label input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+   }
+}
+
+@media (max-width: 480px) {
+   #cadastrar-noticia {
+      padding: 1rem;
+      border-radius: 0.75rem;
+   }
+
+   #cadastrar-noticia .form-group {
+      margin-bottom: 1.5rem;
+   }
+
+   .checkbox-group {
+      gap: 0.5rem;
+   }
+}
+
+/* =============================================
+   GERENCIAR NOTÍCIAS - RESPONSIVE
+   ============================================= */
+@media (max-width: 992px) {
+   .admin-header-noticias,
+   .admin-row-noticias {
+      grid-template-columns: 50px 1fr 1.5fr 100px 80px 70px 90px 60px;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+   }
+
+   .admin-cell.descricao {
+      -webkit-line-clamp: 1;
+   }
+
+   .admin-cell.fonte,
+   .admin-cell.url {
+      font-size: 0.8rem;
+   }
+}
+
+@media (max-width: 768px) {
+   /* Esconder header em mobile */
+   .admin-header-noticias {
+      display: none;
+   }
+
+   /* Layout de cards em mobile */
+   .admin-row-noticias {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      border: 1px solid hsl(var(--border));
+      border-radius: 0.75rem;
+      background: hsl(var(--card));
+      position: relative;
+   }
+
+   .admin-row-noticias:hover {
+      background: hsl(var(--card));
+      box-shadow: var(--shadow-md);
+   }
+
+   .admin-row-noticias .admin-cell {
+      justify-content: flex-start;
+      text-align: left;
+   }
+
+   .admin-row-noticias .admin-cell.id {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+   }
+
+   .admin-row-noticias .admin-cell.titulo {
+      font-size: 1.1rem;
+      font-weight: 700;
+      order: -1;
+      margin-bottom: 0.5rem;
+   }
+
+   .admin-row-noticias .admin-cell.descricao {
+      -webkit-line-clamp: 3;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+   }
+
+   .admin-row-noticias .admin-cell.fonte,
+   .admin-row-noticias .admin-cell.url {
+      font-size: 0.85rem;
+      padding: 0.25rem 0;
+   }
+
+   .admin-row-noticias .admin-cell.fonte::before {
+      content: "Fonte: ";
+      font-weight: 700;
+      color: hsl(var(--primary));
+   }
+
+   .admin-row-noticias .admin-cell.url::before {
+      content: "URL: ";
+      font-weight: 700;
+      color: hsl(var(--primary));
+   }
+
+   .admin-row-noticias .admin-cell.foto {
+      justify-content: center;
+      margin: 0.75rem 0;
+   }
+
+   .admin-row-noticias .admin-thumb {
+      width: 100px;
+      height: 100px;
+   }
+
+   .admin-row-noticias .admin-cell.acoes {
+      justify-content: center;
+      padding-top: 0.75rem;
+      margin-top: 0.5rem;
+      border-top: 1px solid hsl(var(--border));
+   }
+
+   .admin-row-noticias .admin-cell.status {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+   }
+}
+
+@media (max-width: 480px) {
+   .admin-row-noticias {
+      padding: 1rem;
+   }
+
+   .admin-row-noticias .admin-cell.titulo {
+      font-size: 1rem;
+   }
+
+   .admin-row-noticias .admin-cell.descricao {
+      font-size: 0.85rem;
+   }
+
+   .admin-row-noticias .admin-thumb {
+      width: 80px;
+      height: 80px;
+   }
+}
+
+/* =============================================
+   SECTION ESPECÍFICA - GERENCIAR NOTÍCIAS
+   ============================================= */
+#gerenciar-noticias {
+   background: hsl(var(--card));
+   border-radius: 1rem;
+   padding: 2rem;
+   box-shadow: var(--shadow-md);
+}
+
+@media (max-width: 768px) {
+   #gerenciar-noticias {
+      padding: 1.5rem;
+   }
+}
+
+@media (max-width: 480px) {
+   #gerenciar-noticias {
+      padding: 1rem;
+      border-radius: 0.75rem;
+   }
+}
+
 
 /* =============================================
    CADASTRAR HUB - FORM PAGE
