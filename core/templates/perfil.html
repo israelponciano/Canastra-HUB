@@ -1,0 +1,894 @@
+{% extends 'master.html' %}
+{% load static %}
+{% block conteudo %}
+<main class="perfil-page">
+   <div class="perfil-container">
+      
+      <!-- Header do Perfil -->
+      <header class="perfil-header">
+         <div class="perfil-avatar-wrapper">
+            <form id="formFoto" action="{% url 'core:atualizarPerfil' %}" method="POST" enctype="multipart/form-data" style="display: contents;">
+               {% csrf_token %}
+               <input type="hidden" name="apenas_foto" value="1">
+               <div class="perfil-avatar">
+                  {% if user.foto %}
+                     <img src="{{ user.foto.url }}" alt="Foto de perfil" id="avatarImg">
+                  {% else %}
+                     <img src="{% static 'img/perfil_base.png' %}" alt="Foto de perfil" id="avatarImg">
+                  {% endif %}
+                  <label for="inputFoto" class="avatar-overlay" title="Alterar foto">
+                     <span class="avatar-icon">+</span>
+                     <span class="avatar-text">Alterar foto</span>
+                  </label>
+                  <input type="file" id="inputFoto" name="foto" accept="image/jpeg,image/png,image/jpg" style="display: none;">
+               </div>
+            </form>
+         </div>
+         <div class="perfil-info-header">
+            <h1 class="perfil-nome">{{ user.nome }}</h1>
+            <p class="perfil-email">{{ user.email }}</p>
+            <span class="perfil-badge perfil-badge-{{ request.session.perfil }}">
+               {% if request.session.perfil == 'usuario' %}
+                  Candidato
+               {% elif request.session.perfil == 'empresa' %}
+                  Empresa
+               {% else %}
+                  Administrador
+               {% endif %}
+            </span>
+         </div>
+         <div class="perfil-actions-header">
+            <button type="button" class="btn-editar" id="btnEditar">
+               <span class="btn-icon">✏️</span>
+               Editar Perfil
+            </button>
+            <button type="button" class="btn-cancelar-edit" id="btnCancelar" style="display: none;">
+               Cancelar
+            </button>
+         </div>
+      </header>
+
+      <!-- Formulário Principal -->
+      <form id="formPerfil" action="{% url 'core:atualizarPerfil' %}" method="POST" enctype="multipart/form-data">
+         {% csrf_token %}
+
+         <!-- ========================================
+              PERFIL ADMIN - Apenas dados básicos
+         ======================================== -->
+         {% if request.session.perfil == 'admin' %}
+         <div class="perfil-grid perfil-grid-single">
+            <section class="perfil-section">
+               <div class="section-header">
+                  <h2 class="section-title">
+                     <span class="section-icon"></span>
+                     Dados do Administrador
+                  </h2>
+               </div>
+               <div class="section-content">
+                  <div class="form-row">
+                     <div class="form-group">
+                        <label class="form-label">Nome</label>
+                        <input type="text" class="form-input" name="nome" value="{{ user.nome }}" disabled>
+                     </div>
+                     <div class="form-group">
+                        <label class="form-label">E-mail</label>
+                        <input type="email" class="form-input" value="{{ user.email }}" disabled readonly>
+                        <small class="form-hint">O e-mail não pode ser alterado</small>
+                     </div>
+                  </div>
+               </div>
+            </section>
+         </div>
+         {% endif %}
+
+         <!-- ========================================
+              PERFIL EMPRESA
+         ======================================== -->
+         {% if request.session.perfil == 'empresa' %}
+         <div class="perfil-grid">
+            <!-- Dados da Empresa -->
+            <section class="perfil-section">
+               <div class="section-header">
+                  <h2 class="section-title">
+                     <span class="section-icon"></span>
+                     Dados da Empresa
+                  </h2>
+               </div>
+               <div class="section-content">
+                  <div class="form-row">
+                     <div class="form-group">
+                        <label class="form-label">Nome Fantasia</label>
+                        <input type="text" class="form-input" name="nomefantasia" value="{{ empresa.nomefantasia }}" disabled>
+                     </div>
+                     <div class="form-group">
+                        <label class="form-label">Razão Social</label>
+                        <input type="text" class="form-input" name="razao_social" value="{{ empresa.razao_social }}" disabled>
+                     </div>
+                  </div>
+                  <div class="form-row">
+                     <div class="form-group">
+                        <label class="form-label">CNPJ</label>
+                        <input type="text" class="form-input" name="cnpj" value="{{ empresa.cnpj }}" disabled>
+                     </div>
+                     <div class="form-group">
+                        <label class="form-label">Tipo de Empresa</label>
+                        <input type="text" class="form-input" name="tipo_empresa" value="{{ empresa.tipo_empresa }}" disabled>
+                     </div>
+                  </div>
+                  <div class="form-row">
+                     <div class="form-group">
+                        <label class="form-label">Segmento</label>
+                        <input type="text" class="form-input" name="segmento" value="{{ empresa.segmento }}" disabled>
+                     </div>
+                     <div class="form-group">
+                        <label class="form-label">Telefone</label>
+                        <input type="text" class="form-input" name="telefone" value="{{ empresa.telefone }}" disabled>
+                     </div>
+                  </div>
+               </div>
+            </section>
+
+            <!-- Endereço da Empresa -->
+            <section class="perfil-section">
+               <div class="section-header">
+                  <h2 class="section-title">
+                     <span class="section-icon"></span>
+                     Endereço
+                  </h2>
+               </div>
+               <div class="section-content">
+                  <div class="form-row">
+                     <div class="form-group form-group-sm">
+                        <label class="form-label">CEP</label>
+                        <input type="text" class="form-input" name="cep" value="{{ empresa.cep }}" disabled>
+                     </div>
+                     <div class="form-group">
+                        <label class="form-label">Rua</label>
+                        <input type="text" class="form-input" name="rua" value="{{ empresa.rua }}" disabled>
+                     </div>
+                  </div>
+                  <div class="form-row">
+                     <div class="form-group form-group-sm">
+                        <label class="form-label">Número</label>
+                        <input type="text" class="form-input" name="numero" value="{{ empresa.numero }}" disabled>
+                     </div>
+                     <div class="form-group">
+                        <label class="form-label">Complemento</label>
+                        <input type="text" class="form-input" name="complemento" value="{{ empresa.complemento }}" disabled>
+                     </div>
+                  </div>
+                  <div class="form-row">
+                     <div class="form-group">
+                        <label class="form-label">Estado</label>
+                        <select class="form-input select-estado" name="estado" data-cidade-target="cidade-empresa" disabled>
+                           <option value="">Selecione o estado</option>
+                           {% for estado in estados %}
+                              <option value="{{ estado.id }}" {% if empresa.estado.id == estado.id %}selected{% endif %}>
+                                 {{ estado.nome_estado }} ({{ estado.sigla_estado }})
+                              </option>
+                           {% endfor %}
+                        </select>
+                     </div>
+                     <div class="form-group">
+                        <label class="form-label">Cidade</label>
+                        <select class="form-input select-cidade" name="cidade" id="cidade-empresa" disabled>
+                           <option value="">Selecione a cidade</option>
+                           {% for cidade in cidades %}
+                              <option value="{{ cidade.id }}" {% if empresa.cidade.id == cidade.id %}selected{% endif %}>
+                                 {{ cidade.nome_cidade }}
+                              </option>
+                           {% endfor %}
+                        </select>
+                     </div>
+                  </div>
+               </div>
+            </section>
+
+            <!-- Hubs Associados -->
+            <section class="perfil-section perfil-section-full">
+               <div class="section-header">
+                  <h2 class="section-title">
+                     <span class="section-icon"></span>
+                     Hubs Associados
+                  </h2>
+               </div>
+               <div class="section-content">
+                  <p class="form-hint hubs-hint">Selecione os hubs que sua empresa faz parte:</p>
+                  <div class="hubs-grid">
+                     {% for hub in hubs %}
+                        <label class="hub-checkbox-item">
+                           <input type="checkbox" name="hubs" value="{{ hub.id }}" 
+                              {% if hub.id in hubs_vinculados %}checked{% endif %} disabled>
+                           <span class="hub-checkbox-label">{{ hub.nome_hub }}</span>
+                        </label>
+                     {% empty %}
+                        <p class="empty-message">Nenhum hub disponível</p>
+                     {% endfor %}
+                  </div>
+               </div>
+            </section>
+         </div>
+         {% endif %}
+
+         <!-- ========================================
+              PERFIL USUARIO (Candidato)
+         ======================================== -->
+         {% if request.session.perfil == 'usuario' %}
+         <div class="perfil-grid">
+            
+            <!-- Informações Pessoais -->
+            <section class="perfil-section">
+               <div class="section-header">
+                  <h2 class="section-title">
+                     <span class="section-icon"></span>
+                     Informações Pessoais
+                  </h2>
+               </div>
+               <div class="section-content">
+                  <div class="form-row">
+                     <div class="form-group">
+                        <label class="form-label">Nome Social</label>
+                        <input type="text" class="form-input" name="nome_social" value="{{ usuario.nome_social|default:'' }}" disabled>
+                     </div>
+                     <div class="form-group">
+                        <label class="form-label">Data de Nascimento</label>
+                        <input type="date" class="form-input" name="data_nascimento" value="{{ usuario.data_nascimento|date:'Y-m-d' }}" disabled>
+                     </div>
+                  </div>
+                  <div class="form-row">
+                     <div class="form-group">
+                        <label class="form-label">Gênero</label>
+                        <select class="form-input" name="genero" disabled>
+                           <option value="">Selecione</option>
+                           <option value="Masculino" {% if usuario.genero == 'Masculino' %}selected{% endif %}>Masculino</option>
+                           <option value="Feminino" {% if usuario.genero == 'Feminino' %}selected{% endif %}>Feminino</option>
+                           <option value="Outro" {% if usuario.genero == 'Outro' %}selected{% endif %}>Outro</option>
+                           <option value="Prefiro não informar" {% if usuario.genero == 'Prefiro não informar' %}selected{% endif %}>Prefiro não informar</option>
+                        </select>
+                     </div>
+                     <div class="form-group">
+                        <label class="form-label">Estado Civil</label>
+                        <select class="form-input" name="estado_civil" disabled>
+                           <option value="">Selecione</option>
+                           <option value="Solteiro(a)" {% if usuario.estado_civil == 'Solteiro(a)' %}selected{% endif %}>Solteiro(a)</option>
+                           <option value="Casado(a)" {% if usuario.estado_civil == 'Casado(a)' %}selected{% endif %}>Casado(a)</option>
+                           <option value="Divorciado(a)" {% if usuario.estado_civil == 'Divorciado(a)' %}selected{% endif %}>Divorciado(a)</option>
+                           <option value="Viúvo(a)" {% if usuario.estado_civil == 'Viúvo(a)' %}selected{% endif %}>Viúvo(a)</option>
+                        </select>
+                     </div>
+                  </div>
+                  <div class="form-row">
+                     <div class="form-group">
+                        <label class="form-label">Nacionalidade</label>
+                        <input type="text" class="form-input" name="nacionalidade" value="{{ usuario.nacionalidade }}" disabled>
+                     </div>
+                     <div class="form-group">
+                        <label class="form-label">Telefone</label>
+                        <input type="text" class="form-input" name="telefone" value="{{ usuario.telefone }}" disabled>
+                     </div>
+                  </div>
+               </div>
+            </section>
+
+            <!-- Endereço -->
+            <section class="perfil-section">
+               <div class="section-header">
+                  <h2 class="section-title">
+                     <span class="section-icon"></span>
+                     Endereço
+                  </h2>
+               </div>
+               <div class="section-content">
+                  <div class="form-row">
+                     <div class="form-group form-group-sm">
+                        <label class="form-label">CEP</label>
+                        <input type="text" class="form-input" name="cep" value="{{ usuario.cep }}" disabled>
+                     </div>
+                     <div class="form-group">
+                        <label class="form-label">Rua</label>
+                        <input type="text" class="form-input" name="rua" value="{{ usuario.rua }}" disabled>
+                     </div>
+                  </div>
+                  <div class="form-row">
+                     <div class="form-group">
+                        <label class="form-label">Bairro</label>
+                        <input type="text" class="form-input" name="bairro" value="{{ usuario.bairro }}" disabled>
+                     </div>
+                     <div class="form-group form-group-sm">
+                        <label class="form-label">Número</label>
+                        <input type="text" class="form-input" name="numero" value="{{ usuario.numero }}" disabled>
+                     </div>
+                  </div>
+                  <div class="form-row">
+                     <div class="form-group">
+                        <label class="form-label">Complemento</label>
+                        <input type="text" class="form-input" name="complemento" value="{{ usuario.complemento|default:'' }}" disabled>
+                     </div>
+                  </div>
+                  <div class="form-row">
+                     <div class="form-group">
+                        <label class="form-label">Estado</label>
+                        <select class="form-input select-estado" name="estado" data-cidade-target="cidade-usuario" disabled>
+                           <option value="">Selecione o estado</option>
+                           {% for estado in estados %}
+                              <option value="{{ estado.id }}" {% if usuario.estado.id == estado.id %}selected{% endif %}>
+                                 {{ estado.nome_estado }} ({{ estado.sigla_estado }})
+                              </option>
+                           {% endfor %}
+                        </select>
+                     </div>
+                     <div class="form-group">
+                        <label class="form-label">Cidade</label>
+                        <select class="form-input select-cidade" name="cidade" id="cidade-usuario" disabled>
+                           <option value="">Selecione a cidade</option>
+                           {% for cidade in cidades %}
+                              <option value="{{ cidade.id }}" {% if usuario.cidade.id == cidade.id %}selected{% endif %}>
+                                 {{ cidade.nome_cidade }}
+                              </option>
+                           {% endfor %}
+                        </select>
+                     </div>
+                  </div>
+               </div>
+            </section>
+
+            <!-- Objetivo Profissional -->
+            <section class="perfil-section">
+               <div class="section-header">
+                  <h2 class="section-title">
+                     <span class="section-icon"></span>
+                     Objetivo Profissional
+                  </h2>
+               </div>
+               <div class="section-content">
+                  <div class="form-row">
+                     <div class="form-group">
+                        <label class="form-label">Cargo Pretendido</label>
+                        <input type="text" class="form-input" name="cargo_pretendido" value="{{ usuario.cargo_pretendido|default:'' }}" disabled>
+                     </div>
+                     <div class="form-group">
+                        <label class="form-label">Área de Interesse</label>
+                        <input type="text" class="form-input" name="area_interesse" value="{{ usuario.area_interesse|default:'' }}" disabled>
+                     </div>
+                  </div>
+                  <div class="form-row">
+                     <div class="form-group">
+                        <label class="form-label">Pretensão Salarial</label>
+                        <input type="number" step="0.01" class="form-input" name="pretensao_salarial" value="{{ usuario.pretensao_salarial|default:'' }}" disabled>
+                     </div>
+                     <div class="form-group">
+                        <label class="form-label">Disponibilidade</label>
+                        <select class="form-input" name="disponibilidade" disabled>
+                           <option value="">Selecione</option>
+                           <option value="Imediata" {% if usuario.disponibilidade == 'Imediata' %}selected{% endif %}>Imediata</option>
+                           <option value="15 dias" {% if usuario.disponibilidade == '15 dias' %}selected{% endif %}>15 dias</option>
+                           <option value="30 dias" {% if usuario.disponibilidade == '30 dias' %}selected{% endif %}>30 dias</option>
+                           <option value="A combinar" {% if usuario.disponibilidade == 'A combinar' %}selected{% endif %}>A combinar</option>
+                        </select>
+                     </div>
+                  </div>
+                  <div class="form-row">
+                     <div class="form-group">
+                        <label class="form-label checkbox-label">
+                           <input type="checkbox" name="remoto" {% if usuario.remoto %}checked{% endif %} disabled>
+                           <span>Aceita trabalho remoto</span>
+                        </label>
+                     </div>
+                  </div>
+               </div>
+            </section>
+
+            <!-- Redes Sociais -->
+            <section class="perfil-section">
+               <div class="section-header">
+                  <h2 class="section-title">
+                     <span class="section-icon"></span>
+                     Redes Sociais e Links
+                  </h2>
+               </div>
+               <div class="section-content">
+                  <div class="form-row">
+                     <div class="form-group">
+                        <label class="form-label">LinkedIn</label>
+                        <input type="url" class="form-input" name="linkedin" value="{{ usuario.linkedin|default:'' }}" placeholder="https://linkedin.com/in/seu-perfil" disabled>
+                     </div>
+                     <div class="form-group">
+                        <label class="form-label">GitHub</label>
+                        <input type="url" class="form-input" name="github" value="{{ usuario.github|default:'' }}" placeholder="https://github.com/seu-usuario" disabled>
+                     </div>
+                  </div>
+                  <div class="form-row">
+                     <div class="form-group">
+                        <label class="form-label">Instagram</label>
+                        <input type="text" class="form-input" name="instagram" value="{{ usuario.instagram|default:'' }}" placeholder="@seu_usuario" disabled>
+                     </div>
+                     <div class="form-group">
+                        <label class="form-label">Facebook</label>
+                        <input type="url" class="form-input" name="facebook" value="{{ usuario.facebook|default:'' }}" placeholder="https://facebook.com/seu-perfil" disabled>
+                     </div>
+                  </div>
+                  <div class="form-row">
+                     <div class="form-group">
+                        <label class="form-label">Site Pessoal / Portfólio</label>
+                        <input type="url" class="form-input" name="site_pessoal" value="{{ usuario.site_pessoal|default:'' }}" placeholder="https://seu-site.com" disabled>
+                     </div>
+                  </div>
+               </div>
+            </section>
+
+            <!-- Formação Acadêmica -->
+            <section class="perfil-section perfil-section-full">
+               <div class="section-header">
+                  <h2 class="section-title">
+                     <span class="section-icon"></span>
+                     Formação Acadêmica
+                  </h2>
+                  <button type="button" class="btn-add-block" data-target="formacao" data-max="3" style="display: none;">
+                     <span>+</span> Adicionar Formação
+                  </button>
+               </div>
+               <div class="section-content">
+                  <div class="blocks-container" id="formacaoBlocks">
+                     {% if usuario.instituicao_nome1 %}
+                     <div class="info-block" data-block="formacao-1">
+                        <div class="block-header">
+                           <h4 class="block-title">Formação 1</h4>
+                           <button type="button" class="btn-remove-block" data-block="formacao-1" style="display: none;">✕</button>
+                        </div>
+                        <div class="form-row">
+                           <div class="form-group">
+                              <label class="form-label">Instituição</label>
+                              <input type="text" class="form-input" name="instituicao_nome1" value="{{ usuario.instituicao_nome1 }}" disabled>
+                           </div>
+                           <div class="form-group">
+                              <label class="form-label">Grau de Escolaridade</label>
+                              <select class="form-input" name="grau_escolaridade1" disabled>
+                                 <option value="">Selecione</option>
+                                 <option value="Ensino Fundamental" {% if usuario.grau_escolaridade1 == 'Ensino Fundamental' %}selected{% endif %}>Ensino Fundamental</option>
+                                 <option value="Ensino Médio" {% if usuario.grau_escolaridade1 == 'Ensino Médio' %}selected{% endif %}>Ensino Médio</option>
+                                 <option value="Técnico" {% if usuario.grau_escolaridade1 == 'Técnico' %}selected{% endif %}>Técnico</option>
+                                 <option value="Graduação" {% if usuario.grau_escolaridade1 == 'Graduação' %}selected{% endif %}>Graduação</option>
+                                 <option value="Pós-Graduação" {% if usuario.grau_escolaridade1 == 'Pós-Graduação' %}selected{% endif %}>Pós-Graduação</option>
+                                 <option value="Mestrado" {% if usuario.grau_escolaridade1 == 'Mestrado' %}selected{% endif %}>Mestrado</option>
+                                 <option value="Doutorado" {% if usuario.grau_escolaridade1 == 'Doutorado' %}selected{% endif %}>Doutorado</option>
+                              </select>
+                           </div>
+                        </div>
+                        <div class="form-row">
+                           <div class="form-group">
+                              <label class="form-label">Curso</label>
+                              <input type="text" class="form-input" name="curso_graduacao1" value="{{ usuario.curso_graduacao1|default:'' }}" disabled>
+                           </div>
+                           <div class="form-group">
+                              <label class="form-label">Situação</label>
+                              <select class="form-input" name="situacao_academica1" disabled>
+                                 <option value="">Selecione</option>
+                                 <option value="Cursando" {% if usuario.situacao_academica1 == 'Cursando' %}selected{% endif %}>Cursando</option>
+                                 <option value="Concluído" {% if usuario.situacao_academica1 == 'Concluído' %}selected{% endif %}>Concluído</option>
+                                 <option value="Trancado" {% if usuario.situacao_academica1 == 'Trancado' %}selected{% endif %}>Trancado</option>
+                                 <option value="Incompleto" {% if usuario.situacao_academica1 == 'Incompleto' %}selected{% endif %}>Incompleto</option>
+                              </select>
+                           </div>
+                        </div>
+                        <div class="form-row">
+                           <div class="form-group">
+                              <label class="form-label">Data Início</label>
+                              <input type="date" class="form-input" name="data_acad_inicio1" value="{{ usuario.data_acad_inicio1|date:'Y-m-d' }}" disabled>
+                           </div>
+                           <div class="form-group">
+                              <label class="form-label">Data Fim</label>
+                              <input type="date" class="form-input" name="data_acad_fim1" value="{{ usuario.data_acad_fim1|date:'Y-m-d' }}" disabled>
+                           </div>
+                        </div>
+                     </div>
+                     {% endif %}
+
+                     {% if usuario.instituicao_nome2 %}
+                     <div class="info-block" data-block="formacao-2">
+                        <div class="block-header">
+                           <h4 class="block-title">Formação 2</h4>
+                           <button type="button" class="btn-remove-block" data-block="formacao-2" style="display: none;">✕</button>
+                        </div>
+                        <div class="form-row">
+                           <div class="form-group">
+                              <label class="form-label">Instituição</label>
+                              <input type="text" class="form-input" name="instituicao_nome2" value="{{ usuario.instituicao_nome2 }}" disabled>
+                           </div>
+                           <div class="form-group">
+                              <label class="form-label">Grau de Escolaridade</label>
+                              <select class="form-input" name="grau_escolaridade2" disabled>
+                                 <option value="">Selecione</option>
+                                 <option value="Ensino Fundamental" {% if usuario.grau_escolaridade2 == 'Ensino Fundamental' %}selected{% endif %}>Ensino Fundamental</option>
+                                 <option value="Ensino Médio" {% if usuario.grau_escolaridade2 == 'Ensino Médio' %}selected{% endif %}>Ensino Médio</option>
+                                 <option value="Técnico" {% if usuario.grau_escolaridade2 == 'Técnico' %}selected{% endif %}>Técnico</option>
+                                 <option value="Graduação" {% if usuario.grau_escolaridade2 == 'Graduação' %}selected{% endif %}>Graduação</option>
+                                 <option value="Pós-Graduação" {% if usuario.grau_escolaridade2 == 'Pós-Graduação' %}selected{% endif %}>Pós-Graduação</option>
+                                 <option value="Mestrado" {% if usuario.grau_escolaridade2 == 'Mestrado' %}selected{% endif %}>Mestrado</option>
+                                 <option value="Doutorado" {% if usuario.grau_escolaridade2 == 'Doutorado' %}selected{% endif %}>Doutorado</option>
+                              </select>
+                           </div>
+                        </div>
+                        <div class="form-row">
+                           <div class="form-group">
+                              <label class="form-label">Curso</label>
+                              <input type="text" class="form-input" name="curso_graduacao2" value="{{ usuario.curso_graduacao2|default:'' }}" disabled>
+                           </div>
+                           <div class="form-group">
+                              <label class="form-label">Situação</label>
+                              <select class="form-input" name="situacao_academica2" disabled>
+                                 <option value="">Selecione</option>
+                                 <option value="Cursando" {% if usuario.situacao_academica2 == 'Cursando' %}selected{% endif %}>Cursando</option>
+                                 <option value="Concluído" {% if usuario.situacao_academica2 == 'Concluído' %}selected{% endif %}>Concluído</option>
+                                 <option value="Trancado" {% if usuario.situacao_academica2 == 'Trancado' %}selected{% endif %}>Trancado</option>
+                                 <option value="Incompleto" {% if usuario.situacao_academica2 == 'Incompleto' %}selected{% endif %}>Incompleto</option>
+                              </select>
+                           </div>
+                        </div>
+                        <div class="form-row">
+                           <div class="form-group">
+                              <label class="form-label">Data Início</label>
+                              <input type="date" class="form-input" name="data_acad_inicio2" value="{{ usuario.data_acad_inicio2|date:'Y-m-d' }}" disabled>
+                           </div>
+                           <div class="form-group">
+                              <label class="form-label">Data Fim</label>
+                              <input type="date" class="form-input" name="data_acad_fim2" value="{{ usuario.data_acad_fim2|date:'Y-m-d' }}" disabled>
+                           </div>
+                        </div>
+                     </div>
+                     {% endif %}
+
+                     {% if usuario.instituicao_nome3 %}
+                     <div class="info-block" data-block="formacao-3">
+                        <div class="block-header">
+                           <h4 class="block-title">Formação 3</h4>
+                           <button type="button" class="btn-remove-block" data-block="formacao-3" style="display: none;">✕</button>
+                        </div>
+                        <div class="form-row">
+                           <div class="form-group">
+                              <label class="form-label">Instituição</label>
+                              <input type="text" class="form-input" name="instituicao_nome3" value="{{ usuario.instituicao_nome3 }}" disabled>
+                           </div>
+                           <div class="form-group">
+                              <label class="form-label">Grau de Escolaridade</label>
+                              <select class="form-input" name="grau_escolaridade3" disabled>
+                                 <option value="">Selecione</option>
+                                 <option value="Ensino Fundamental" {% if usuario.grau_escolaridade3 == 'Ensino Fundamental' %}selected{% endif %}>Ensino Fundamental</option>
+                                 <option value="Ensino Médio" {% if usuario.grau_escolaridade3 == 'Ensino Médio' %}selected{% endif %}>Ensino Médio</option>
+                                 <option value="Técnico" {% if usuario.grau_escolaridade3 == 'Técnico' %}selected{% endif %}>Técnico</option>
+                                 <option value="Graduação" {% if usuario.grau_escolaridade3 == 'Graduação' %}selected{% endif %}>Graduação</option>
+                                 <option value="Pós-Graduação" {% if usuario.grau_escolaridade3 == 'Pós-Graduação' %}selected{% endif %}>Pós-Graduação</option>
+                                 <option value="Mestrado" {% if usuario.grau_escolaridade3 == 'Mestrado' %}selected{% endif %}>Mestrado</option>
+                                 <option value="Doutorado" {% if usuario.grau_escolaridade3 == 'Doutorado' %}selected{% endif %}>Doutorado</option>
+                              </select>
+                           </div>
+                        </div>
+                        <div class="form-row">
+                           <div class="form-group">
+                              <label class="form-label">Curso</label>
+                              <input type="text" class="form-input" name="curso_graduacao3" value="{{ usuario.curso_graduacao3|default:'' }}" disabled>
+                           </div>
+                           <div class="form-group">
+                              <label class="form-label">Situação</label>
+                              <select class="form-input" name="situacao_academica3" disabled>
+                                 <option value="">Selecione</option>
+                                 <option value="Cursando" {% if usuario.situacao_academica3 == 'Cursando' %}selected{% endif %}>Cursando</option>
+                                 <option value="Concluído" {% if usuario.situacao_academica3 == 'Concluído' %}selected{% endif %}>Concluído</option>
+                                 <option value="Trancado" {% if usuario.situacao_academica3 == 'Trancado' %}selected{% endif %}>Trancado</option>
+                                 <option value="Incompleto" {% if usuario.situacao_academica3 == 'Incompleto' %}selected{% endif %}>Incompleto</option>
+                              </select>
+                           </div>
+                        </div>
+                        <div class="form-row">
+                           <div class="form-group">
+                              <label class="form-label">Data Início</label>
+                              <input type="date" class="form-input" name="data_acad_inicio3" value="{{ usuario.data_acad_inicio3|date:'Y-m-d' }}" disabled>
+                           </div>
+                           <div class="form-group">
+                              <label class="form-label">Data Fim</label>
+                              <input type="date" class="form-input" name="data_acad_fim3" value="{{ usuario.data_acad_fim3|date:'Y-m-d' }}" disabled>
+                           </div>
+                        </div>
+                     </div>
+                     {% endif %}
+
+                     {% if not usuario.instituicao_nome1 and not usuario.instituicao_nome2 and not usuario.instituicao_nome3 %}
+                     <p class="empty-message" id="emptyFormacao">Nenhuma formação cadastrada</p>
+                     {% endif %}
+                  </div>
+               </div>
+            </section>
+
+            <!-- Inclusão e Acessibilidade -->
+            <section class="perfil-section">
+               <div class="section-header">
+                  <h2 class="section-title">
+                     <span class="section-icon"></span>
+                     Inclusão e Acessibilidade
+                  </h2>
+               </div>
+               <div class="section-content">
+                  <div class="form-row">
+                     <div class="form-group">
+                        <label class="form-label checkbox-label">
+                           <input type="checkbox" name="pessoa_com_deficiencia" {% if usuario.pessoa_com_deficiencia %}checked{% endif %} disabled>
+                           <span>Pessoa com deficiência (PcD)</span>
+                        </label>
+                     </div>
+                  </div>
+                  <div class="form-row">
+                     <div class="form-group">
+                        <label class="form-label">Tipo de Deficiência</label>
+                        <input type="text" class="form-input" name="tipo_deficiencia" value="{{ usuario.tipo_deficiencia|default:'' }}" disabled>
+                     </div>
+                  </div>
+                  <div class="form-row">
+                     <div class="form-group">
+                        <label class="form-label">Necessidade de Adaptação</label>
+                        <textarea class="form-input form-textarea" name="necessidade_adaptacao" rows="3" disabled>{{ usuario.necessidade_adaptacao|default:'' }}</textarea>
+                     </div>
+                  </div>
+               </div>
+            </section>
+
+            <!-- Informações Adicionais -->
+            <section class="perfil-section">
+               <div class="section-header">
+                  <h2 class="section-title">
+                     <span class="section-icon"></span>
+                     Informações Adicionais
+                  </h2>
+               </div>
+               <div class="section-content">
+                  <div class="form-row">
+                     <div class="form-group">
+                        <label class="form-label">Interesses e Hobbies</label>
+                        <textarea class="form-input form-textarea" name="interesses_hobbies" rows="3" disabled>{{ usuario.interesses_hobbies|default:'' }}</textarea>
+                     </div>
+                  </div>
+               </div>
+            </section>
+
+            <!-- Anexos -->
+            <section class="perfil-section perfil-section-full">
+               <div class="section-header">
+                  <h2 class="section-title">
+                     <span class="section-icon"></span>
+                     Anexos
+                  </h2>
+               </div>
+               <div class="section-content">
+                  <div class="form-row">
+                     <div class="form-group">
+                        <label class="form-label">Currículo (PDF)</label>
+                        {% if usuario.curriculo_pdf %}
+                           <div class="file-preview">
+                              <a href="{{ usuario.curriculo_pdf.url }}" target="_blank" class="file-link">
+                                 Ver currículo atual
+                              </a>
+                           </div>
+                        {% endif %}
+                        <input type="file" class="form-input" name="curriculo_pdf" accept=".pdf" disabled>
+                     </div>
+                     <div class="form-group">
+                        <label class="form-label">Carta de Apresentação</label>
+                        {% if usuario.carta_apresentacao %}
+                           <div class="file-preview">
+                              <a href="{{ usuario.carta_apresentacao.url }}" target="_blank" class="file-link">
+                                 Ver carta atual
+                              </a>
+                           </div>
+                        {% endif %}
+                        <input type="file" class="form-input" name="carta_apresentacao" accept=".pdf,.doc,.docx" disabled>
+                     </div>
+                  </div>
+               </div>
+            </section>
+
+         </div>
+         {% endif %}
+
+         <!-- Botão Salvar (aparece apenas no modo edição) -->
+         <div class="perfil-footer" id="perfilFooter" style="display: none;">
+            <button type="submit" class="btn-salvar">
+               Salvar Alterações
+            </button>
+         </div>
+
+      </form>
+   </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+   var btnEditar = document.getElementById('btnEditar');
+   var btnCancelar = document.getElementById('btnCancelar');
+   var perfilFooter = document.getElementById('perfilFooter');
+   var formPerfil = document.getElementById('formPerfil');
+   var formFoto = document.getElementById('formFoto');
+   var inputFoto = document.getElementById('inputFoto');
+   var avatarImg = document.getElementById('avatarImg');
+
+   var isEditMode = false;
+
+   // =============================================
+   // UPLOAD DE FOTO - Submit automático
+   // =============================================
+   if (inputFoto) {
+      inputFoto.addEventListener('change', function(e) {
+         var file = e.target.files[0];
+         if (file) {
+            // Preview da imagem
+            var reader = new FileReader();
+            reader.onload = function(e) {
+               avatarImg.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+            
+            // Submit automático do form de foto
+            if (formFoto) {
+               formFoto.submit();
+            }
+         }
+      });
+   }
+
+   // =============================================
+   // TOGGLE MODO EDIÇÃO
+   // =============================================
+   if (btnEditar) {
+      btnEditar.addEventListener('click', function() {
+         isEditMode = true;
+         enableEditMode();
+      });
+   }
+
+   if (btnCancelar) {
+      btnCancelar.addEventListener('click', function() {
+         if (confirm('Deseja cancelar as alterações? Os dados não salvos serão perdidos.')) {
+            isEditMode = false;
+            location.reload();
+         }
+      });
+   }
+
+   function enableEditMode() {
+      // Habilitar todos os inputs do formulário principal
+      if (formPerfil) {
+         var elements = formPerfil.querySelectorAll('input, select, textarea');
+         for (var i = 0; i < elements.length; i++) {
+            elements[i].disabled = false;
+         }
+      }
+
+      // Mostrar/ocultar botões
+      if (btnEditar) btnEditar.style.display = 'none';
+      if (btnCancelar) btnCancelar.style.display = 'inline-flex';
+      if (perfilFooter) perfilFooter.style.display = 'flex';
+
+      // Mostrar botões de adicionar bloco
+      var addBtns = document.querySelectorAll('.btn-add-block');
+      for (var i = 0; i < addBtns.length; i++) {
+         addBtns[i].style.display = 'inline-flex';
+      }
+
+      // Mostrar botões de remover bloco
+      var removeBtns = document.querySelectorAll('.btn-remove-block');
+      for (var i = 0; i < removeBtns.length; i++) {
+         removeBtns[i].style.display = 'inline-flex';
+      }
+
+      // Adicionar classe ao body
+      document.body.classList.add('edit-mode');
+   }
+
+   // =============================================
+   // AJAX PARA CIDADES
+   // =============================================
+   var selectEstados = document.querySelectorAll('.select-estado');
+   for (var i = 0; i < selectEstados.length; i++) {
+      selectEstados[i].addEventListener('change', function() {
+         var estadoId = this.value;
+         var cidadeTargetId = this.dataset.cidadeTarget;
+         var selectCidade = document.getElementById(cidadeTargetId);
+
+         if (!selectCidade) return;
+
+         if (!estadoId) {
+            selectCidade.innerHTML = '<option value="">Selecione a cidade</option>';
+            return;
+         }
+
+         // Buscar cidades via AJAX
+         fetch('{% url "core:buscarCidades" %}?estado_id=' + estadoId)
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+               selectCidade.innerHTML = '<option value="">Selecione a cidade</option>';
+               if (data.cidades) {
+                  for (var j = 0; j < data.cidades.length; j++) {
+                     var cidade = data.cidades[j];
+                     var option = document.createElement('option');
+                     option.value = cidade.id;
+                     option.textContent = cidade.nome;
+                     selectCidade.appendChild(option);
+                  }
+               }
+            })
+            .catch(function(error) {
+               console.error('Erro ao buscar cidades:', error);
+            });
+      });
+   }
+
+   // =============================================
+   // BLOCOS DINÂMICOS
+   // =============================================
+   var templates = {
+      formacao: '<div class="info-block info-block-new" data-block="formacao-{n}"><div class="block-header"><h4 class="block-title">Formação {n}</h4><button type="button" class="btn-remove-block" data-block="formacao-{n}">✕</button></div><div class="form-row"><div class="form-group"><label class="form-label">Instituição</label><input type="text" class="form-input" name="instituicao_nome{n}"></div><div class="form-group"><label class="form-label">Grau de Escolaridade</label><select class="form-input" name="grau_escolaridade{n}"><option value="">Selecione</option><option value="Ensino Fundamental">Ensino Fundamental</option><option value="Ensino Médio">Ensino Médio</option><option value="Técnico">Técnico</option><option value="Graduação">Graduação</option><option value="Pós-Graduação">Pós-Graduação</option><option value="Mestrado">Mestrado</option><option value="Doutorado">Doutorado</option></select></div></div><div class="form-row"><div class="form-group"><label class="form-label">Curso</label><input type="text" class="form-input" name="curso_graduacao{n}"></div><div class="form-group"><label class="form-label">Situação</label><select class="form-input" name="situacao_academica{n}"><option value="">Selecione</option><option value="Cursando">Cursando</option><option value="Concluído">Concluído</option><option value="Trancado">Trancado</option><option value="Incompleto">Incompleto</option></select></div></div><div class="form-row"><div class="form-group"><label class="form-label">Data Início</label><input type="date" class="form-input" name="data_acad_inicio{n}"></div><div class="form-group"><label class="form-label">Data Fim</label><input type="date" class="form-input" name="data_acad_fim{n}"></div></div></div>'
+   };
+
+   // Adicionar novos blocos
+   var addBtns = document.querySelectorAll('.btn-add-block');
+   for (var i = 0; i < addBtns.length; i++) {
+      addBtns[i].addEventListener('click', function() {
+         var target = this.dataset.target;
+         var maxBlocks = parseInt(this.dataset.max) || 3;
+         var container = document.getElementById(target + 'Blocks');
+         
+         if (!container || !templates[target]) return;
+         
+         var existingBlocks = container.querySelectorAll('.info-block').length;
+
+         if (existingBlocks >= maxBlocks) {
+            alert('Limite máximo de ' + maxBlocks + ' itens atingido.');
+            return;
+         }
+
+         var nextNum = existingBlocks + 1;
+         var template = templates[target].replace(/{n}/g, nextNum);
+
+         // Remover mensagem de vazio se existir
+         var emptyMsg = container.querySelector('.empty-message');
+         if (emptyMsg) emptyMsg.remove();
+
+         container.insertAdjacentHTML('beforeend', template);
+
+         // Ocultar botão se atingiu o limite
+         if (nextNum >= maxBlocks) {
+            this.style.display = 'none';
+         }
+
+         // Adicionar evento de remover ao novo botão
+         var newRemoveBtn = container.querySelector('[data-block="' + target + '-' + nextNum + '"] .btn-remove-block');
+         if (newRemoveBtn) {
+            newRemoveBtn.addEventListener('click', removeBlock);
+         }
+      });
+   }
+
+   // Função para remover blocos
+   function removeBlock() {
+      var blockId = this.dataset.block;
+      var block = document.querySelector('[data-block="' + blockId + '"]');
+      var target = blockId.split('-')[0];
+
+      if (confirm('Deseja remover este item?')) {
+         block.remove();
+
+         // Mostrar botão de adicionar novamente
+         var addBtn = document.querySelector('[data-target="' + target + '"]');
+         if (addBtn && isEditMode) {
+            addBtn.style.display = 'inline-flex';
+         }
+      }
+   }
+
+   // Adicionar eventos aos botões de remover existentes
+   var removeBtns = document.querySelectorAll('.btn-remove-block');
+   for (var i = 0; i < removeBtns.length; i++) {
+      removeBtns[i].addEventListener('click', removeBlock);
+   }
+});
+</script>
+{% endblock %}
