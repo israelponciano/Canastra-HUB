@@ -96,6 +96,16 @@
          {% csrf_token %}
          <input type="hidden" id="idNoticia" name="idnoticia">
          
+         <div class="form-group mb-3">
+            <label for="selHub">Vincular a um Hub (Opcional):</label>
+            <select name="selHub" id="selHub" class="form-control">
+                <option value="">-- Notícia Geral (Sem Hub) --</option>
+                {% for hub in hubs %}
+                    <option value="{{ hub.id }}">{{ hub.nome_hub }}</option>
+                {% endfor %}
+            </select>
+         </div>
+
          <div class="form-group">
             <label for="txtTituloNoticia">Título da Notícia</label>
             <input type="text" id="txtTituloNoticia" name="txtTituloNoticia" maxlength="250" required>
