@@ -32,13 +32,11 @@ def cadastrarHub(request):
         return redirect('core:home')
     
     if request.method == 'POST':
-        id = request.POST.get('idhub')
         nome_hub = request.POST.get('txtNomeHub')
         foto_hub = request.FILES.get("fleFotoHub")  
         descricao_hub= request.POST.get("txtDescricaoHub") 
         
-        hub = Hub.objects.get(id=id)
-        if Hub.objects.filter(nome_hub=nome_hub).exclude(id=hub.id).exists():
+        if Hub.objects.filter(nome_hub=nome_hub):
             messages.error(request, "Hub já Cadastrado no sistema")
             return redirect('administrador:gerenciarHubs') 
 
@@ -49,7 +47,6 @@ def cadastrarHub(request):
       )
 
         hubs.save()
-        print(hubs.nome)
         messages.success(request, ("Hub cadastrado com sucesso"))
         return redirect('administrador:cadastrarHub')
 
@@ -62,18 +59,24 @@ def alterarHub(request):
         return redirect('core:home')
     
     if request.method == 'POST':
+        id = request.POST.get('idhub')
         nome_hub = request.POST.get('txtNomeHub')
         foto_hub = request.FILES.get("fleFotoHubs")  
         descricao_hub= request.POST.get("txtDescricaoHub")
 
         hub = Hub.objects.get(id=id)
-        hub.nome_hub = nome_hub
         if Hub.objects.filter(nome_hub=nome_hub).exclude(id=hub.id).exists():
             messages.error(request, "Essa Hub já existe")
             return redirect('administrador:gerenciarHubs')
-        
-        hub.foto_hub = foto_hub
-        hub.descricao_hub = descricao_hub
+
+        if nome_hub:
+            hub.nome_hub = nome_hub
+    
+        if foto_hub:
+            hub.foto_hub = foto_hub
+
+        if descricao_hub:  
+            hub.descricao_hub = descricao_hub
     
                         
         if foto_hub is not None:

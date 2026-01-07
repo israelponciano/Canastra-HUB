@@ -57,11 +57,11 @@
                      <img src="{% static 'img/update.png' %}" alt="Editar"/>
                   </button>
                   {% if noticia.isActive %}
-                  <button class="admin-btn admin-btn-danger" onclick="confirmarExclusao('{% url 'administrador:deletaNoticia' noticia.id %}')">
+                  <button class="admin-btn admin-btn-danger" onclick="confirmarExclusao('{% url 'administrador:deletaNoticias' noticia.id %}')">
                      <img src="{% static 'img/delete.png' %}" alt="Desativar" />
                   </button>
                   {% else %}
-                  <button class="admin-btn admin-btn-success" onclick="confirmarExclusao('{% url 'administrador:deletaNoticia' noticia.id %}')">
+                  <button class="admin-btn admin-btn-success" onclick="confirmarExclusao('{% url 'administrador:deletaNoticias' noticia.id %}')">
                      <img src="{% static 'img/active.png' %}" alt="Ativar" />
                   </button>
                   {% endif %}
