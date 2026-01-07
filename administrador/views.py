@@ -242,11 +242,23 @@ def deletaNoticias(request, noticia_id):
 
 @login_required
 def gerenciarNoticias(request):
-    if (request.user.is_admin != True):
+    if not request.user.is_admin:
         messages.error(request, "Acesso negado")
         return redirect('core:home')
 
     noticias_lista = Noticia.objects.all().order_by('-id')
+    for noticia in noticias_lista:
+        # Busca o vínculo na tabela intermediária
+        vinculo = NoticiaHub.objects.filter(
+            noticia=noticia).select_related('hub').first()
+        if vinculo:
+            noticia.nome_hub = vinculo.hub.nome_hub
+            # Útil para marcar o select como 'selected' no modal de edição
+            noticia.hub_id_atual = vinculo.hub.id
+        else:
+            noticia.nome_hub = "Geral (Sem Hub)"
+            noticia.hub_id_atual = None
+
     hubs = Hub.objects.filter(isActive=True).order_by('nome_hub')
 
     context = {
