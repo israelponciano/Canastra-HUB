@@ -8,8 +8,15 @@ from core.models import *
 
 
 def home(request):
-
-    return render(request, 'home.html')
+    # Buscar notícias ativas que devem aparecer na home
+    noticias_home = NoticiaHub.objects.filter(
+        noticia__isActive=True,
+        noticia__isHome=True
+    ).select_related('noticia', 'hub').order_by('-noticia__id')[:5]  # Limitando a 10 notícias
+    
+    return render(request, 'home.html', {
+        'noticias_home': noticias_home
+    })
 
 def parceiros(request):
 

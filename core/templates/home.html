@@ -14,41 +14,36 @@
     <section id="home" class="carousel-section">
       <div class="carousel-container">
         <div class="carousel-slides">
-          <!-- Slide 1 -->
-          <div class="carousel-slide active">
-            <img src="{% static '/img/hubs/noticia_agro_1.png' %}" alt="Noticia agro" />
-            <div class="carousel-overlay"></div>
-            <div class="carousel-content" style="margin-left: 4%;">
-              <span class="carousel-category">Agro</span>
-              <h2 class="carousel-title">Minas Gerais lidera ranking dos melhores cafés do Brasil em 2025</h2>
-              <p class="carousel-description">Produtores mineiros conquistaram as três categorias do Cup of Excellence, o mais prestigiado concurso de qualidade do setor.</p>
-              <a href="https://agro.estadao.com.br/agricultura/minas-gerais-lidera-ranking-dos-melhores-cafes-do-brasil-em-2025" target="_blank" class="btn btn-primary">Leia Mais</a>
+          {% for noticia_hub in noticias_home %}
+            <!-- Slide {{ forloop.counter }} -->
+            <div class="carousel-slide {% if forloop.first %}active{% endif %}">
+              {% if noticia_hub.noticia.imagem_noticia %}
+                <img src="{{ noticia_hub.noticia.imagem_noticia.url }}" alt="{{ noticia_hub.noticia.titulo_noticia }}" />
+              {% else %}
+                <img src="{% static 'img/default-news.jpg' %}" alt="{{ noticia_hub.noticia.titulo_noticia }}" />
+              {% endif %}
+              <div class="carousel-overlay"></div>
+              <div class="carousel-content" style="margin-left: 4%;">
+                <span class="carousel-category">{{ noticia_hub.hub.nome_hub }}</span>
+                <h2 class="carousel-title">{{ noticia_hub.noticia.titulo_noticia }}</h2>
+                <p class="carousel-description">{{ noticia_hub.noticia.descricao_noticia }}</p>
+                {% if noticia_hub.noticia.url %}
+                  <a href="{{ noticia_hub.noticia.url }}" target="_blank" class="btn btn-primary">Leia Mais</a>
+                {% endif %}
+              </div>
             </div>
-          </div>
-
-          <!-- Slide 2 -->
-          <div class="carousel-slide">
-            <img src="https://blog.verde.ag/pt/wp-content/uploads/2023/09/Conheca-os-principais-tipos-de-bioinsumos-na-cultura-do-milho.jpg" alt="Noticia Milho" />
-            <div class="carousel-overlay"></div>
-            <div class="carousel-content" style="margin-left: 4%;">
-              <span class="carousel-category">Milho</span>
-              <h2 class="carousel-title">Plantio do milho segunda safra avança com chegada de chuvas</h2>
-              <p class="carousel-description">Falta de chuva atrasou o início do cultivo, mas produtores aproveitam melhora do tempo e uso de irrigação para manter o cronograma nas lavouras.</p>
-              <a href="https://g1.globo.com/sp/sorocaba-jundiai/nosso-campo/noticia/2025/11/09/plantio-do-milho-segunda-safra-avanca-com-chegada-de-chuvas.ghtml" target="_blank" class="btn btn-primary">Leia Mais</a>
+          {% empty %}
+            <!-- Slide padrão caso não haja notícias -->
+            <div class="carousel-slide active">
+              <img src="{% static 'img/default-carousel.jpg' %}" alt="Sem notícias" />
+              <div class="carousel-overlay"></div>
+              <div class="carousel-content" style="margin-left: 4%;">
+                <span class="carousel-category">Informação</span>
+                <h2 class="carousel-title">Nenhuma notícia disponível</h2>
+                <p class="carousel-description">Aguarde novas atualizações em breve.</p>
+              </div>
             </div>
-          </div>
-
-          <!-- Slide 3 -->
-          <div class="carousel-slide">
-            <img src="https://5455473.fs1.hubspotusercontent-na1.net/hubfs/5455473/Imported_Blog_Media/exportacao-de-feijao-1.jpg" alt="Noticia Graos" />
-            <div class="carousel-overlay"></div>
-            <div class="carousel-content" style="margin-left: 4%;">
-              <span class="carousel-category">Grãos</span>
-              <h2 class="carousel-title">Exportações do feijão seguem registrando desempenho recorde</h2>
-              <p class="carousel-description">As exportações brasileiras de feijão seguem registrando um desempenho recorde, tanto no volume mensal quanto no acumulado de 12 meses.</p>
-              <a href="https://sna.agr.br/feijao-exportacoes-seguem-registrando-desempenho-recorde/" target="_blank" class="btn btn-primary">Leia Mais</a>
-            </div>
-          </div>
+          {% endfor %}
         </div>
 
         <!-- Carousel Navigation -->
@@ -57,9 +52,9 @@
 
         <!-- Carousel Indicators -->
         <div class="carousel-indicators">
-          <button class="carousel-indicator active" data-slide="0"></button>
-          <button class="carousel-indicator" data-slide="1"></button>
-          <button class="carousel-indicator" data-slide="2"></button>
+          {% for noticia_hub in noticias_home %}
+            <button class="carousel-indicator {% if forloop.first %}active{% endif %}" data-slide="{{ forloop.counter0 }}"></button>
+          {% endfor %}
         </div>
       </div>
     </section>
@@ -135,6 +130,12 @@
 
         <div class="partners-grid">
           <div class="partner-card">
+            <div class="partner-logo highlight">C</div>
+            <h3>Coffee Plus</h3>
+            <p>Café</p>
+          </div>
+
+          <div class="partner-card">
             <div class="partner-logo">
               <img src="{% static 'img/sicoob.png' %}" alt="Logo Sicoob" />
             </div>
@@ -150,11 +151,6 @@
             <p>Serviço de Apoio às Micro e Pequenas Empresas</p>
           </div>
 
-          <div class="partner-card">
-            <div class="partner-logo highlight">C</div>
-            <h3>Coffee Plus</h3>
-            <p>Café</p>
-          </div>
           <div class="partner-card">
             <div class="partner-logo highlight">R</div>
             <h3>Rural Connect</h3>
