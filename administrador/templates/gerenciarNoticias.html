@@ -13,6 +13,7 @@
             <div>Título</div>
             <div>Descrição</div>
             <div>Fonte</div>
+            <div>Hub</div>
             <div>URL</div>
             <div>Foto</div>
             <div>Ações</div>
@@ -26,6 +27,9 @@
             <div class="admin-cell titulo">{{ noticia.titulo_noticia }}</div>
             <div class="admin-cell descricao">{{ noticia.descricao_noticia }}</div>
             <div class="admin-cell fonte">{{ noticia.fonte }}</div>
+            <div class="admin-cell hub">
+               <span class="badge-hub">{{ noticia.nome_hub }}</span>
+            </div>
             <div class="admin-cell url">
                {% if noticia.url %}
                   <a href="{{ noticia.url }}" target="_blank" class="url-link">Ver</a>
@@ -43,19 +47,19 @@
 
             <div class="admin-cell acoes">
                <div class="admin-actions">
-                  <button class="admin-btn openModal"
-                     data-id="{{ noticia.id }}"
-                     data-titulo_noticia="{{ noticia.titulo_noticia }}"
-                     data-descricao_noticia="{{ noticia.descricao_noticia }}"
-                     data-fonte="{{ noticia.fonte }}"
-                     data-url="{{ noticia.url|default:'' }}"
-                     {% if noticia.imagem_noticia %}
-                        data-imagem_noticia="{{ noticia.imagem_noticia.url }}"
-                     {% else %}
-                        data-imagem_noticia=""
-                     {% endif %}>
-                     <img src="{% static 'img/update.png' %}" alt="Editar"/>
-                  </button>
+               <button class="admin-btn openModal"
+                  data-id="{{ noticia.id }}"
+                  data-titulo_noticia="{{ noticia.titulo_noticia }}"
+                  data-descricao_noticia="{{ noticia.descricao_noticia }}"
+                  data-fonte="{{ noticia.fonte }}"
+                  data-url="{{ noticia.url|default:'' }}"
+                  data-hub_id="{{ noticia.hub_id_atual|default:'' }}"  {% if noticia.imagem_noticia %}
+                     data-imagem_noticia="{{ noticia.imagem_noticia.url }}"
+                  {% else %}
+                     data-imagem_noticia=""
+                  {% endif %}>
+                  <img src="{% static 'img/update.png' %}" alt="Editar"/>
+               </button>
                   {% if noticia.isActive %}
                   <button class="admin-btn admin-btn-danger" onclick="confirmarExclusao('{% url 'administrador:deletaNoticias' noticia.id %}')">
                      <img src="{% static 'img/delete.png' %}" alt="Desativar" />
@@ -96,6 +100,16 @@
          {% csrf_token %}
          <input type="hidden" id="idNoticia" name="idnoticia">
          
+         <div class="form-group mb-3">
+            <label for="selHub">Hub Referente:</label>
+            <select name="selHub" id="selHub" class="form-control">
+               <option value="">Geral (Sem Hub)</option>
+               {% for hub in hubs %}
+                  <option value="{{ hub.id }}">{{ hub.nome_hub }}</option>
+               {% endfor %}
+            </select>
+         </div>
+
          <div class="form-group">
             <label for="txtTituloNoticia">Título da Notícia</label>
             <input type="text" id="txtTituloNoticia" name="txtTituloNoticia" maxlength="250" required>
@@ -155,6 +169,7 @@
    const inputUrl = document.getElementById('txtUrl');
    const fotoAtualPreview = document.getElementById('fotoAtualPreview');
    const semFotoAtual = document.getElementById('semFotoAtual');
+   const inputHub = document.getElementById('selHub');
    
    // Função para abrir modal
    function openModal() {
@@ -187,12 +202,19 @@
          const fonte = btn.dataset.fonte;
          const url = btn.dataset.url;
          const foto = btn.dataset.imagem_noticia;
+         const hubId = btn.dataset.hub_id; // PEGA O ID DO HUB DO BOTÃO
          
          inputId.value = id;
          inputTitulo.value = titulo;
          inputDescricao.value = descricao;
          inputFonte.value = fonte;
          inputUrl.value = url;
+
+         if (hubId) {
+            inputHub.value = hubId; 
+         } else {
+            inputHub.value = ""; // Volta para "Geral" se não tiver hub
+         }
          
          // Mostrar foto atual se existir
          if (foto) {
@@ -205,7 +227,7 @@
          }
          
          openModal();
-      });
+         });
    });
 
    // Evento do botão fechar (X)
