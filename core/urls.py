@@ -9,6 +9,9 @@ urlpatterns = [
     path("", views.home, name="home"),
     path("login/", views.login, name="login"),
     path("logout/", views.logout, name="logout"),
+    path('perfil/', views.perfil, name='perfil'),
+    path('perfil/atualizar/', views.atualizarPerfil, name='atualizarPerfil'),
+    path('api/cidades/', views.buscar_cidades, name='buscarCidades'),
     
     # cadastros de usuario    
     path("cadastro/", views.cadastro, name="cadastro"),

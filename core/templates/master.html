@@ -8,6 +8,111 @@
     <title>Hub Canastra - Conectando o Agronegócio Sustentável</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="{% static 'css/styles_atualizado.css' %}" />
+
+    <!-- CSS para Dropdowns do Menu -->
+    <style>
+      /* Dropdown Desktop */
+      .nav-dropdown {
+        position: relative;
+        display: inline-block;
+      }
+      
+      .nav-link-dropdown {
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+      
+      .dropdown-arrow {
+        font-size: 0.7rem;
+        transition: transform 0.3s ease;
+      }
+      
+      .nav-dropdown:hover .dropdown-arrow {
+        transform: rotate(180deg);
+      }
+      
+      .nav-dropdown-content {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: white;
+        min-width: 180px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        border-radius: 8px;
+        padding: 0.5rem 0;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        z-index: 1000;
+      }
+      
+      .nav-dropdown:hover .nav-dropdown-content {
+        opacity: 1;
+        visibility: visible;
+      }
+      
+      .nav-dropdown-content a {
+        display: block;
+        padding: 0.75rem 1.25rem;
+        color: #333;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        font-size: 0.95rem;
+      }
+      
+      .nav-dropdown-content a:hover {
+        background: hsl(142 76% 36% / 0.1);
+        color: hsl(142 76% 36%);
+        padding-left: 1.5rem;
+      }
+      
+      /* Dropdown Mobile */
+      .mobile-dropdown {
+        width: 100%;
+      }
+      
+      .mobile-dropdown-toggle {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+      }
+      
+      .mobile-dropdown .dropdown-arrow {
+        transition: transform 0.3s ease;
+      }
+      
+      .mobile-dropdown.active .dropdown-arrow {
+        transform: rotate(180deg);
+      }
+      
+      .mobile-dropdown-content {
+        display: none;
+        padding-left: 1rem;
+        border-left: 2px solid hsl(142 76% 36%);
+        margin: 0.5rem 0 0.5rem 1rem;
+      }
+      
+      .mobile-dropdown.active .mobile-dropdown-content {
+        display: block;
+      }
+      
+      .mobile-dropdown-content a {
+        display: block;
+        padding: 0.5rem 0;
+        color: #555;
+        text-decoration: none;
+        font-size: 0.95rem;
+      }
+      
+      .mobile-dropdown-content a:hover {
+        color: hsl(142 76% 36%);
+      }
+    </style>
   </head>
 
   <body>
@@ -29,17 +134,43 @@
           <div class="nav-links">
             <a href="{% url 'core:home' %}" class="nav-link">Home</a>
             <a href="{% url 'core:hubs' %}" class="nav-link">Hub</a>
-            <a href="{% url 'vagas:buscar_vagas' %}" class="nav-link">Vagas</a>
-            <a href="{% url 'core:buscar_eventos' %}" class="nav-link">Eventos</a>
-            <a href="{% url 'core:buscar_treinamentos' %}" class="nav-link">Treinamentos</a>
+
             {% if request.session.perfil == 'empresa' %}
-              <a href="{% url 'vagas:cadastro_vagas' %}" class="nav-link">Cadastro de Vagas</a>
-              <a href="{% url 'core:cadastro_eventos' %}" class="nav-link">Cadastro de Eventos</a>
-              <a href="{% url 'core:cadastro_treinamentos' %}" class="nav-link">Cadastro de Treinamentos</a>
+              <!-- Dropdown Vagas (Empresa) -->
+              <div class="nav-dropdown">
+                <span class="nav-link nav-link-dropdown">Vagas <span class="dropdown-arrow">▼</span></span>
+                <div class="nav-dropdown-content">
+                  <a href="{% url 'vagas:buscar_vagas' %}">Ver Vagas</a>
+                  <a href="{% url 'vagas:cadastro_vagas' %}">Cadastrar Vaga</a>
+                </div>
+              </div>
+
+              <!-- Dropdown Eventos (Empresa) -->
+              <div class="nav-dropdown">
+                <span class="nav-link nav-link-dropdown">Eventos <span class="dropdown-arrow">▼</span></span>
+                <div class="nav-dropdown-content">
+                  <a href="{% url 'core:buscar_eventos' %}">Ver Eventos</a>
+                  <a href="{% url 'core:cadastro_eventos' %}">Cadastrar Evento</a>
+                </div>
+              </div>
+
+              <!-- Dropdown Treinamentos (Empresa) -->
+              <div class="nav-dropdown">
+                <span class="nav-link nav-link-dropdown">Treinamentos <span class="dropdown-arrow">▼</span></span>
+                <div class="nav-dropdown-content">
+                  <a href="{% url 'core:buscar_treinamentos' %}">Ver Treinamentos</a>
+                  <a href="{% url 'core:cadastro_treinamentos' %}">Cadastrar Treinamento</a>
+                </div>
+              </div>
+            {% else %}
+              <!-- Links simples (Usuário/Admin/Visitante) -->
+              <a href="{% url 'vagas:buscar_vagas' %}" class="nav-link">Vagas</a>
+              <a href="{% url 'core:buscar_eventos' %}" class="nav-link">Eventos</a>
+              <a href="{% url 'core:buscar_treinamentos' %}" class="nav-link">Treinamentos</a>
             {% endif %}
+
             <a href="{% url 'core:espacos_hub' %}" class="nav-link">Espaços Hub</a>
             <a href="{% url 'core:parceiros' %}" class="nav-link">Parceiros</a>
-            {% comment %} <a href="#contato" class="nav-link">Contato</a> {% endcomment %}
             <a href="{% url 'core:sobre' %}" class="nav-link">Sobre</a>
           </div>
 
@@ -56,12 +187,11 @@
                     <a href="{% url 'administrador:areaAdm' %}" class="nav-link-home-dropdown">Admin</a>
                   {% endif %}
                   {% if not request.path == '/perfil/' %}
-                    {% comment %} <a class="nav-link-home-dropdown" href="#">Perfil</a> {% endcomment %}
+                    <a class="nav-link-home-dropdown" href="{% url 'core:perfil' %}">Perfil</a>
                   {% endif %}
                   <a class="nav-link-home-dropdown" href="{% url 'core:logout' %}">Sair</a>
                 </div>
               </div>
-              <!-- <a href="{% url 'core:login' %}" class="nav-link-home">Login</a> -->
             {% endif %}
           </div>
           <div class="nav-actions-mobile">
@@ -74,19 +204,49 @@
           <div class="mobile-nav-links">
             <a href="{% url 'core:home' %}" class="nav-link">Home</a>
             <a href="{% url 'core:hubs' %}" class="nav-link">Hub</a>
-            <a href="{% url 'vagas:buscar_vagas' %}" class="nav-link">Vagas</a>
 
             {% if request.session.perfil == 'empresa' %}
-              <a href="{% url 'vagas:cadastro_vagas' %}" class="nav-link">Cadastro de Vagas</a>
+              <!-- Dropdown Vagas Mobile (Empresa) -->
+              <div class="mobile-dropdown">
+                <span class="nav-link mobile-dropdown-toggle">Vagas <span class="dropdown-arrow">▼</span></span>
+                <div class="mobile-dropdown-content">
+                  <a href="{% url 'vagas:buscar_vagas' %}">Ver Vagas</a>
+                  <a href="{% url 'vagas:cadastro_vagas' %}">Cadastrar Vaga</a>
+                </div>
+              </div>
+
+              <!-- Dropdown Eventos Mobile (Empresa) -->
+              <div class="mobile-dropdown">
+                <span class="nav-link mobile-dropdown-toggle">Eventos <span class="dropdown-arrow">▼</span></span>
+                <div class="mobile-dropdown-content">
+                  <a href="{% url 'core:buscar_eventos' %}">Ver Eventos</a>
+                  <a href="{% url 'core:cadastro_eventos' %}">Cadastrar Evento</a>
+                </div>
+              </div>
+
+              <!-- Dropdown Treinamentos Mobile (Empresa) -->
+              <div class="mobile-dropdown">
+                <span class="nav-link mobile-dropdown-toggle">Treinamentos <span class="dropdown-arrow">▼</span></span>
+                <div class="mobile-dropdown-content">
+                  <a href="{% url 'core:buscar_treinamentos' %}">Ver Treinamentos</a>
+                  <a href="{% url 'core:cadastro_treinamentos' %}">Cadastrar Treinamento</a>
+                </div>
+              </div>
+            {% else %}
+              <!-- Links simples Mobile (Usuário/Admin/Visitante) -->
+              <a href="{% url 'vagas:buscar_vagas' %}" class="nav-link">Vagas</a>
+              <a href="{% url 'core:buscar_eventos' %}" class="nav-link">Eventos</a>
+              <a href="{% url 'core:buscar_treinamentos' %}" class="nav-link">Treinamentos</a>
             {% endif %}
-            <a href="#parceiros" class="nav-link">Parceiros</a>
-            {% comment %} <a href="#contato" class="nav-link">Contato</a> {% endcomment %}
-            <a href="#sobre" class="nav-link">Sobre</a>
+
+            <a href="{% url 'core:espacos_hub' %}" class="nav-link">Espaços Hub</a>
+            <a href="{% url 'core:parceiros' %}" class="nav-link">Parceiros</a>
+            <a href="{% url 'core:sobre' %}" class="nav-link">Sobre</a>
             {% if user.is_authenticated %}
-              <a href="#perfil" class="nav-link">Perfil</a>
+              <a href="{% url 'core:perfil' %}" class="nav-link">Perfil</a>
               <a href="{% url 'core:logout' %}" class="nav-link">Sair</a>
             {% else %}
-              <button href="{% url 'core:login' %}" class="btn btn-primary">Acessar</button>
+              <a href="{% url 'core:login' %}" class="btn btn-primary">Acessar</a>
             {% endif %}
           </div>
         </div>
@@ -96,92 +256,106 @@
     {% block conteudo %}
 
     {% endblock %}
-  </body>
 
-  <!-- Footer -->
-  <footer id="contato" class="footer">
-    <div class="container">
-      <div class="footer-grid">
-        <!-- Brand & Description -->
-        <div class="footer-brand">
-          <div class="footer-logo">
-            <a href="/"><img src="{% static 'img/logoCanastra.jpeg' %}" alt="Logo Canastra" class="logo" height="50px" /></a>
-            <a href="/"><img src="{% static 'img/ifmgLogoBranca.png' %}" alt="Logo Canastra" class="logo" height="110px" /></a>
-          </div>
-          <p class="footer-description">Conectando produtores, especialistas e tecnologia para impulsionar o agronegócio sustentável. Conteúdos exclusivos sobre agricultura, apicultura e cafeicultura.</p>
+    <!-- Footer -->
+    <footer id="contato" class="footer">
+      <div class="container">
+        <div class="footer-grid">
+          <!-- Brand & Description -->
+          <div class="footer-brand">
+            <div class="footer-logo">
+              <a href="/"><img src="{% static 'img/logoCanastra.jpeg' %}" alt="Logo Canastra" class="logo" height="50px" /></a>
+              <a href="/"><img src="{% static 'img/ifmgLogoBranca.png' %}" alt="Logo Canastra" class="logo" height="110px" /></a>
+            </div>
+            <p class="footer-description">Conectando produtores, especialistas e tecnologia para impulsionar o agronegócio sustentável. Conteúdos exclusivos sobre agricultura, apicultura e cafeicultura.</p>
 
-          <!-- Social Media -->
-          <div class="social-links">
-            <a href="#" class="social-link" aria-label="Facebook">📘</a>
-            <a href="#" class="social-link" aria-label="Instagram">📷</a>
-            <a href="#" class="social-link" aria-label="Twitter">🐦</a>
-            <a href="#" class="social-link" aria-label="LinkedIn">💼</a>
-          </div>
-        </div>
-
-        <!-- Contact Info -->
-        <div class="footer-contact">
-          <h3>Contato</h3>
-          <div class="contact-item">
-            <span class="contact-icon">📍</span>
-            <div>
-              <a href="https://www.google.com/maps/place/IFMG+Campus+Bambu%C3%AD/@-20.0357893,-46.0127586,1428m/data=!3m1!1e3!4m6!3m5!1s0x94b3e93b6265b15b:0x5c7e8f490ffc60b6!8m2!3d-20.0331216!4d-46.0095271!16s%2Fg%2F1ttdp250?entry=ttu&g_ep=EgoyMDI1MTEyMy4xIKXMDSoASAFQAw%3D%3D"><p>IFMG Campus Bambuí</p></a>
+            <!-- Social Media -->
+            <div class="social-links">
+              <a href="#" class="social-link" aria-label="Facebook">📘</a>
+              <a href="#" class="social-link" aria-label="Instagram">📷</a>
+              <a href="#" class="social-link" aria-label="Twitter">🐦</a>
+              <a href="#" class="social-link" aria-label="LinkedIn">💼</a>
             </div>
           </div>
 
-          <div class="contact-item">
-            <span class="contact-icon">📞</span>
-            <a href="tel:(37) 3431-4901">(37) 3431-4901</a>
-          </div>
+          <!-- Contact Info -->
+          <div class="footer-contact">
+            <h3>Contato</h3>
+            <div class="contact-item">
+              <span class="contact-icon">📍</span>
+              <div>
+                <a href="https://www.google.com/maps/place/IFMG+Campus+Bambu%C3%AD/@-20.0357893,-46.0127586,1428m/data=!3m1!1e3!4m6!3m5!1s0x94b3e93b6265b15b:0x5c7e8f490ffc60b6!8m2!3d-20.0331216!4d-46.0095271!16s%2Fg%2F1ttdp250?entry=ttu&g_ep=EgoyMDI1MTEyMy4xIKXMDSoASAFQAw%3D%3D"><p>IFMG Campus Bambuí</p></a>
+              </div>
+            </div>
 
-          <div class="contact-item">
-            <span class="contact-icon">✉️</span>
-            <a href="canastrahub.bambui@ifmg.edu.br">canastrahub.bambui@ifmg.edu.br</a>
+            <div class="contact-item">
+              <span class="contact-icon">📞</span>
+              <a href="tel:(37) 3431-4901">(37) 3431-4901</a>
+            </div>
+
+            <div class="contact-item">
+              <span class="contact-icon">✉️</span>
+              <a href="canastrahub.bambui@ifmg.edu.br">canastrahub.bambui@ifmg.edu.br</a>
+            </div>
           </div>
         </div>
+
+        <div class="footer-bottom">
+          <p>&copy; 2025 Hub Canastra. Todos os direitos reservados.</p>
+        </div>
       </div>
+    </footer>
 
-      <div class="footer-bottom">
-        <p>&copy; 2025 Hub Canastra. Todos os direitos reservados.</p>
-      </div>
-    </div>
-  </footer>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <link href="{% static 'css/toastr.min.css' %}" rel="stylesheet" />
-  <script src="{% static 'js/toastr.min.js' %}"></script>
-  <script>
-  
-  $(document).ready(function() {
+    <!-- Scripts Base -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="{% static 'css/toastr.min.css' %}" rel="stylesheet" />
+    <script src="{% static 'js/toastr.min.js' %}"></script>
+    <script>
+      $(document).ready(function() {
+        toastr.options = {
+          "debug": false,
+          "newestOnTop": true,
+          "progressBar": false,
+          "positionClass": "toast-bottom-left",
+          "preventDuplicates": false,
+          "onclick": null,
+          "showDuration": "300",
+          "timeOut": "3000",
+          "extendedTimeOut": "300",
+          "showEasing": "swing",
+          "hideEasing": "linear",
+          "showMethod": "fadeIn",
+          "hideMethod": "fadeOut"
+        };
 
-    toastr.options = {
-            "debug": false,
-            "newestOnTop": true,
-            "progressBar": false,
-            "positionClass": "toast-bottom-left",
-            "preventDuplicates": false,
-            "onclick": null,
-            "showDuration": "300",
-            "timeOut": "3000",
-            "extendedTimeOut": "300",
-            "showEasing": "swing",
-            "hideEasing": "linear",
-            "showMethod": "fadeIn",
-            "hideMethod": "fadeOut"
-      };
+        {% if messages %}
+          {% for message in messages %}
+            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+              toastr.error("{{ message }}", "Erro");
+            {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+              toastr.success("{{ message }}", "Sucesso");
+            {% elif message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
+              toastr.warning("{{ message }}", "Aviso");
+            {% elif message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+              toastr.info("{{ message }}", "Atenção");
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+        
+        // Toggle Menu Mobile
+        $('#mobile-menu-btn').on('click', function() {
+          $('#mobile-menu').toggleClass('active');
+        });
+        
+        // Toggle Dropdowns Mobile
+        $('.mobile-dropdown-toggle').on('click', function() {
+          $(this).parent('.mobile-dropdown').toggleClass('active');
+        });
+      });
+    </script>
 
-      {% if messages %}
-            {% for message in messages %}
-               {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
-                  toastr.error("{{ message }}", "Erro");
-               {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
-                  toastr.success("{{ message }}", "Sucesso");
-               {% elif message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
-                  toastr.warning("{{ message }}", "Aviso");
-               {% elif message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
-                  toastr.info("{{ message }}", "Atenção");
-               {% endif %}
-            {% endfor %}
-      {% endif %}
-  })
-</script>
+    <!-- Bloco para scripts adicionais das páginas filhas -->
+    {% block scripts %}
+    {% endblock %}
+  </body>
 </html>

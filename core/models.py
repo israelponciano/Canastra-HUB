@@ -260,7 +260,7 @@ class Noticia(models.Model):
                                  allowed_extensions=["jpg", "png", "jpeg"])],
                              null=True,
                              blank=True,
-                             default=None)
+                             default=None, db_column='foto_hub')
 
 class NoticiaHub(models.Model):
     noticia = models.ForeignKey(Noticia, on_delete=models.CASCADE)

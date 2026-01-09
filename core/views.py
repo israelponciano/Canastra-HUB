@@ -4,8 +4,10 @@ from django.contrib.auth import authenticate, login as auth_login, logout as aut
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods 
 from core.models import *
-# Create your views here.
-
+from empresa.models import *
+from django.contrib.auth.decorators import login_required
+from decimal import Decimal, InvalidOperation
+from datetime import datetime
 
 def home(request):
     # Buscar notícias ativas que devem aparecer na home
@@ -644,3 +646,430 @@ def get_cidades(request):
         'cidades': cidades_data,
         'total': len(cidades_data)
     })
+    
+    
+@login_required
+def perfil(request):
+    """
+    View para exibir o perfil do usuário logado.
+    Detecta o tipo de usuário (admin, empresa, usuario) e carrega os dados correspondentes.
+    """
+    user = request.user
+    tipo_perfil = request.session.get('perfil', 'admin')
+    
+    # Carregar estados para os selects
+    estados = Estado.objects.all().order_by('nome_estado')
+    
+    contexto = {
+        'user': user,
+        'estados': estados,
+        'cidades': Cidade.objects.none(),  # Inicialmente vazio, carrega via AJAX
+    }
+    
+    if tipo_perfil == 'empresa':
+        try:
+            empresa = Empresa.objects.select_related('cidade', 'estado').get(user=user)
+            # Carregar cidades do estado selecionado
+            if empresa.estado:
+                contexto['cidades'] = Cidade.objects.filter(estado_cidade=empresa.estado).order_by('nome_cidade')
+            
+            # Carregar todos os hubs disponíveis
+            hubs = Hub.objects.all().order_by('nome_hub')
+            
+            # Carregar IDs dos hubs vinculados à empresa
+            hubs_vinculados = list(EmpresaHub.objects.filter(empresa=empresa).values_list('hub_id', flat=True))
+            
+            contexto['empresa'] = empresa
+            contexto['hubs'] = hubs
+            contexto['hubs_vinculados'] = hubs_vinculados
+        except Empresa.DoesNotExist:
+            messages.error(request, 'Perfil de empresa não encontrado.')
+            return redirect('core:home')
+            
+    elif tipo_perfil == 'usuario':
+        try:
+            usuario = Usuario.objects.select_related('cidade', 'estado').get(user=user)
+            experiencias = ExperienciaProfissional.objects.filter(usuario=usuario)
+            cursos_extras = CursoExtraCurricular.objects.filter(usuario=usuario)
+            idiomas = Idioma.objects.filter(usuario=usuario)
+            
+            # Carregar cidades do estado selecionado
+            if usuario.estado:
+                contexto['cidades'] = Cidade.objects.filter(estado_cidade=usuario.estado).order_by('nome_cidade')
+            
+            contexto.update({
+                'usuario': usuario,
+                'experiencias': experiencias,
+                'cursos_extras': cursos_extras,
+                'idiomas': idiomas,
+            })
+        except Usuario.DoesNotExist:
+            messages.error(request, 'Perfil de usuário não encontrado.')
+            return redirect('core:home')
+    
+    # Admin não precisa de dados extras (usa apenas user)
+    
+    return render(request, 'perfil.html', contexto)
+
+
+@login_required
+def atualizarPerfil(request):
+    """
+    View para atualizar o perfil do usuário logado.
+    Processa o formulário POST e atualiza os dados no banco.
+    """
+    if request.method != 'POST':
+        return redirect('core:perfil')
+    
+    user = request.user
+    tipo_perfil = request.session.get('perfil', 'admin')
+    
+    # Verificar se é apenas upload de foto
+    apenas_foto = request.POST.get('apenas_foto') == '1'
+    
+    try:
+        # Atualizar foto do perfil (comum a todos)
+        if 'foto' in request.FILES:
+            foto = request.FILES['foto']
+            # Validar extensão
+            ext = foto.name.split('.')[-1].lower()
+            if ext in ['jpg', 'jpeg', 'png']:
+                user.foto = foto
+                user.save()
+                
+                # Se for apenas foto, retorna aqui
+                if apenas_foto:
+                    messages.success(request, 'Foto atualizada com sucesso!')
+                    return redirect('core:perfil')
+        
+        # Atualizar nome (comum a todos)
+        if request.POST.get('nome'):
+            user.nome = request.POST.get('nome')
+        
+        user.save()
+        
+        # Atualizar dados específicos por tipo de perfil
+        if tipo_perfil == 'admin':
+            # Admin só atualiza dados básicos
+            messages.success(request, 'Perfil atualizado com sucesso!')
+            
+        elif tipo_perfil == 'empresa':
+            _atualizar_empresa(request, user)
+            messages.success(request, 'Perfil da empresa atualizado com sucesso!')
+            
+        elif tipo_perfil == 'usuario':
+            _atualizar_usuario(request, user)
+            messages.success(request, 'Perfil atualizado com sucesso!')
+        
+    except Exception as e:
+        messages.error(request, f'Erro ao atualizar perfil: {str(e)}')
+    
+    return redirect('core:perfil')
+
+
+def _atualizar_empresa(request, user):
+    """
+    Função auxiliar para atualizar dados da empresa.
+    """
+    empresa = Empresa.objects.get(user=user)
+    
+    # Dados da empresa
+    empresa.nomefantasia = request.POST.get('nomefantasia', empresa.nomefantasia)
+    empresa.razao_social = request.POST.get('razao_social', empresa.razao_social)
+    empresa.cnpj = request.POST.get('cnpj', empresa.cnpj)
+    empresa.tipo_empresa = request.POST.get('tipo_empresa', empresa.tipo_empresa)
+    empresa.segmento = request.POST.get('segmento', empresa.segmento)
+    empresa.telefone = request.POST.get('telefone', empresa.telefone)
+    
+    # Endereço
+    empresa.cep = request.POST.get('cep', empresa.cep)
+    empresa.rua = request.POST.get('rua', empresa.rua)
+    empresa.numero = request.POST.get('numero', empresa.numero) or 0
+    empresa.complemento = request.POST.get('complemento', empresa.complemento)
+    
+    # Cidade e Estado
+    estado_id = request.POST.get('estado')
+    cidade_id = request.POST.get('cidade')
+    
+    if estado_id:
+        empresa.estado = Estado.objects.get(id=estado_id)
+    if cidade_id:
+        empresa.cidade = Cidade.objects.get(id=cidade_id)
+    
+    empresa.save()
+    
+    # Atualizar hubs vinculados
+    _atualizar_hubs_empresa(request, empresa)
+
+
+def _atualizar_hubs_empresa(request, empresa):
+    """
+    Atualiza os hubs vinculados à empresa.
+    Remove vínculos antigos e cria novos conforme seleção.
+    """
+    # Pegar os IDs dos hubs selecionados no formulário
+    hubs_selecionados = request.POST.getlist('hubs')
+    
+    # Converter para inteiros
+    hubs_selecionados_ids = [int(h) for h in hubs_selecionados if h]
+    
+    # Remover todos os vínculos atuais
+    EmpresaHub.objects.filter(empresa=empresa).delete()
+    
+    # Criar novos vínculos
+    for hub_id in hubs_selecionados_ids:
+        try:
+            hub = Hub.objects.get(id=hub_id)
+            EmpresaHub.objects.create(empresa=empresa, hub=hub)
+        except Hub.DoesNotExist:
+            pass  # Ignorar hub inválido
+
+
+def _atualizar_usuario(request, user):
+    """
+    Função auxiliar para atualizar dados do usuário (candidato).
+    """
+    usuario = Usuario.objects.get(user=user)
+    
+    # Informações pessoais
+    usuario.nome_social = request.POST.get('nome_social') or None
+    usuario.data_nascimento = _parse_date(request.POST.get('data_nascimento')) or usuario.data_nascimento
+    usuario.genero = request.POST.get('genero', usuario.genero)
+    usuario.estado_civil = request.POST.get('estado_civil', usuario.estado_civil)
+    usuario.nacionalidade = request.POST.get('nacionalidade', usuario.nacionalidade)
+    usuario.telefone = request.POST.get('telefone', usuario.telefone)
+    
+    # Endereço
+    usuario.cep = request.POST.get('cep', usuario.cep)
+    usuario.rua = request.POST.get('rua', usuario.rua)
+    usuario.bairro = request.POST.get('bairro', usuario.bairro)
+    usuario.numero = request.POST.get('numero', usuario.numero)
+    usuario.complemento = request.POST.get('complemento') or None
+    
+    # Cidade e Estado
+    estado_id = request.POST.get('estado')
+    cidade_id = request.POST.get('cidade')
+    
+    if estado_id:
+        usuario.estado = Estado.objects.get(id=estado_id)
+    if cidade_id:
+        usuario.cidade = Cidade.objects.get(id=cidade_id)
+    
+    # Objetivo profissional
+    usuario.cargo_pretendido = request.POST.get('cargo_pretendido') or None
+    usuario.area_interesse = request.POST.get('area_interesse') or None
+    usuario.pretensao_salarial = _parse_decimal(request.POST.get('pretensao_salarial'))
+    usuario.disponibilidade = request.POST.get('disponibilidade') or None
+    usuario.remoto = request.POST.get('remoto') == 'on'
+    
+    # Redes sociais
+    usuario.linkedin = request.POST.get('linkedin') or None
+    usuario.github = request.POST.get('github') or None
+    usuario.instagram = request.POST.get('instagram') or None
+    usuario.facebook = request.POST.get('facebook') or None
+    usuario.site_pessoal = request.POST.get('site_pessoal') or None
+    
+    # Formação acadêmica 1
+    usuario.instituicao_nome1 = request.POST.get('instituicao_nome1') or None
+    usuario.grau_escolaridade1 = request.POST.get('grau_escolaridade1') or None
+    usuario.curso_graduacao1 = request.POST.get('curso_graduacao1') or None
+    usuario.situacao_academica1 = request.POST.get('situacao_academica1') or None
+    usuario.data_acad_inicio1 = _parse_date(request.POST.get('data_acad_inicio1'))
+    usuario.data_acad_fim1 = _parse_date(request.POST.get('data_acad_fim1'))
+    
+    # Formação acadêmica 2
+    usuario.instituicao_nome2 = request.POST.get('instituicao_nome2') or None
+    usuario.grau_escolaridade2 = request.POST.get('grau_escolaridade2') or None
+    usuario.curso_graduacao2 = request.POST.get('curso_graduacao2') or None
+    usuario.situacao_academica2 = request.POST.get('situacao_academica2') or None
+    usuario.data_acad_inicio2 = _parse_date(request.POST.get('data_acad_inicio2'))
+    usuario.data_acad_fim2 = _parse_date(request.POST.get('data_acad_fim2'))
+    
+    # Formação acadêmica 3
+    usuario.instituicao_nome3 = request.POST.get('instituicao_nome3') or None
+    usuario.grau_escolaridade3 = request.POST.get('grau_escolaridade3') or None
+    usuario.curso_graduacao3 = request.POST.get('curso_graduacao3') or None
+    usuario.situacao_academica3 = request.POST.get('situacao_academica3') or None
+    usuario.data_acad_inicio3 = _parse_date(request.POST.get('data_acad_inicio3'))
+    usuario.data_acad_fim3 = _parse_date(request.POST.get('data_acad_fim3'))
+    
+    # Competências 1
+    usuario.competencias_tecnicas1 = request.POST.get('competencias_tecnicas1') or None
+    usuario.competencias_comportamentais1 = request.POST.get('competencias_comportamentais1') or None
+    
+    # Competências 2
+    usuario.competencias_tecnicas2 = request.POST.get('competencias_tecnicas2') or None
+    usuario.competencias_comportamentais2 = request.POST.get('competencias_comportamentais2') or None
+    
+    # Competências 3
+    usuario.competencias_tecnicas3 = request.POST.get('competencias_tecnicas3') or None
+    usuario.competencias_comportamentais3 = request.POST.get('competencias_comportamentais3') or None
+    
+    # Inclusão e acessibilidade
+    usuario.pessoa_com_deficiencia = request.POST.get('pessoa_com_deficiencia') == 'on'
+    usuario.tipo_deficiencia = request.POST.get('tipo_deficiencia') or None
+    usuario.necessidade_adaptacao = request.POST.get('necessidade_adaptacao') or None
+    
+    # Informações adicionais
+    usuario.interesses_hobbies = request.POST.get('interesses_hobbies') or None
+    
+    # Anexos
+    if 'curriculo_pdf' in request.FILES:
+        usuario.curriculo_pdf = request.FILES['curriculo_pdf']
+    if 'carta_apresentacao' in request.FILES:
+        usuario.carta_apresentacao = request.FILES['carta_apresentacao']
+    
+    usuario.save()
+    
+    # Atualizar experiências profissionais
+    _atualizar_experiencias(request, usuario)
+    
+    # Atualizar cursos extracurriculares
+    _atualizar_cursos(request, usuario)
+    
+    # Atualizar idiomas
+    _atualizar_idiomas(request, usuario)
+
+
+def _atualizar_experiencias(request, usuario):
+    """
+    Atualiza ou cria experiências profissionais do usuário.
+    """
+    # Buscar ou criar o registro de experiência
+    experiencia, created = ExperienciaProfissional.objects.get_or_create(usuario=usuario)
+    
+    # Experiência 1
+    experiencia.nome_empresa1 = request.POST.get('nome_empresa1') or None
+    experiencia.cargo1 = request.POST.get('cargo1') or None
+    experiencia.data_inicio1 = _parse_date(request.POST.get('data_inicio1'))
+    experiencia.data_fim1 = _parse_date(request.POST.get('data_fim1'))
+    
+    # Experiência 2
+    experiencia.nome_empresa2 = request.POST.get('nome_empresa2') or None
+    experiencia.cargo2 = request.POST.get('cargo2') or None
+    experiencia.data_inicio2 = _parse_date(request.POST.get('data_inicio2'))
+    experiencia.data_fim2 = _parse_date(request.POST.get('data_fim2'))
+    
+    # Experiência 3
+    experiencia.nome_empresa3 = request.POST.get('nome_empresa3') or None
+    experiencia.cargo3 = request.POST.get('cargo3') or None
+    experiencia.data_inicio3 = _parse_date(request.POST.get('data_inicio3'))
+    experiencia.data_fim3 = _parse_date(request.POST.get('data_fim3'))
+    
+    experiencia.save()
+
+
+def _atualizar_cursos(request, usuario):
+    """
+    Atualiza ou cria cursos extracurriculares do usuário.
+    """
+    curso, created = CursoExtraCurricular.objects.get_or_create(usuario=usuario)
+    
+    # Curso 1
+    curso.nome_curso1 = request.POST.get('nome_curso1') or None
+    curso.instituicao1 = request.POST.get('instituicao1') or None
+    curso.carga_horaria1 = _parse_int(request.POST.get('carga_horaria1'))
+    curso.data_conclusao1 = _parse_date(request.POST.get('data_conclusao1'))
+    curso.link_certificado1 = request.POST.get('link_certificado1') or None
+    
+    # Curso 2
+    curso.nome_curso2 = request.POST.get('nome_curso2') or None
+    curso.instituicao2 = request.POST.get('instituicao2') or None
+    curso.carga_horaria2 = _parse_int(request.POST.get('carga_horaria2'))
+    curso.data_conclusao2 = _parse_date(request.POST.get('data_conclusao2'))
+    curso.link_certificado2 = request.POST.get('link_certificado2') or None
+    
+    # Curso 3
+    curso.nome_curso3 = request.POST.get('nome_curso3') or None
+    curso.instituicao3 = request.POST.get('instituicao3') or None
+    curso.carga_horaria3 = _parse_int(request.POST.get('carga_horaria3'))
+    curso.data_conclusao3 = _parse_date(request.POST.get('data_conclusao3'))
+    curso.link_certificado3 = request.POST.get('link_certificado3') or None
+    
+    curso.save()
+
+
+def _atualizar_idiomas(request, usuario):
+    """
+    Atualiza ou cria idiomas do usuário.
+    """
+    idioma, created = Idioma.objects.get_or_create(usuario=usuario)
+    
+    # Idioma 1
+    idioma.idioma1 = request.POST.get('idioma1') or None
+    idioma.nivel_fluencia1 = request.POST.get('nivel_fluencia1') or None
+    
+    # Idioma 2
+    idioma.idioma2 = request.POST.get('idioma2') or None
+    idioma.nivel_fluencia2 = request.POST.get('nivel_fluencia2') or None
+    
+    # Idioma 3
+    idioma.idioma3 = request.POST.get('idioma3') or None
+    idioma.nivel_fluencia3 = request.POST.get('nivel_fluencia3') or None
+    
+    idioma.save()
+
+
+# =============================================
+# FUNÇÕES AUXILIARES DE PARSING
+# =============================================
+
+def _parse_date(date_str):
+    """
+    Converte string de data para objeto date.
+    Retorna None se a conversão falhar.
+    """
+    if not date_str:
+        return None
+    try:
+        return datetime.strptime(date_str, '%Y-%m-%d').date()
+    except ValueError:
+        return None
+
+
+def _parse_decimal(value_str):
+    """
+    Converte string para Decimal.
+    Retorna None se a conversão falhar.
+    """
+    if not value_str:
+        return None
+    try:
+        return Decimal(value_str)
+    except (InvalidOperation, ValueError):
+        return None
+
+
+def _parse_int(value_str):
+    """
+    Converte string para int.
+    Retorna None se a conversão falhar.
+    """
+    if not value_str:
+        return None
+    try:
+        return int(value_str)
+    except ValueError:
+        return None
+
+
+# =============================================
+# API AJAX PARA CIDADES
+# =============================================
+
+def buscar_cidades(request):
+    """
+    API para buscar cidades por estado via AJAX.
+    Retorna JSON com lista de cidades.
+    """
+    estado_id = request.GET.get('estado_id')
+    
+    if not estado_id:
+        return JsonResponse({'cidades': []})
+    
+    try:
+        cidades = Cidade.objects.filter(estado_cidade_id=estado_id).order_by('nome_cidade')
+        cidades_list = [{'id': c.id, 'nome': c.nome_cidade} for c in cidades]
+        return JsonResponse({'cidades': cidades_list})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
