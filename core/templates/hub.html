@@ -1,0 +1,185 @@
+{% extends 'master.html' %}
+{% load static %}
+{% block conteudo %}
+  <main class="hub-main">
+    <!-- Título do Hub -->
+    <h1 class="section-bigTitle">{{ hub.nome_hub }}</h1>
+
+    <!-- Notícias Section -->
+    <section id="noticias" class="hub-section">
+      <div class="container">
+        <h2 class="section-title">Notícias</h2>
+        <div class="carousel-wrapper">
+          <button class="carousel-control prev" aria-label="Notícia anterior">‹</button>
+          <div class="news-carousel">
+            <div class="news-track">
+              {% for noticia_hub in noticias %}
+                <div class="news-card">
+                  <img src="{% if noticia_hub.noticia.imagem_noticia %}
+                      {{ noticia_hub.noticia.imagem_noticia.url }}
+                    {% else %}
+                      {% static 'img/default-news.jpg' %}
+                    {% endif %}"
+                    alt="{{ noticia_hub.noticia.titulo_noticia }}" />
+                  <div class="news-content">
+                    <span class="news-author">Por {{ noticia_hub.noticia.fonte }}</span>
+                    <h3>{{ noticia_hub.noticia.titulo_noticia }}</h3>
+                    <p>{{ noticia_hub.noticia.descricao_noticia }}</p>
+                    {% if noticia_hub.noticia.url %}
+                      <a target="_blank" href="{{ noticia_hub.noticia.url }}">saiba mais...</a>
+                    {% endif %}
+                  </div>
+                </div>
+              {% empty %}
+                <p>Nenhuma notícia disponível no momento.</p>
+              {% endfor %}
+            </div>
+          </div>
+          <button class="carousel-control next" aria-label="Próxima notícia">›</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Demandas Section -->
+    <!-- Codiguin pronto pros cria -->
+    {% comment %} <section id="demandas" class="hub-section">
+      <div class="container">
+        <h2 class="section-title">Demandas</h2>
+        <div class="demands-grid">
+          {% for demanda in demandas %}
+            <div class="demand-card">
+              <img src="{{ demanda.imagem }}" alt="{{ demanda.titulo }}" class="company-logo" />
+              <h3>{{ demanda.titulo }}</h3>
+              {% if demanda.preco_min and demanda.preco_max %}
+                <span class="price">R$ {{ demanda.preco_min|floatformat:0 }} - R$ {{ demanda.preco_max|floatformat:0 }}</span>
+              {% endif %}
+              <p>{{ demanda.descricao }}</p>
+            </div>
+          {% empty %}
+            <p>Nenhuma demanda disponível no momento.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </section> {% endcomment %}
+    <section id="demandas" class="hub-section">
+      <div class="container">
+        <h2 class="section-title">Demandas</h2>
+        <div class="demands-grid">
+          <!-- Demanda 1 -->
+          <div class="demand-card">
+            <img src="{% static '/img/hubs/demanda_milho_1.png' %}" alt="AgroTech Solutions" class="company-logo" />
+            <h3>Monitoramento Inteligente por Imagens Aéreas</h3>
+            <span class="price">Urgente</span>
+            <p>Implementação de um sistema de monitoramento de lavouras utilizando drones com câmeras multiespectrais. Desenvolvimento de modelos de Inteligência Artificial para detecção precoce de estresse hídrico, deficiências nutricionais e infestação de pragas, permitindo a aplicação de insumos de forma precisa.</p>
+          </div>
+
+          <!-- Demanda 2 -->
+          <div class="demand-card">
+            <img src="{% static '/img/hubs/demanda_milho_2.png' %}" alt="irrigacao" class="company-logo" />
+            <h3>Modelo de Negócio Sustentável</h3>
+            <span class="price">Negociável</span>
+            <p>Lançar uma plataforma digital visando prever a safra (clima, produtividade por talhão) e otimizar a armazenagem inteligente (controle de umidade e pragas), conectando produtores, transportadores especializados e compradores regionais (indústrias de ração, agroindústrias).</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Empresas Section -->
+    <!-- Codiguin pronto pros cria -->
+    {% comment %} <section id="empresas" class="hub-section">
+      <div class="container">
+        <h2 class="section-title">Empresas Parceiras</h2>
+        <div class="companies-grid">
+          {% for empresa in empresas %}
+            <div class="partner-card">
+              <div class="partner-logo highlight">{{ empresa.logo_letra }}</div>
+              <h3>{{ empresa.nome }}</h3>
+              <p>{{ empresa.descricao }}</p>
+            </div>
+          {% empty %}
+            <p>Nenhuma empresa parceira cadastrada.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </section> {% endcomment %}
+    <section id="empresas" class="hub-section">
+      <div class="container">
+        <h2 class="section-title">Empresas Parceiras</h2>
+        <div class="companies-grid">
+          <div class="partner-card">
+            <div class="partner-logo highlight">A</div>
+            <h3>AgroNova</h3>
+            <p>Soluções integradas para o desenvolvimento sustentável do agronegócio.</p>
+          </div>
+
+          <div class="partner-card">
+            <div class="partner-logo highlight">T</div>
+            <h3>TerraPrime</h3>
+            <p>Atuação completa na cadeia agrícola, do campo à comercialização.</p>
+          </div>
+
+          <div class="partner-card">
+            <div class="partner-logo highlight">R</div>
+            <h3>Ruralis</h3>
+            <p>Conectando pessoas, tecnologia e oportunidades no agronegócio.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Treinamentos Section -->
+    <!-- Codiguin pronto pros cria -->
+    {% comment %} <section id="treinamentos" class="hub-section">
+      <div class="container">
+        <h2 class="section-title">Treinamentos</h2>
+        <div class="training-grid">
+          {% for treinamento in treinamentos %}
+            <div class="training-card">
+              <img src="{{ treinamento.imagem }}" alt="{{ treinamento.titulo }}" />
+              <div class="training-content">
+                <h3>{{ treinamento.titulo }}</h3>
+                <p>{{ treinamento.descricao }}</p>
+              </div>
+            </div>
+          {% empty %}
+            <p>Nenhum treinamento disponível no momento.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </section> {% endcomment %}
+    <section id="treinamentos" class="hub-section">
+      <div class="container">
+        <h2 class="section-title">Treinamentos</h2>
+        <div class="training-grid">
+          <!-- Treinamento 1 -->
+          <div class="training-card">
+            <img src="https://agrotools.com.br/wp-content/uploads/2024/01/capa_blog_analise-de-dados-no-agro-1.png" alt="" />
+            <div class="training-content">
+              <h3>Tecnologias Digitais e Análise de Dados no Agronegócio</h3>
+              <p>Introdução às principais tecnologias digitais aplicadas ao agro, como agricultura de precisão, sensoriamento remoto, uso de dados, automação e inteligência artificial para apoio à tomada de decisão e ganho de eficiência produtiva e comercial.</p>
+            </div>
+          </div>
+
+          <!-- Treinamento 2 -->
+          <div class="training-card">
+            <img src="https://imagens-cdn.canalrural.com.br/wp-content/uploads/tecnologia-sustentabilidade-agro.jpg" alt="" />
+            <div class="training-content">
+              <h3>Gestão de Riscos, Qualidade e Sustentabilidade no Campo</h3>
+              <p>Capacitação em boas práticas de manejo, gestão de riscos operacionais, controle de perdas, sustentabilidade, uso racional de insumos e conformidade com normas ambientais e de qualidade aplicáveis ao agronegócio.</p>
+            </div>
+          </div>
+
+          <!-- Treinamento 3 -->
+          <div class="training-card">
+            <img src="https://rehagro.com.br/blog/wp-content/uploads/2023/08/capa-negociacao-e-vendas.jpg" alt="" />
+            <div class="training-content">
+              <h3>Estratégias de Mercado, Comercialização e Vendas no Agro</h3>
+              <p>Fundamentos de análise de mercado, formação de preços, negociação, estratégias comerciais, gestão de contratos e técnicas de vendas voltadas ao agronegócio, com foco em redução de riscos e aumento de rentabilidade.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="{% static 'js/hub.js' %}"></script>
+{% endblock %}

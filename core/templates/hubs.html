@@ -2,67 +2,24 @@
 {% load static %}
 {% block conteudo %}
   <main>
-    <!-- Carousel Section -->
-
-    <section class="imagemgrande-section">
-      <a href="{% url 'core:agro' %}" class="imagemgrande-link">
-        <div class="imagemgrande-container" style="background-image: url('{% static 'img/milho.jpg' %}');">
-          <div class="imagemgrande-content">
-            <h1>Agro</h1>
+    {% for hub in hubs %}
+      <section class="imagemgrande-section">
+        <a href="{% url 'core:hub_detalhe' nome_hub=hub.nome_hub %}" class="imagemgrande-link">
+          <div class="imagemgrande-container">
+            {% if hub.foto_hub %}
+              <img src="{{ hub.foto_hub.url }}" alt="{{ hub.nome_hub }}" class="imagemgrande-background" />
+            {% else %}
+              <img src="{% static 'img/default-hub.jpg' %}" alt="{{ hub.nome_hub }}" class="imagemgrande-background" />
+            {% endif %}
+            <div class="imagemgrande-content">
+              <h1>{{ hub.nome_hub }}</h1>
+            </div>
           </div>
-        </div>
-      </a>
-    </section>
-
-    <section class="imagemgrande-section">
-      <a href="{% url 'core:apicultura' %}" class="imagemgrande-link">
-        <div class="imagemgrande-container" style="background-image: url('{% static 'img/apicultura.png' %}');">
-          <div class="imagemgrande-content">
-            <h1>Apicultura</h1>
-          </div>
-        </div>
-      </a>
-    </section>
-
-    <section class="imagemgrande-section">
-      <a href="{% url 'core:calcados' %}" class="imagemgrande-link">
-        <div class="imagemgrande-container" style="background-image: url('{% static 'img/calcados.jpg' %}');">
-          <div class="imagemgrande-content">
-            <h1>Calçados</h1>
-          </div>
-        </div>
-      </a>
-    </section>
-
-    <section class="imagemgrande-section">
-      <a href="{% url 'core:milho' %}" class="imagemgrande-link">
-        <div class="imagemgrande-container" style="background-image: url('{% static 'img/milho_hub.jpg' %}');">
-          <div class="imagemgrande-content">
-            <h1>Milho</h1>
-          </div>
-        </div>
-      </a>
-    </section>
-
-    <section class="imagemgrande-section">
-      <a href="{% url 'core:queijo' %}" class="imagemgrande-link">
-        <div class="imagemgrande-container" style="background-image: url('https://acasadoprodutor.com.br/wp-content/uploads/2025/07/Tipos-de-queijos-no-Brasil.jpg');">
-          <div class="imagemgrande-content">
-            <h1>Queijo</h1>
-          </div>
-        </div>
-      </a>
-    </section>
-
-    <section class="imagemgrande-section">
-      <a href="{% url 'core:graos' %}" class="imagemgrande-link">
-        <div class="imagemgrande-container" style="background-image: url('{% static 'img/hubs/graos_hub.jpg' %}');">
-          <div class="imagemgrande-content">
-            <h1>Grãos</h1>
-          </div>
-        </div>
-      </a>
-    </section>
+        </a>
+      </section>
+    {% empty %}
+      <p>Nenhum hub disponível no momento.</p>
+    {% endfor %}
   </main>
 
   <script src="{% static 'js/scripts.js' %}"></script>

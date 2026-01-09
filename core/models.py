@@ -234,7 +234,7 @@ class Idioma(models.Model):
 
 
 class Hub(models.Model):
-    nome_hub = models.CharField(max_length=100)
+    nome_hub = models.CharField(max_length=100, unique=True)
     descricao_hub = models.CharField(max_length=250)
     foto_hub = models.ImageField(upload_to="fotos_hub/",
                              validators=[FileExtensionValidator(

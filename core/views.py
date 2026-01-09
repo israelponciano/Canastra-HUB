@@ -1,10 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods 
 from core.models import *
-
 # Create your views here.
 
 
@@ -12,36 +11,43 @@ def home(request):
 
     return render(request, 'home.html')
 
-def hubs(request):
-
-    return render(request, 'hubs.html')
-
 def parceiros(request):
 
     return render(request, 'parceiros.html')
 
-def agro(request):
+def hubs(request):
+    """View para a central de hubs"""
+    hubs = Hub.objects.filter(isActive=True)
+    return render(request, 'hubs.html', {'hubs': hubs})
 
-    return render(request, 'agro.html')
-
-def queijo(request):
-
-    return render(request, 'queijo.html')
-
-def apicultura(request):
-
-    return render(request, 'apicultura.html')
-
-def calcados(request):
-    return render(request, 'calcados.html')
-
-
-def milho(request):
-    return render(request, 'milho.html')
-
-def graos(request):
-
-    return render(request, 'graos.html')
+def hub_detalhe(request, nome_hub):
+    """View dinâmica para cada hub"""
+    hub = get_object_or_404(Hub, nome_hub=nome_hub, isActive=True)
+    
+    # Buscar notícias relacionadas ao hub
+    noticias = NoticiaHub.objects.filter(
+        hub=hub, 
+        noticia__isActive=True
+    ).select_related('noticia')
+    
+    # Buscar demandas
+    #demandas = Demanda.objects.filter(hub=hub, isActive=True)
+    
+    # Buscar empresas parceiras
+    #empresas = EmpresaParceira.objects.filter(hub=hub, isActive=True)
+    
+    # Buscar treinamentos
+    #treinamentos = Treinamento.objects.filter(hub=hub, isActive=True)
+    
+    context = {
+        'hub': hub,
+        'noticias': noticias,
+        #'demandas': demandas,
+        #'empresas': empresas,
+        #'treinamentos': treinamentos,
+    }
+    
+    return render(request, 'hub.html', context)
 
 def sobre(request):
 

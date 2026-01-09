@@ -61,7 +61,7 @@ def alterarHub(request):
     if request.method == 'POST':
         id = request.POST.get('idhub')
         nome_hub = request.POST.get('txtNomeHub')
-        foto_hub = request.FILES.get("fleFotoHubs")  
+        foto_hub = request.FILES.get("fleFotoHub")  
         descricao_hub= request.POST.get("txtDescricaoHub")
 
         hub = Hub.objects.get(id=id)
@@ -72,16 +72,11 @@ def alterarHub(request):
         if nome_hub:
             hub.nome_hub = nome_hub
     
-        if foto_hub:
+        if foto_hub is not None:
             hub.foto_hub = foto_hub
 
         if descricao_hub:  
             hub.descricao_hub = descricao_hub
-    
-                        
-        if foto_hub is not None:
-            hub.delete_foto_hub()
-            hub.foto_hub = foto_hub
 
         hub.save()
         messages.success(request, "Hub Alterado com sucesso")
