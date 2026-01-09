@@ -105,11 +105,12 @@ def deletaHub(request, hubs_id):
 
 
 @login_required
+@login_required
 def cadastrarNoticias(request):
-    if (request.user.is_admin != True):
+    if not request.user.is_admin:
         messages.error(request, "Acesso negado")
         return redirect('core:home')
-    
+
     if request.method == 'POST':
         titulo_noticia = request.POST.get('txtTituloNoticia')
         descricao_noticia = request.POST.get('txtDescricaoNoticia')
@@ -117,14 +118,16 @@ def cadastrarNoticias(request):
         url = request.POST.get('txtUrl')
         imagem_noticia = request.FILES.get('fleImagemNoticia')
         is_home = request.POST.get('chkIsHome') == 'on'
-        
-        # Verificar se já existe notícia com o mesmo título
-        if Noticia.objects.filter(titulo_noticia=titulo_noticia).exists():
-            messages.error(request, "Notícia com este título já cadastrada no sistema")
-            return redirect('administrador:cadastrarNoticias') 
 
-        # Criar notícia
-        noticia = Noticia.objects.create(    
+        # CAPTURA O HUB SELECIONADO
+        hub_id = request.POST.get('selHub')
+
+        if Noticia.objects.filter(titulo_noticia=titulo_noticia).exists():
+            messages.error(request, "Notícia com este título já cadastrada")
+            return redirect('administrador:cadastrarNoticias')
+
+        # 1. Cria a Notícia primeiro
+        noticia = Noticia.objects.create(
             titulo_noticia=titulo_noticia,
             descricao_noticia=descricao_noticia,
             fonte=fonte,
@@ -134,20 +137,26 @@ def cadastrarNoticias(request):
             isActive=True
         )
 
-        noticia.save()
+        # 2. Se um Hub foi selecionado, cria o vínculo na NoticiaHub
+        if hub_id:
+            hub_obj = Hub.objects.get(id=hub_id)
+            NoticiaHub.objects.create(noticia=noticia, hub=hub_obj)
 
-        messages.success(request, "Notícia cadastrada com sucesso")
+        messages.success(request, "Notícia cadastrada com sucesso!")
         return redirect('administrador:gerenciarNoticias')
 
-    return render(request, "cadastrar_noticias.html")
+    # Passa os hubs para o select no HTML
+    hubs = Hub.objects.filter(isActive=True).order_by('nome_hub')
+    return render(request, "cadastrar_noticias.html", {'hubs': hubs})
 
 
 @login_required
 def alterarNoticias(request):
-    if (request.user.is_admin != True):
+    # Verificação de segurança: Apenas administradores
+    if not request.user.is_admin:
         messages.error(request, "Acesso negado")
         return redirect('core:home')
-    
+
     if request.method == 'POST':
         id_noticia = request.POST.get('idnoticia')
         titulo_noticia = request.POST.get('txtTituloNoticia')
@@ -155,37 +164,50 @@ def alterarNoticias(request):
         fonte = request.POST.get('txtFonte')
         url = request.POST.get('txtUrl')
         imagem_noticia = request.FILES.get('fleImagemNoticia')
+        hub_id = request.POST.get('selHub')  # ID vindo do select
 
         try:
             noticia = Noticia.objects.get(id=id_noticia)
-            
-            # Verificar se já existe outra notícia com o mesmo título
+
+            # 1. Verificar se o novo título já existe em OUTRA notícia
             if Noticia.objects.filter(titulo_noticia=titulo_noticia).exclude(id=noticia.id).exists():
-                messages.error(request, "Já existe outra notícia com este título")
+                messages.error(
+                    request, "Já existe outra notícia com este título")
                 return redirect('administrador:gerenciarNoticias')
-            
-            # Atualizar campos
+
+            # 2. Atualizar campos básicos
             noticia.titulo_noticia = titulo_noticia
             noticia.descricao_noticia = descricao_noticia
             noticia.fonte = fonte
             noticia.url = url if url else None
-            
-            # Atualizar imagem se fornecida
+
             if imagem_noticia is not None:
-                # Deletar imagem antiga se existir
                 if noticia.imagem_noticia:
                     noticia.imagem_noticia.delete(save=False)
                 noticia.imagem_noticia = imagem_noticia
 
             noticia.save()
-            messages.success(request, "Notícia alterada com sucesso")
+
+            # 3. Gerenciar vínculo na tabela NoticiaHub
+            if hub_id:
+                # Se selecionou um Hub, cria ou atualiza o vínculo
+                hub_obj = Hub.objects.get(id=hub_id)
+                NoticiaHub.objects.update_or_create(
+                    noticia=noticia,
+                    defaults={'hub': hub_obj}
+                )
+            else:
+                # Se selecionou "Nenhum", remove qualquer vínculo existente
+                NoticiaHub.objects.filter(noticia=noticia).delete()
+
+            messages.success(
+                request, "Notícia e vínculo atualizados com sucesso!")
             return redirect('administrador:gerenciarNoticias')
-            
+
         except Noticia.DoesNotExist:
             messages.error(request, "Notícia não encontrada")
             return redirect('administrador:gerenciarNoticias')
-    
-    messages.error(request, "Método de requisição inválido")
+
     return redirect('administrador:gerenciarNoticias')
 
 
@@ -194,10 +216,10 @@ def deletaNoticias(request, noticia_id):
     if (request.user.is_admin != True):
         messages.error(request, "Acesso negado")
         return redirect('core:home')
-    
+
     try:
         noticia = Noticia.objects.get(id=noticia_id)
-        
+
         if noticia.isActive:
             noticia.isActive = False
             noticia.save()
@@ -206,24 +228,37 @@ def deletaNoticias(request, noticia_id):
             noticia.isActive = True
             noticia.save()
             messages.success(request, "Notícia ativada com sucesso!")
-            
+
         return redirect('administrador:gerenciarNoticias')
-        
+
     except Noticia.DoesNotExist:
         messages.error(request, "Notícia não encontrada")
         return redirect('administrador:gerenciarNoticias')
-
 
 @login_required
 def gerenciarNoticias(request):
     if (request.user.is_admin != True):
         messages.error(request, "Acesso negado")
         return redirect('core:home')
-    
+
     noticias_lista = Noticia.objects.all().order_by('-id')
-    
+    for noticia in noticias_lista:
+        # Busca o vínculo na tabela intermediária
+        vinculo = NoticiaHub.objects.filter(
+            noticia=noticia).select_related('hub').first()
+        if vinculo:
+            noticia.nome_hub = vinculo.hub.nome_hub
+            # Útil para marcar o select como 'selected' no modal de edição
+            noticia.hub_id_atual = vinculo.hub.id
+        else:
+            noticia.nome_hub = "Geral (Sem Hub)"
+            noticia.hub_id_atual = None
+
+    hubs = Hub.objects.filter(isActive=True).order_by('nome_hub')
+
     context = {
-        'noticias_lista': noticias_lista
+        'noticias_lista': noticias_lista,
+        'hubs': hubs,
     }
-    
+
     return render(request, "gerenciarNoticias.html", context)
