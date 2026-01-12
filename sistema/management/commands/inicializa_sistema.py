@@ -1,10 +1,11 @@
 from django.core.management.base import BaseCommand
-from core.models import *
+from django.conf import settings
+from django.core.files import File
 import json
-from empresa.models import Empresa
-from vagas.models import Vagas
-
-# from usuario.models import Usuario
+from pathlib import Path
+from empresa.models import *
+from vagas.models import *
+from core.models import * 
 
 
 class Command(BaseCommand):
@@ -34,33 +35,41 @@ class Command(BaseCommand):
             except Exception as e:
                 print(f"Erro ao inserir {estado_data['nome']}: {e}")
 
-        hub1 = Hub.objects.create(
-            nome_hub='Agro',
-            descricao='Agro é melhor com o pessoal da canastra'
-        )
-        hub2 = Hub.objects.create(
-            nome_hub='Apicultura',
-            descricao='Apicultura é melhor com o pessoal da canastra'
-        )
-        hub3 = Hub.objects.create(
-            nome_hub='Calçados',
-            descricao='Calçados é melhor com o pessoal da canastra'
-        )
+        caminho_hub1_imagem = settings.BASE_DIR/'media'/'fotos_hub'/'agro_hub.jpg'
+        with open(caminho_hub1_imagem, 'rb') as f:
+            hub1 = Hub.objects.create(
+                nome_hub='Agro',
+                descricao_hub='Agro é melhor com o pessoal da canastra',
+                foto_hub = File(f, name=caminho_hub1_imagem.name) # Use o wrapper File
+            )        
+        # hub2 = Hub.objects.create(
+        #     nome_hub='Apicultura',
+        #     descricao_hub='Apicultura é melhor com o pessoal da canastra'
+        # )
+        # hub3 = Hub.objects.create(
+        #     nome_hub='Calçados',
+        #     descricao_hub='Calçados é melhor com o pessoal da canastra'
+        # )
 
-        hub4 = Hub.objects.create(
-            nome_hub='Milho',
-            descricao='Milho é melhor com o pessoal da canastra'
-        )
+        caminho_hub4_imagem = settings.BASE_DIR/'media'/'fotos_hub'/'milho_hub.jpg'
+        with open(caminho_hub4_imagem, 'rb') as f:
+            hub4 = Hub.objects.create(
+                nome_hub='Milho',
+                descricao_hub='Milho é melhor com o pessoal da canastra',
+                foto_hub = File(f, name=caminho_hub4_imagem.name)
+            )
         
-        hub5 = Hub.objects.create(
-            nome_hub='Queijo',
-            descricao='Queijo é melhor com o pessoal da canastra'
-        )
-        
-        hub6 = Hub.objects.create(
-            nome_hub='Grãos',
-            descricao='Grãos é melhor com o pessoal da canastra'
-        )
+        # hub5 = Hub.objects.create(
+        #     nome_hub='Queijo',
+        #     descricao_hub='Queijo é melhor com o pessoal da canastra'
+        # )
+        caminho_hub6_imagem = settings.BASE_DIR/'media'/'fotos_hub'/'graos_hub.jpg'
+        with open(caminho_hub6_imagem, 'rb') as f:
+            hub6 = Hub.objects.create(
+                nome_hub='Grãos',
+                descricao_hub='Grãos é melhor com o pessoal da canastra',
+                foto_hub = File(f, name=caminho_hub6_imagem.name) 
+            )
         
         user = UsuarioBase.objects.create_user(
             email='usuario@teste',
@@ -115,6 +124,152 @@ class Command(BaseCommand):
             tipo='admin'
         )
 
+        caminho_agro_noticia_1 = settings.BASE_DIR/'resources'/'static'/'img'/'hubs'/'noticia_agro_1.png'
+        with open(caminho_agro_noticia_1, 'rb') as f:
+            noticia_agro_1 = Noticia.objects.create(
+                titulo_noticia = 'Minas Gerais lidera ranking dos melhores cafés do Brasil em 2025',
+                descricao_noticia = 'Produtores mineiros conquistaram as três categorias do Cup of Excellence, o mais prestigiado concurso de qualidade do setor.',
+                fonte = 'Paloma Santos',
+                url = 'https://agro.estadao.com.br/agricultura/minas-gerais-lidera-ranking-dos-melhores-cafes-do-brasil-em-2025',
+                isActive = True,
+                isHome = True,
+                imagem_noticia = File(f, name=caminho_agro_noticia_1.name) # Use o wrapper File
+            )
+        noticia_agro_1_hub = NoticiaHub.objects.create(
+            noticia = noticia_agro_1,
+            hub = hub1
+        )
+
+        caminho_agro_noticia_2 = settings.BASE_DIR/'resources'/'static'/'img'/'hubs'/'noticia_agro_2.png'
+        with open(caminho_agro_noticia_2, 'rb') as f:
+            noticia_agro_2 = Noticia.objects.create(
+                titulo_noticia = 'O futuro sustentável do agronegócio passa pela boa gestão',
+                descricao_noticia = 'No Brasil, anualmente, os dados econômicos demonstram que o agro permanece no centro da economia.',
+                fonte = 'André Paranhos*',
+                url = 'https://globorural.globo.com/google/amp/opiniao/vozes-do-agro/noticia/2025/11/o-futuro-sustentavel-do-agronegocio-passa-pela-boa-gestao.ghtml',
+                isActive = True,
+                isHome = False,
+                imagem_noticia = File(f, name=caminho_agro_noticia_2.name) # Use o wrapper File
+            )
+        noticia_agro_2_hub = NoticiaHub.objects.create(
+            noticia = noticia_agro_2,
+            hub = hub1
+        )
+
+        caminho_agro_noticia_3 = settings.BASE_DIR/'resources'/'static'/'img'/'hubs'/'noticia_agro_3.png'
+        with open(caminho_agro_noticia_3, 'rb') as f:
+            noticia_agro_3 = Noticia.objects.create(
+                titulo_noticia = 'MG lança certificação para produtores que adotam agricultura regenerativa',
+                descricao_noticia = 'Reconhecimento integra o programa Certifica Minas e estará disponível a partir de 2026.',
+                fonte = 'Redação Agro Estadão',
+                url = 'https://agro.estadao.com.br/sustentabilidade/mg-lanca-certificacao-para-produtores-que-adotam-agricultura-regenerativa' \
+                '',
+                isActive = True,
+                isHome = False,
+                imagem_noticia = File(f, name=caminho_agro_noticia_3.name) # Use o wrapper File
+            )
+        noticia_agro_3_hub = NoticiaHub.objects.create(
+            noticia = noticia_agro_3,
+            hub = hub1
+        )
+            
+
+        caminho_grao_noticia_1 = settings.BASE_DIR/'resources'/'static'/'img'/'hubs'/'graos'/'noticia_graos1.png'
+        with open(caminho_grao_noticia_1, 'rb') as f:
+            noticia1 = Noticia.objects.create(
+                titulo_noticia = 'A jornada dos grãos pelo Tapajós rumo ao mercado externo',
+                descricao_noticia = 'Reportagem viajou em empurrador e acompanhou transporte de grãos pela hidrovia',
+                fonte = 'Raphael Salomão',
+                url = 'https://globorural.globo.com/google/amp/especiais/caminhos-da-safra/noticia/2025/11/a-jornada-dos-graos-pelo-tapajos-rumo-ao-mercado-externo.ghtml',
+                isActive = True,
+                isHome = True,
+                imagem_noticia = File(f, name=caminho_grao_noticia_1.name) # Use o wrapper File
+            )
+        noticia_grao_1_hub = NoticiaHub.objects.create(
+            noticia = noticia1,
+            hub = hub6
+        )
+
+        caminho_grao_noticia2 = settings.BASE_DIR/'resources'/'static'/'img'/'hubs'/'graos'/'noticia_graos2.png'
+        with open(caminho_grao_noticia2, 'rb') as f:
+            noticia2 = Noticia.objects.create(
+                titulo_noticia = 'Feijão: Exportações seguem registrando desempenho recorde',
+                descricao_noticia = 'As exportações brasileiras de feijão seguem registrando um desempenho recorde, tanto no volume mensal quanto no acumulado de 12 meses.',
+                fonte = 'Sociedade Nacional de Agricultura',
+                url = 'https://sna.agr.br/feijao-exportacoes-seguem-registrando-desempenho-recorde/',
+                isActive = True,
+                isHome = False,
+                imagem_noticia = File(f, name=caminho_grao_noticia2.name) # Use o wrapper File
+            )
+        noticia_grao_2_hub = NoticiaHub.objects.create(
+            noticia = noticia2,
+            hub = hub6
+        )
+
+        caminho_grao_noticia3 = settings.BASE_DIR/'resources'/'static'/'img'/'hubs'/'graos'/'noticia_graos3.png'
+        with open(caminho_grao_noticia3, 'rb') as f:
+            noticia_grao_3 = Noticia.objects.create(
+                titulo_noticia = 'SIC 2025 destaca inovação e sustentabilidade, reforçando protagonismo de Minas Gerais na cafeicultura mundial',
+                descricao_noticia = 'Aconteceu na última quarta-feira (05/11), no Expominas, em Belo Horizonte, a 13ª SIC (Semana Internacional do Café).',
+                fonte = 'Hannah Andrade',
+                url = 'https://amirt.com.br/sic-2025-destaca-inovacao-e-sustentabilidade-reforcando-protagonismo-de-minas-gerais-na-cafeicultura-mundial/',
+                isActive = True,
+                isHome = False,
+                imagem_noticia = File(f, name=caminho_grao_noticia3.name) # Use o wrapper File
+            )
+        noticia_grao_3_hub = NoticiaHub.objects.create(
+            noticia = noticia_grao_3,
+            hub = hub6
+        )
+
+        caminho_milho_noticia_1 = settings.BASE_DIR/'resources'/'static'/'img'/'hubs'/'noticia_milho_1.png'
+        with open(caminho_milho_noticia_1, 'rb') as f:
+            noticia_milho_1 = Noticia.objects.create(
+                titulo_noticia = 'SIC 2025 destaca inovação e sustentabilidade, reforçando protagonismo de Minas Gerais na cafeicultura mundial',
+                descricao_noticia = 'Aconteceu na última quarta-feira (05/11), no Expominas, em Belo Horizonte, a 13ª SIC (Semana Internacional do Café).',
+                fonte = 'Hannah Andrade',
+                url = 'https://g1.globo.com/sp/sorocaba-jundiai/nosso-campo/noticia/2025/11/09/plantio-do-milho-segunda-safra-avanca-com-chegada-de-chuvas.ghtml',
+                isActive = True,
+                isHome = True,
+                imagem_noticia = File(f, name=caminho_milho_noticia_1.name) # Use o wrapper File
+            )
+        noticia_milho_1_hub = NoticiaHub.objects.create(
+            noticia = noticia_milho_1,
+            hub = hub4
+        )
+
+        caminho_milho_noticia_2 = settings.BASE_DIR/'resources'/'static'/'img'/'hubs'/'noticia_milho_2.png'
+        with open(caminho_milho_noticia_2, 'rb') as f:
+            noticia_milho_2 = Noticia.objects.create(
+                titulo_noticia = 'Levantamento da Emater-MG aponta municípios campeões na produção de milho e soja',
+                descricao_noticia = 'Triângulo e Noroeste de Minas dominam a lista na safra 2024/2025.',
+                fonte = 'Roberto Meokare',
+                url = 'https://www.otempo.com.br/canal-o-tempo/podcasts/agrotempo/2025/9/8/levantamento-da-emater-mg-aponta-municipios-campeoes-na-producao-de-milho-e-soja',
+                isActive = True,
+                isHome = False,
+                imagem_noticia = File(f, name=caminho_milho_noticia_2.name) # Use o wrapper File
+            )
+        noticia_milho_2_hub = NoticiaHub.objects.create(
+            noticia = noticia_milho_2,
+            hub = hub4
+        )
+
+        caminho_milho_noticia_3 = settings.BASE_DIR/'resources'/'static'/'img'/'hubs'/'noticia_milho_3.png'
+        with open(caminho_milho_noticia_3, 'rb') as f:
+            noticia_milho_3 = Noticia.objects.create(
+                titulo_noticia = 'Santa Catarina registra recuperação na produção de milho em 2025',
+                descricao_noticia = 'Depois de anos consecutivos de queda na produção, a safra de milho em Santa Catarina começa a dar sinais de recuperação.',
+                fonte = 'NDTV',
+                url = 'https://ndmais.com.br/video/santa-catarina-registra-recuperacao-na-producao-de-milho-em-2025/',
+                isActive = True,
+                isHome = False,
+                imagem_noticia = File(f, name=caminho_milho_noticia_3.name) # Use o wrapper File
+            )
+        noticia_milho_1_hub = NoticiaHub.objects.create(
+            noticia = noticia_milho_3,
+            hub = hub4
+        )
+
         vaga1 = Vagas.objects.create(
             cargo_vaga='Operador de Máquinas Agrícolas',
             descricao_vaga='Responsável por operar tratores, colheitadeiras e outros equipamentos agrícolas durante o plantio e a colheita.',
@@ -152,10 +307,10 @@ class Command(BaseCommand):
         print("User-2", user2.email, empresa.segmento)
         print("User-3", user3.email, user3.is_admin)
         print("hub1", hub1.nome_hub)
-        print("hub2", hub2.nome_hub)
-        print("hub3", hub3.nome_hub)
+        # print("hub2", hub2.nome_hub)
+        # print("hub3", hub3.nome_hub)
         print("hub4", hub4.nome_hub)
-        print("hub5", hub5.nome_hub)
+        # print("hub5", hub5.nome_hub)
         print("hub6", hub6.nome_hub)
         print("vaga1", vaga1.cargo_vaga)
         print("vaga2", vaga2.cargo_vaga)
