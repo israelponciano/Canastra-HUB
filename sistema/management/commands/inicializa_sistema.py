@@ -132,7 +132,7 @@ class Command(BaseCommand):
                 fonte = 'Paloma Santos',
                 url = 'https://agro.estadao.com.br/agricultura/minas-gerais-lidera-ranking-dos-melhores-cafes-do-brasil-em-2025',
                 isActive = True,
-                isHome = True,
+                isHome = False,
                 imagem_noticia = File(f, name=caminho_agro_noticia_1.name) # Use o wrapper File
             )
         noticia_agro_1_hub = NoticiaHub.objects.create(
@@ -140,7 +140,7 @@ class Command(BaseCommand):
             hub = hub1
         )
 
-        caminho_agro_noticia_2 = settings.BASE_DIR/'resources'/'static'/'img'/'hubs'/'noticia_agro_2.png'
+        caminho_agro_noticia_2 = settings.BASE_DIR/'resources'/'static'/'img'/'hubs'/'noticia_agro_2.jpeg'
         with open(caminho_agro_noticia_2, 'rb') as f:
             noticia_agro_2 = Noticia.objects.create(
                 titulo_noticia = 'O futuro sustentável do agronegócio passa pela boa gestão',
@@ -148,7 +148,7 @@ class Command(BaseCommand):
                 fonte = 'André Paranhos*',
                 url = 'https://globorural.globo.com/google/amp/opiniao/vozes-do-agro/noticia/2025/11/o-futuro-sustentavel-do-agronegocio-passa-pela-boa-gestao.ghtml',
                 isActive = True,
-                isHome = False,
+                isHome = True,
                 imagem_noticia = File(f, name=caminho_agro_noticia_2.name) # Use o wrapper File
             )
         noticia_agro_2_hub = NoticiaHub.objects.create(
@@ -230,7 +230,7 @@ class Command(BaseCommand):
                 fonte = 'Hannah Andrade',
                 url = 'https://g1.globo.com/sp/sorocaba-jundiai/nosso-campo/noticia/2025/11/09/plantio-do-milho-segunda-safra-avanca-com-chegada-de-chuvas.ghtml',
                 isActive = True,
-                isHome = True,
+                isHome = False,
                 imagem_noticia = File(f, name=caminho_milho_noticia_1.name) # Use o wrapper File
             )
         noticia_milho_1_hub = NoticiaHub.objects.create(
@@ -246,7 +246,7 @@ class Command(BaseCommand):
                 fonte = 'Roberto Meokare',
                 url = 'https://www.otempo.com.br/canal-o-tempo/podcasts/agrotempo/2025/9/8/levantamento-da-emater-mg-aponta-municipios-campeoes-na-producao-de-milho-e-soja',
                 isActive = True,
-                isHome = False,
+                isHome = True,
                 imagem_noticia = File(f, name=caminho_milho_noticia_2.name) # Use o wrapper File
             )
         noticia_milho_2_hub = NoticiaHub.objects.create(
