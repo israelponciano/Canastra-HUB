@@ -4,7 +4,7 @@
   {% if request.session.incompleto %}
     <div id="alert-bar" class="alert-bar">
       <div class="alert-content">
-        <span>Seu cadastro ainda não foi finalizado. <a href="{% url 'core:cadastro_completo' %}" class="alert-link">Clique aqui para completa-lo</a>.</span>
+        <span>Seu cadastro ainda não foi finalizado. <a href="{% url 'core:perfil' %}" class="alert-link">Clique aqui para completa-lo</a>.</span>
         <button class="close-btn" onclick="closeAlert()">×</button>
       </div>
     </div>
