@@ -45,9 +45,6 @@ def hub_detalhe(request, nome_hub):
     # Buscar empresas parceiras
     #empresas = EmpresaParceira.objects.filter(hub=hub, isActive=True)
     
-    # Buscar treinamentos
-    #treinamentos = Treinamento.objects.filter(hub=hub, isActive=True)
-    
     context = {
         'hub': hub,
         'noticias': noticias,
@@ -137,72 +134,6 @@ def buscar_eventos(request):
 
     # 5. Renderiza o template de busca
     return render(request, 'tela_busca_eventos.html', contexto)
-
-def cadastro_treinamentos(request):
-
-    return render(request, 'cadastro_treinamentos.html')
-
-
-def criar_treinamentos(request):
-    usuario_email = request.session.get('email_atual')
-
-    if request.method == 'POST':
-        nome_treinamentos = request.POST.get('txtNomeTreinamento')
-        data_treinamento_inicio = request.POST.get('dteInicioTreinamento') 
-        data_treinamento_fim = request.POST.get('dteFimTreinamento') 
-        horario_treinamento = request.POST.get('hrTreinamento') 
-        local_treinamento = request.POST.get('txtLocalTreinamento') 
-        publico_treinamento = request.POST.get('txtPublicoAlvo') 
-        descricao_treinamento = request.POST.get('txtDescricaoTreinamento') 
-        
-        usuario = UsuarioBase.objects.get(email=usuario_email)
-    
-        treinamento = Treinamentos.objects.create(
-            nome_treinamentos = nome_treinamentos,
-            data_treinamento_inicio = data_treinamento_inicio,
-            data_treinamento_fim = data_treinamento_fim,
-            horario_treinamento = horario_treinamento,
-            local_treinamento = local_treinamento,
-            publico_treinamento = publico_treinamento, 
-            descricao_treinamento = descricao_treinamento        
-        )   
-
-        UsuarioTreinamentos.objects.create(
-            treinamento = treinamento,
-            usuario = usuario
-        )
-        messages.success(request, 'Treinamento cadastrado com sucesso')
-        return redirect('core:home')
-    
-    return render(request,'cadastro_treinamentos.html')
-
-def buscar_treinamentos(request):
-    '''
-    Lista todas os Treinamentos ativos, com opção de filtrar por termo de busca.
-    '''
-
-    termo_busca = request.GET.get('q', '').strip()
-
-    treinamentos = Treinamentos.objects.order_by('-data_treinamento_inicio')
-
-    # 3. Se houver um termo de busca, aplica o filtro
-    if termo_busca:
-        # filtrar por nome ou descrição 
-        treinamentos = treinamentos.filter(
-            models.Q(nome_treinamentos__icontains=termo_busca) |
-            models.Q(descricao_treinamento__icontains=termo_busca) |
-            models.Q(local_treinamento__icontains=termo_busca)
-            # Usa .distinct() para evitar duplicatas, se a busca for mais complexa
-        ).distinct()
-
-    # 4. Prepara o contexto
-    contexto = {
-        'treinamentos': treinamentos,
-        'termo_busca': termo_busca,
-    }
-
-    return render(request, 'tela_busca_treinamentos.html', contexto)
-
 
 def cadastro_usuario(request):
     if request.user.is_authenticated:
