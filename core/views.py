@@ -50,7 +50,6 @@ def hub_detalhe(request, nome_hub):
         'noticias': noticias,
         #'demandas': demandas,
         #'empresas': empresas,
-        #'treinamentos': treinamentos,
     }
     
     return render(request, 'hub.html', context)
