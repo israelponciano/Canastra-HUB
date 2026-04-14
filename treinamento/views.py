@@ -1,9 +1,17 @@
+import csv
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.http import HttpResponse
 from django.db import models as db_models
 from core.models import Hub
-from .models import Treinamento, SessaoTreinamento, InscricaoTreinamento
+from .models import Treinamento, SessaoTreinamento, InscricaoTreinamento, ListaEspera
+
+
+def _is_gestor(request):
+     #Retornar True se o usuário logado é empresa ou admin
+     return request.session.get('perfil') in ('empresa', 'admin')
 
 
 # ──────────────────────────────────────────
@@ -23,9 +31,16 @@ def listar_treinamentos(request):
 
     # marca quais o usuário logado já está inscrito
     inscritos = set()
+    em_espera = set()
+
     if request.user.is_authenticated:
         inscritos = set(
             InscricaoTreinamento.objects.filter(
+                usuario=request.user
+            ).values_list('treinamento_id', flat=True)
+        )
+        em_espera = set(
+            ListaEspera.objects.filter(
                 usuario=request.user
             ).values_list('treinamento_id', flat=True)
         )
@@ -34,6 +49,7 @@ def listar_treinamentos(request):
         'treinamentos': treinamentos,
         'termo': termo,
         'inscritos': inscritos,
+        'em_espera': em_espera,
     })
 
 
@@ -43,8 +59,7 @@ def listar_treinamentos(request):
 
 @login_required
 def criar_treinamento(request):
-    perfil = request.session.get('perfil')
-    if perfil not in ('empresa', 'admin'):
+    if not _is_gestor(request):
         messages.error(request, 'Acesso negado.')
         return redirect('treinamento:listar_treinamentos')
 
@@ -102,6 +117,10 @@ def criar_treinamento(request):
 
 @login_required
 def editar_treinamento(request, treinamento_id):
+    if not _is_gestor(request):
+        messages.error(request, 'Acesso negado.')
+        return redirect('treinamento:listar_treinamentos')
+    
     perfil = request.session.get('perfil')
     if perfil not in ('empresa', 'admin'):
         messages.error(request, 'Acesso negado.')
@@ -156,6 +175,10 @@ def editar_treinamento(request, treinamento_id):
 
 @login_required
 def remover_treinamento(request, treinamento_id):
+    if not _is_gestor(request):
+        messages.error(request, 'Acesso negado.')
+        return redirect('treinamento:listar_treinamentos')
+    
     perfil = request.session.get('perfil')
     if perfil not in ('empresa', 'admin'):
         messages.error(request, 'Acesso negado.')
@@ -181,22 +204,28 @@ def remover_treinamento(request, treinamento_id):
 def inscrever(request, treinamento_id):
     treinamento = get_object_or_404(Treinamento, id=treinamento_id)
 
-    if treinamento.vagas_disponiveis <= 0:
-        messages.error(request, 'Não há vagas disponíveis neste treinamento.')
+    if InscricaoTreinamento.objects.filter(
+        treinamento=treinamento,        usuario=request.user    ).exists():
+        messages.warning(request, 'Você já está inscrito neste treinamento.')
         return redirect('treinamento:listar_treinamentos')
 
-    _, criado = InscricaoTreinamento.objects.get_or_create(
-        treinamento=treinamento,
-        usuario=request.user,
-    )
 
-    if criado:
+    if treinamento.vagas_disponiveis > 0:
+        InscricaoTreinamento.objects.create(
+            treinamento=treinamento,
+            usuario=request.user,
+        )
         treinamento.vagas_disponiveis -= 1
         treinamento.save()
         messages.success(request, f'Inscrição em "{treinamento.nome}" realizada!')
     else:
-        messages.warning(request, 'Você já está inscrito neste treinamento.')
-
+        _, criado = ListaEspera.objects.get_or_create(
+            treinamento=treinamento, usuario=request.user)
+        if criado:
+            posicao = ListaEspera.objects.filter(treinamento=treinamento).count()
+            messages.info(request, f'Vagas esgotadas. Você foi adicionado à lista de espera (posição {posicao}).')
+        else:
+            messages.warning(request, 'Você já está na lista de espera para este treinamento.')
     return redirect('treinamento:listar_treinamentos')
 
 
@@ -217,7 +246,124 @@ def cancelar_inscricao(request, treinamento_id):
         treinamento.vagas_disponiveis += 1
         treinamento.save()
         messages.success(request, 'Inscrição cancelada com sucesso.')
+
+        proximo = ListaEspera.objects.filter(treinamento=treinamento).order_by('data_entrada').first()
+        if proximo:
+            InscricaoTreinamento.objects.create(
+                treinamento=treinamento,
+                usuario=proximo.usuario,
+            )
+            treinamento.vagas_disponiveis -= 1
+            treinamento.save()
+            proximo.delete()
+            messages.info(request, f'Vaga liberada! {proximo.usuario.email} foi inscrito a partir da lista de espera.')
+
     except InscricaoTreinamento.DoesNotExist:
-        messages.error(request, 'Você não está inscrito neste treinamento.')
+        pass
+
+    try:
+        espera = ListaEspera.objects.get(
+            treinamento=treinamento,
+            usuario=request.user,
+        )
+        espera.delete()
+        messages.success(request, 'Removido da lista de espera com sucesso.')
+    except ListaEspera.DoesNotExist:
+        messages.error(request, 'Você não está inscrito nem na lista de espera deste treinamento.')
 
     return redirect('treinamento:listar_treinamentos')
+
+# ──────────────────────────────────────────
+# Gestão De Inscrições — (empresa e admin)
+# ──────────────────────────────────────────
+
+@login_required
+def gerenciar_inscricoes(request, treinamento_id):
+    if not _is_gestor(request):
+        messages.error(request, 'Acesso negado.')
+        return redirect('treinamento:listar_treinamentos')
+
+    treinamento = get_object_or_404(Treinamento, id=treinamento_id)
+    inscricoes  = treinamento.inscricoes.select_related('usuario').order_by('data_inscricao')
+    espera      = treinamento.lista_espera.select_related('usuario').order_by('data_entrada')
+
+    # contagem correta de presenças
+    total_presentes = inscricoes.filter(presenca='presente').count()
+
+    return render(request, 'treinamento/inscritos.html', {
+        'treinamento':    treinamento,
+        'inscricoes':     inscricoes,
+        'espera':         espera,
+        'total_presentes': total_presentes,
+    })
+
+@login_required
+def atualizar_presenca(request, inscricao_id):
+    if not _is_gestor(request):
+        messages.error(request, 'Acesso negado.')
+        return redirect('treinamento:listar_treinamentos')
+    
+    inscricao = get_object_or_404(InscricaoTreinamento, id=inscricao_id)
+
+    if request.method == 'POST':
+        inscricao.presenca = request.POST.get('presenca', 'pendente')
+        inscricao.save()
+        messages.success(request, f'Presença de {inscricao.usuario.email} atualizada.')
+
+
+    return redirect('treinamento:gerenciar_inscricoes', treinamento_id=inscricao.treinamento_id)
+
+@login_required
+def remover_inscricao(request, inscricao_id):
+    if not _is_gestor(request):
+        messages.error(request, 'Acesso negado.')
+        return redirect('treinamento:listar_treinamentos')
+    
+    inscricao = get_object_or_404(InscricaoTreinamento, id=inscricao_id)
+    treinamento = inscricao.treinamento 
+    inscricao.delete()
+    treinamento.vagas_disponiveis += 1
+    treinamento.save()
+
+    proximo = ListaEspera.objects.filter(treinamento=treinamento).order_by('data_entrada').first()
+    if proximo:
+        InscricaoTreinamento.objects.create(
+            treinamento=treinamento,
+            usuario=proximo.usuario,
+        )
+        treinamento.vagas_disponiveis -= 1
+        treinamento.save()
+        proximo.delete()
+        messages.info(request, f'Vaga liberada! {proximo.usuario.email} foi inscrito a partir da lista de espera.')
+
+    messages.success(request, f'Inscrição de {inscricao.usuario.email} removida.')
+    return redirect('treinamento:gerenciar_inscricoes', treinamento_id=treinamento.id)
+
+# ──────────────────────────────────────────
+# EXPORTAR CSV
+# ──────────────────────────────────────────
+
+@login_required
+def exportar_csv(request, treinamento_id):
+    if not _is_gestor(request):
+        messages.error(request, 'Acesso negado.')
+        return redirect('treinamento:listar_treinamentos')
+    
+    treinamento= get_object_or_404(Treinamento, id=treinamento_id)
+    inscricoes = treinamento.inscricoes.select_related('usuario').order_by('-data_inscricao')
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="inscricoes_{treinamento.nome}.csv"'
+    
+    writer = csv.writer(response)
+    writer.writerow(['Nome', 'Email', 'Data Inscrição', 'Presença'])
+
+    for inscricao in inscricoes:
+        writer.writerow([
+            inscricao.usuario.nome,
+            inscricao.usuario.email,
+            inscricao.data_inscricao.strftime('%d/%m/%Y %H:%M'),
+            inscricao.get_presenca_display(),
+        ])
+
+    return response

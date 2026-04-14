@@ -67,8 +67,12 @@
           <!-- Ações -->
           <div class="d-flex gap-2 mt-3 flex-wrap">
             {% if request.session.perfil == 'empresa' or request.session.perfil == 'admin' %}
+              <a href="{% url 'treinamento:gerenciar_inscricoes' t.id %}"
+                class="btn btn-outline-primary btn-sm">
+                👥 Ver Inscritos ({{ t.inscricoes.count }})
+              </a>
               <a href="{% url 'treinamento:editar_treinamento' t.id %}"
-                 class="btn btn-outline-secondary btn-sm">Editar</a>
+                class="btn btn-outline-secondary btn-sm">Editar</a>
               <form action="{% url 'treinamento:remover_treinamento' t.id %}" method="POST">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-outline-danger btn-sm"

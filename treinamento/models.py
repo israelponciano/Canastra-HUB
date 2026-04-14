@@ -9,7 +9,7 @@ class Treinamento(models.Model):
     publico_alvo = models.CharField(max_length=255, blank=True, null=True)
     descricao = models.TextField(max_length=250, blank=True, null=True)
     vagas_disponiveis = models.PositiveIntegerField(default=0)       # novo
-    tipo_setc = models.CharField(max_length=100, blank=True, null=True)  # novo
+    tipo_setc = models.CharField(max_length=100, blank=True, null=True)  # apagar
     hub = models.ForeignKey(                                          # novo
         Hub, on_delete=models.SET_NULL,
         null=True, blank=True, related_name='treinamentos'
@@ -31,12 +31,31 @@ class SessaoTreinamento(models.Model):         # novo — múltiplos horários
 
 
 class InscricaoTreinamento(models.Model):
-    treinamento = models.ForeignKey(Treinamento, on_delete=models.CASCADE)
+    STATUS_PRESENCA = [
+        ('pendente', 'Pendente'),
+        ('presente', 'Presente'),
+        ('ausente', 'Ausente'),
+    ]
+
+    treinamento = models.ForeignKey(Treinamento, on_delete=models.CASCADE, related_name='inscricoes')
     usuario = models.ForeignKey(UsuarioBase, on_delete=models.CASCADE)
     data_inscricao = models.DateTimeField(auto_now_add=True)
+    presenca = models.CharField(max_length=10, choices=STATUS_PRESENCA, default='pendente')
 
     class Meta:
         unique_together = ('treinamento', 'usuario')
 
     def __str__(self):
         return f"{self.usuario.email} → {self.treinamento.nome}"
+    
+class ListaEspera(models.Model):
+    treinamento = models.ForeignKey(Treinamento, on_delete=models.CASCADE, related_name='lista_espera')
+    usuario = models.ForeignKey(UsuarioBase, on_delete=models.CASCADE)
+    data_entrada = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('treinamento', 'usuario')
+        ordering = ['data_entrada']
+
+    def __str__(self):
+        return f"{self.usuario.email} → Lista de Espera: {self.treinamento.nome}"
