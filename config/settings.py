@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "sistema",
     "vagas",
     "administrador",
+    "treinamento",
 ]
 
 MIDDLEWARE = [

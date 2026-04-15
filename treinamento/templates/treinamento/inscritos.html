@@ -1,0 +1,132 @@
+{% extends 'master.html' %}
+{% block conteudo %}
+<div class="container mt-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="mb-0">{{ treinamento.nome }}</h2>
+      <small class="text-muted">Gerenciar inscritos</small>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{% url 'treinamento:exportar_csv' treinamento.id %}"
+         class="btn btn-outline-success">
+        ⬇ Exportar CSV
+      </a>
+      <a href="{% url 'treinamento:listar_treinamentos' %}"
+         class="btn btn-secondary">
+        Voltar
+      </a>
+    </div>
+  </div>
+
+  <!-- Resumo -->
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <div class="card text-center p-3">
+        <h3 class="text-success mb-0">{{ inscricoes.count }}</h3>
+        <small class="text-muted">Inscritos</small>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-center p-3">
+        <h3 class="text-warning mb-0">{{ espera.count }}</h3>
+        <small class="text-muted">Lista de Espera</small>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-center p-3">
+        <h3 class="text-primary mb-0">{{ treinamento.vagas_disponiveis }}</h3>
+        <small class="text-muted">Vagas Disponíveis</small>
+      </div>
+    </div>  
+    <div class="col-md-3">
+      <div class="card text-center p-3">
+        <h3 class="mb-0 text-success">{{ total_presentes }}</h3>
+        <small class="text-muted">Presenças Confirmadas</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabela de inscritos -->
+  <h5 class="mb-3">Inscritos confirmados</h5>
+  {% if inscricoes %}
+  <div class="table-responsive mb-5">
+    <table class="table table-bordered table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>#</th>
+          <th>Nome</th>
+          <th>Email</th>
+          <th>Inscrito em</th>
+          <th>Presença</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in inscricoes %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ i.usuario.nome }}</td>
+          <td>{{ i.usuario.email }}</td>
+          <td>{{ i.data_inscricao|date:"d/m/Y H:i" }}</td>
+          <td>
+            <form method="POST"
+                  action="{% url 'treinamento:atualizar_presenca' i.id %}"
+                  class="d-flex gap-1">
+              {% csrf_token %}
+              <select name="presenca" class="form-select form-select-sm">
+                <option value="pendente"  {% if i.presenca == 'pendente'  %}selected{% endif %}>Pendente</option>
+                <option value="presente"  {% if i.presenca == 'presente'  %}selected{% endif %}>Presente</option>
+                <option value="ausente"   {% if i.presenca == 'ausente'   %}selected{% endif %}>Ausente</option>
+              </select>
+              <button type="submit" class="btn btn-sm btn-outline-primary">✓</button>
+            </form>
+          </td>
+          <td>
+            <form method="POST"
+                  action="{% url 'treinamento:remover_inscricao' i.id %}"
+                  onsubmit="return confirm('Remover {{ i.usuario.nome }} do treinamento?')">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-outline-danger">Remover</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+    <div class="alert alert-info mb-5">Nenhum inscrito ainda.</div>
+  {% endif %}
+
+  <!-- Lista de espera -->
+  <h5 class="mb-3">Lista de Espera</h5>
+  {% if espera %}
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover align-middle">
+      <thead class="table-warning">
+        <tr>
+          <th>Posição</th>
+          <th>Nome</th>
+          <th>Email</th>
+          <th>Entrou em</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in espera %}
+        <tr>
+          <td>{{ forloop.counter }}º</td>
+          <td>{{ e.usuario.nome }}</td>
+          <td>{{ e.usuario.email }}</td>
+          <td>{{ e.data_entrada|date:"d/m/Y H:i" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+    <div class="alert alert-light">Nenhum usuário na lista de espera.</div>
+  {% endif %}
+
+</div>
+{% endblock %}
