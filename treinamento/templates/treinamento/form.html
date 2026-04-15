@@ -1,6 +1,39 @@
 {% extends 'master.html' %}
 {% load static %}
 {% block conteudo %}
+  <style>
+    .form-container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .form-label{
+      color: #000000ff;
+    }
+    .form-container h2 {
+      margin-bottom: 1.5rem;
+      color: #22c55e;
+      font-weight: bold;
+    }
+    .submit-btn {
+      text-align: right;
+    }
+    .submit-btn button {
+      background-color: #22c55e;
+      color: #fff;
+      font-size: 18px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+    }
+    .submit-btn button:hover {
+      background-color: #1a9e4b;
+    }
+  </style>
+
 <div class="container mt-4" style="max-width: 860px;">
   <h2 class="mb-4" style="color: #22c55e; font-weight: bold;">
     {% if treinamento %}Editar Treinamento{% else %}Cadastrar Treinamento{% endif %}
@@ -45,11 +78,6 @@
         <label class="form-label">Público Alvo</label>
         <input type="text" name="publico_alvo" class="form-control"
                value="{{ treinamento.publico_alvo|default:'' }}">
-      </div>
-      <div class="col-md-3">
-        <label class="form-label">Tipo SETC</label>
-        <input type="text" name="tipo_setc" class="form-control"
-               value="{{ treinamento.tipo_setc|default:'' }}">
       </div>
       <div class="col-md-3">
         <label class="form-label">Hub</label>
@@ -107,12 +135,21 @@
       </button>
     </div>
 
+    {% if treinamento %}
+    <div class="d-flex gap-2 justify-content-end">
+      <a href="{% url 'treinamento:detalhe_treinamento' treinamento.id %}" class="btn btn-secondary">Cancelar</a>
+      <button type="submit" class="btn btn-success">
+        Salvar Alterações
+      </button>
+    </div>
+    {% else %}
     <div class="d-flex gap-2 justify-content-end">
       <a href="{% url 'treinamento:listar_treinamentos' %}" class="btn btn-secondary">Cancelar</a>
       <button type="submit" class="btn btn-success">
-        {% if treinamento %}Salvar Alterações{% else %}Cadastrar{% endif %}
+        Cadastrar
       </button>
     </div>
+    {% endif %}
   </form>
 </div>
 
