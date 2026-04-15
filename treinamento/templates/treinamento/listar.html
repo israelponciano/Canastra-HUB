@@ -66,30 +66,20 @@
 
           <!-- Ações -->
           <div class="d-flex gap-2 mt-3 flex-wrap">
-            {% if request.session.perfil == 'empresa' or request.session.perfil == 'admin' %}
-              <a href="{% url 'treinamento:gerenciar_inscricoes' t.id %}"
+            <a href="{% url 'treinamento:detalhe_treinamento' t.id %}"
                 class="btn btn-outline-primary btn-sm">
-                👥 Ver Inscritos ({{ t.inscricoes.count }})
-              </a>
-              <a href="{% url 'treinamento:editar_treinamento' t.id %}"
-                class="btn btn-outline-secondary btn-sm">Editar</a>
-              <form action="{% url 'treinamento:remover_treinamento' t.id %}" method="POST">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-outline-danger btn-sm"
-                  onclick="return confirm('Confirma a remoção de {{ t.nome }}?')">
-                  Remover
-                </button>
-              </form>
-            {% else %}
+                Detalhar
+            </a>
+            {% if request.session.perfil == 'usuario'%}
               {% if user.is_authenticated %}
                 {% if t.id in inscritos %}
-                  <form action="{% url 'treinamento:cancelar' t.id %}" method="POST">
+                  <form action="{% url 'treinamento:cancelar' t.id 0 %}" method="POST">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-danger btn-sm">Cancelar Inscrição</button>
                   </form>
                 {% else %}
                   {% if t.vagas_disponiveis > 0 %}
-                    <form action="{% url 'treinamento:inscrever' t.id %}" method="POST">
+                    <form action="{% url 'treinamento:inscrever' t.id 0 %}" method="POST">
                       {% csrf_token %}
                       <button type="submit" class="btn btn-success btn-sm">Inscrever-se</button>
                     </form>

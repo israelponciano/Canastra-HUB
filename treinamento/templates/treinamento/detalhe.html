@@ -1,0 +1,192 @@
+{% extends 'master.html' %}
+{% load static %}
+
+{% block conteudo %}
+<div class="container my-5">
+
+  <!-- ── Cabeçalho ── -->
+  <div class="d-flex justify-content-between align-items-start mb-4 flex-wrap gap-2">
+    <div>
+      <h1 class="mb-1">{{ treinamento.nome }}</h1>
+      <div class="d-flex gap-2 flex-wrap">
+        {% if treinamento.hub %}
+          <span class="badge bg-primary fs-6">{{ treinamento.hub.nome_hub }}</span>
+        {% endif %}
+        {% if treinamento.tipo_setc %}
+          <span class="badge bg-secondary fs-6">{{ treinamento.tipo_setc }}</span>
+        {% endif %}
+      </div>
+    </div>
+    <a href="{% url 'treinamento:listar_treinamentos' %}" class="btn btn-outline-secondary">
+      ← Voltar para lista
+    </a>
+  </div>
+
+  <div class="row g-4">
+
+    <!-- ── Coluna principal ── -->
+    <div class="col-lg-8">
+
+      <!-- Sobre -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Sobre o treinamento</h5>
+          <p class="card-text">{{ treinamento.descricao|default:"Sem descrição disponível." }}</p>
+
+          <hr>
+
+          <ul class="list-unstyled mb-0">
+            {% if treinamento.local %}
+              <li class="mb-1">
+                <strong>📍 Local:</strong> {{ treinamento.local }}
+              </li>
+            {% endif %}
+            {% if treinamento.publico_alvo %}
+              <li class="mb-1">
+                <strong>👥 Público-alvo:</strong> {{ treinamento.publico_alvo }}
+              </li>
+            {% endif %}
+            {% if treinamento.data_inicio %}
+              <li class="mb-1">
+                <strong>🗓 Início:</strong> {{ treinamento.data_inicio|date:"d/m/Y" }}
+              </li>
+            {% endif %}
+            {% if treinamento.data_fim %}
+              <li class="mb-1">
+                <strong>🗓 Término:</strong> {{ treinamento.data_fim|date:"d/m/Y" }}
+              </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+
+      <!-- Sessões / Encontros -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Sessões / Encontros</h5>
+          {% if sessoes %}
+            <div class="table-responsive">
+              <table class="table table-sm table-hover mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>#</th>
+                    <th>Data</th>
+                    <th>Horário</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for s in sessoes %}
+                    <tr>
+                      <td>{{ forloop.counter }}</td>
+                      <td>{{ s.data|date:"d/m/Y (l)" }}</td>
+                      <td>{{ s.horario|time:"H:i" }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <p class="text-muted mb-0">Nenhuma sessão cadastrada para este treinamento.</p>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── Coluna lateral: inscrição ── -->
+    <div class="col-lg-4">
+      <div class="card shadow-sm sticky-top" style="top: 1.5rem;">
+        <div class="card-body text-center">
+
+          <!-- Vagas -->
+          {% if treinamento.vagas_disponiveis > 0 %}
+            <p class="fs-5 text-success mb-1">
+              <strong>{{ treinamento.vagas_disponiveis }}</strong> vaga(s) disponível(is)
+            </p>
+          {% else %}
+            <p class="fs-5 text-danger mb-1"><strong>Vagas esgotadas</strong></p>
+            <p class="small text-muted">Você pode entrar na lista de espera.</p>
+          {% endif %}
+
+          <hr>
+
+          {% if user.is_authenticated %}
+
+            {% if pode_inscrever %}
+              {# ── usuário comum ── #}
+              {% if ja_inscrito %}
+                <p class="text-success fw-bold">✔ Você está inscrito</p>
+                <form action="{% url 'treinamento:cancelar' treinamento.id 1 %}" method="POST">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-outline-danger w-100"
+                    onclick="return confirm('Confirma o cancelamento da inscrição?')">
+                    Cancelar inscrição
+                  </button>
+                </form>
+
+              {% elif em_espera %}
+                <p class="text-warning fw-bold">⏳ Você está na lista de espera</p>
+                <form action="{% url 'treinamento:cancelar' treinamento.id 1  %}" method="POST">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-outline-secondary w-100"
+                    onclick="return confirm('Deseja sair da lista de espera?')">
+                    Sair da lista de espera
+                  </button>
+                </form>
+
+              {% else %}
+                {% if treinamento.vagas_disponiveis > 0 %}
+                  <form action="{% url 'treinamento:inscrever' treinamento.id 1 %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary w-100 btn-lg">
+                      Inscrever-se
+                    </button>
+                  </form>
+                {% else %}
+                  <form action="{% url 'treinamento:inscrever' treinamento.id %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-warning w-100">
+                      Entrar na lista de espera
+                    </button>
+                  </form>
+                {% endif %}
+              {% endif %}
+
+            {% else %}
+              {# ── empresa ou admin — só visualização e gestão ── #}
+              <p class="text-muted small">Empresa e administrador não se inscrevem em treinamentos.</p>
+              {% if request.session.perfil == 'empresa' or request.session.perfil == 'admin' %}
+                <a href="{% url 'treinamento:gerenciar_inscricoes' treinamento.id %}"
+                   class="btn btn-outline-primary w-100 mb-2">
+                  👥 Gerenciar inscritos
+                </a>
+                <a href="{% url 'treinamento:editar_treinamento' treinamento.id %}"
+                   class="btn btn-outline-secondary w-100 mb-2">
+                  ✏️ Editar treinamento
+                </a>
+                <a href="{% url 'treinamento:exportar_csv' treinamento.id %}"
+                   class="btn btn-outline-success w-100">
+                  📥 Exportar inscritos (CSV)
+                </a>
+                <a href="{% url 'treinamento:remover_treinamento' treinamento.id %}"
+                   class="btn btn-outline-danger w-100">
+                  Remover Treinamento
+                </a>
+              {% endif %}
+            {% endif %}
+
+          {% else %}
+            {# ── visitante não autenticado ── #}
+            <p class="text-muted">Faça login para se inscrever neste treinamento.</p>
+            <a href="{% url 'core:login' %}" class="btn btn-primary w-100 btn-lg">
+              Entrar na conta
+            </a>
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
