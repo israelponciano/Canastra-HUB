@@ -104,7 +104,7 @@ def deletaHub(request, hubs_id):
     return redirect('administrador:gerenciarHubs')
 
 
-@login_required
+
 @login_required
 def cadastrarNoticias(request):
     if not request.user.is_admin:

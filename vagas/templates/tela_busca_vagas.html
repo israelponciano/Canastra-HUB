@@ -135,7 +135,7 @@
               <div class="card-body">
                 <h5 class="card-title text-primary">{{ vaga.cargo_vaga }}</h5>
 
-                <h6 class="card-subtitle mb-2 text-muted">Empresa: {{ vaga.empresa.nome_empresa|default:'HUB CANASTRA' }} | Local: {{ vaga.local|default:'Não Especificado' }}</h6>
+                <h6 class="card-subtitle mb-2 text-muted">Empresa: {{ vaga.empresa.nomefantasia|default:'HUB CANASTRA' }} | Local: {{ vaga.local|default:'Não Especificado' }}</h6>
 
                 <p class="card-text">{{ vaga.descricao_vaga|truncatechars:150 }}</p>
 
