@@ -9,6 +9,8 @@ from django.contrib.auth.decorators import login_required
 from decimal import Decimal, InvalidOperation
 from datetime import datetime
 
+from treinamento.models import Treinamento
+
 def home(request):
     # Buscar notícias ativas que devem aparecer na home
     noticias_home = NoticiaHub.objects.filter(
@@ -38,7 +40,21 @@ def hub_detalhe(request, nome_hub):
         hub=hub, 
         noticia__isActive=True
     ).select_related('noticia')
-    
+
+    #Treinamento  vinculado ao hub (novo app)
+    treinamneto  = Treinamento.objects.filter(hub=hub).prefetch_related('sessoes').order_by('-id')
+
+    #Empresas parceiras vinculadas ao hub
+    empresas_hub = EmpresaHub.objects.filter(hub=hub).select_related('empresa__user')
+
+    context = {
+        'hub': hub,
+        'noticias': noticias,
+        'treinamento': treinamneto,
+        'empresas_hub': empresas_hub
+    }
+    return render(request, 'hub.html', context)
+
     # Buscar demandas
     #demandas = Demanda.objects.filter(hub=hub, isActive=True)
     

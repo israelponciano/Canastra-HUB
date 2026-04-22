@@ -8,11 +8,7 @@
       <small class="text-muted">Gerenciar inscritos</small>
     </div>
     <div class="d-flex gap-2">
-      <a href="{% url 'treinamento:exportar_csv' treinamento.id %}"
-         class="btn btn-outline-success">
-        ⬇ Exportar CSV
-      </a>
-      <a href="{% url 'treinamento:listar_treinamentos' %}"
+      <a href="{% url 'treinamento:detalhe_treinamento' treinamento.id %}"
          class="btn btn-secondary">
         Voltar
       </a>
