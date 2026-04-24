@@ -82,65 +82,6 @@ def cadastro(request):
 
     return render(request, 'cadastro.html')
 
-def cadastro_eventos(request):
-    
-    return render(request,'cadastro_eventos.html')
-
-def criar_eventos(request):
-    usuario_email = request.session.get('email_atual')
-
-    if request.method == 'POST':
-        nome_evento = request.POST.get('txtNomeEvento')
-        data_evento_inicio = request.POST.get('dteInicioEvento') 
-        data_evento_fim = request.POST.get('dteFimEvento') 
-        horario_evento = request.POST.get('hrEvento') 
-        local_evento = request.POST.get('txtLocalEvento') 
-        publico_evento = request.POST.get('txtPublicoAlvoEvento') 
-        descricao_evento = request.POST.get('txtDescricaoEvento') 
-        
-        usuario = UsuarioBase.objects.get(email=usuario_email)
-    
-        evento = Eventos.objects.create(
-            nome_evento = nome_evento,
-            data_evento_inicio = data_evento_inicio,
-            data_evento_fim = data_evento_fim,
-            horario_evento = horario_evento,
-            local_evento = local_evento,
-            publico_evento = publico_evento, 
-            descricao_evento = descricao_evento        
-        )   
-
-        UsuarioEventos.objects.create(
-            evento = evento,
-            usuario = usuario
-        )
-        messages.success(request, 'Evento cadastrado com sucesso')
-        return redirect('core:home')
-
-    return render(request, 'cadastro_evento.html')
-
-def buscar_eventos(request):
-    '''
-    Lista todas os eventos ativos, com opção de filtrar por termo de busca.
-    '''
-    # 1. Receber o termo de busca (query) da URL (ex: /vagas/?q=Desenvolvedor)
-    termo_busca = request.GET.get('q', '').strip()
-
-    eventos= Eventos.objects.order_by('-data_evento_inicio')
-
-    # 3. Se houver um termo de busca, aplica o filtro
-    if termo_busca:
-        # Filtra as vagas onde o termo de busca aparece:
-        # - No cargo da vaga (cargo_vaga__icontains)
-        # - Na descrição da vaga (descricao_vaga__icontains)
-        # - Ou no requisito (requisito_vaga__icontains)
-        eventos = eventos.filter(
-            models.Q(nome_evento__icontains=termo_busca) |
-            models.Q(descricao_evento__icontains=termo_busca) |
-            models.Q(local_evento__icontains=termo_busca)
-            # Usa .distinct() para evitar duplicatas, se a busca for mais complexa
-        ).distinct()
-
     # 4. Prepara o contexto
     contexto = {
         'eventos': eventos,

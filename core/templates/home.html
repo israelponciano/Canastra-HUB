@@ -92,7 +92,8 @@
             <p class="signup-description">Cadastre-se e receba conteúdos exclusivos, novidades e oportunidades do Hub Canastra diretamente no seu e-mail.</p>
           </div>
 
-          {% comment %} <div class="signup-form-container">
+          {% comment %} 
+          <div class="signup-form-container">
             <form id="signup-form" class="signup-form">
               <div class="form-group">
                 <label for="name" class="form-label">Nome Completo</label>
@@ -106,7 +107,9 @@
                 <span class="form-error" id="email-error"></span>
               </div> {% endcomment %}
 
-              <button type="submit" class="btn btn-accent btn-lg" onclick="window.location.href='{% url 'core:cadastro' %}'">Cadastrar Agora</button>
+              <button type="submit" class="btn btn-accent btn-lg" onclick="window.location.href='{% url 'core:cadastro' %}'">
+                Cadastrar Agora
+              </button>
             </form>
 
             <!-- Success Message -->
