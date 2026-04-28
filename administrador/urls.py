@@ -18,4 +18,10 @@ urlpatterns = [
     path("gerenciarNoticias/", views.gerenciarNoticias, name="gerenciarNoticias"),
     path("alterarNoticias/", views.alterarNoticias, name="alterarNoticias"),
     path("deletaNoticias/<int:hubs_id>", views.deletaNoticias, name="deletaNoticias"),
+
+    #gerencia os usuários
+    path("listar_usuarios/", views.listar_usuarios, name="listar_usuarios"),
+    path("detalhe_usuario/<int:usuario_id>/", views.detalhe_usuario, name="detalhe_usuario"),
+    path("desativar_usuario/<int:usuario_id>/", views.desativar_usuario, name="desativar_usuario"),
 ]
+

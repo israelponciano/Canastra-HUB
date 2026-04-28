@@ -1,0 +1,164 @@
+{% extends 'masterAdm.html' %}
+{% load static %}
+{% block conteudo %}
+
+<main class="efeito" id="efeito">
+   <section id="gerenciar-usuarios">
+      <h2 class="section-title">Gerenciar <span>Usuários</span></h2>
+
+      <!-- Filtros -->
+      <form method="GET" action="{% url 'administrador:listar_usuarios' %}" class="admin-filter-form">
+         <div class="filter-row">
+            <input
+               type="text"
+               name="busca"
+               placeholder="Buscar por nome ou e-mail..."
+               value="{{ busca }}"
+               class="filter-input"
+            />
+
+            <select name="tipo" class="filter-select">
+               <option value="" {% if tipo_selecionado == '' %}selected{% endif %}>Todos os tipos</option>
+               <option value="candidato" {% if tipo_selecionado == 'candidato' %}selected{% endif %}>Candidato</option>
+               <option value="empresa" {% if tipo_selecionado == 'empresa' %}selected{% endif %}>Empresa</option>
+            </select>
+
+            <button type="submit" class="admin-btn admin-btn-primary">Filtrar</button>
+
+            {% if busca or tipo_selecionado %}
+               <a href="{% url 'administrador:listar_usuarios' %}" class="admin-btn admin-btn-secondary">Limpar</a>
+            {% endif %}
+         </div>
+      </form>
+
+      <div class="admin-card">
+         <!-- Header da tabela -->
+         <div class="admin-header admin-header-usuarios">
+            <div>ID</div>
+            <div>Nome</div>
+            <div>E-mail</div>
+            <div>Tipo</div>
+            <div>Status</div>
+            <div>Ações</div>
+         </div>
+
+         {% for usuario in usuarios %}
+         <div class="admin-row admin-row-usuarios {% if not usuario.is_active %}row-inativo{% endif %}">
+            <div class="admin-cell id">{{ usuario.id }}</div>
+
+            <div class="admin-cell nome">
+               {% if usuario.foto %}
+                  <img src="{{ usuario.foto.url }}" class="admin-avatar" alt="{{ usuario.nome }}" />
+               {% else %}
+                  <img src="{% static 'img/perfil_base.png' %}" class="admin-avatar" alt="Sem foto" />
+               {% endif %}
+               {{ usuario.nome }}
+            </div>
+
+            <div class="admin-cell email">{{ usuario.email }}</div>
+
+            <div class="admin-cell tipo">
+               <span class="badge-tipo badge-tipo-{{ usuario.tipo }}">{{ usuario.tipo|capfirst }}</span>
+            </div>
+
+            <div class="admin-cell status text-center">
+               {% if usuario.is_active %}
+                  <img src="{% static 'img/status_green.png' %}" width="18px" alt="Ativo" title="Ativo">
+               {% else %}
+                  <img src="{% static 'img/status_red.png' %}" width="18px" alt="Desativado" title="Desativado">
+               {% endif %}
+            </div>
+
+            <div class="admin-cell acoes">
+               <div class="admin-actions">
+                  <a href="{% url 'administrador:detalhe_usuario' usuario.id %}" class="admin-btn" title="Ver detalhes">
+                     <img src="{% static 'img/update.png' %}" alt="Detalhes" />
+                  </a>
+
+                {% if not usuario.is_admin %}
+                  {% if usuario.is_active %}
+                  <button
+                    class="admin-btn admin-btn-danger openModalConfirm"
+                    data-url="{% url 'administrador:desativar_usuario' usuario.id %}"
+                    data-msg="Desativar o usuário {{ usuario.nome }}?"
+                    title="Desativar usuário">
+                    <img src="{% static 'img/delete.png' %}" alt="Desativar" />
+                    </button>
+                 {% else %}
+                 <button
+                    class="admin-btn admin-btn-success openModalConfirm"
+                    data-url="{% url 'administrador:desativar_usuario' usuario.id %}"
+                    data-msg="Reativar o usuário {{ usuario.nome }}?"
+                    title="Reativar usuário">
+                    <img src="{% static 'img/active.png' %}" alt="Reativar" />
+                 </button>
+                {% endif %}
+            {% else %}
+                    <span class="badge-admin">Admin</span>
+            {% endif %}
+               </div>
+            </div>
+         </div>
+         {% empty %}
+         <div class="admin-row admin-row-empty">
+            <div class="admin-cell">Nenhum usuário encontrado.</div>
+         </div>
+         {% endfor %}
+      </div>
+
+      <p class="result-count">{{ usuarios|length }} usuário(s) encontrado(s)</p>
+   </section>
+</main>
+
+<!-- Modal de confirmação genérico -->
+<div class="modal" id="modalConfirm" style="display:none;">
+   <div class="modal-content" style="max-width:400px; text-align:center;">
+      <div class="modal-header">
+         <h2 id="modalConfirmMsg">Confirmar ação</h2>
+      </div>
+      <div class="modal-footer" style="display:flex; gap:1rem; justify-content:center; padding:1rem;">
+         <a id="modalConfirmBtn" href="#" class="admin-btn admin-btn-danger">Confirmar</a>
+         <button onclick="fecharModal()" class="admin-btn admin-btn-secondary">Cancelar</button>
+      </div>
+   </div>
+</div>
+<div class="modal-overlay" id="modalOverlay" style="display:none;" onclick="fecharModal()"></div>
+
+<style>
+   .admin-header-usuarios { grid-template-columns: 60px 1fr 1fr 110px 70px 120px; }
+   .admin-row-usuarios     { grid-template-columns: 60px 1fr 1fr 110px 70px 120px; }
+
+   .admin-filter-form { margin-bottom: 1.5rem; }
+   .filter-row { display: flex; gap: .75rem; flex-wrap: wrap; align-items: center; }
+   .filter-input  { flex: 1; min-width: 200px; padding: .5rem .75rem; border-radius: 8px; border: 1px solid #ccc; }
+   .filter-select { padding: .5rem .75rem; border-radius: 8px; border: 1px solid #ccc; background: #fff; }
+
+   .admin-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; margin-right: .5rem; vertical-align: middle; }
+
+   .badge-tipo { display:inline-block; padding:.2rem .6rem; border-radius:12px; font-size:.8rem; font-weight:600; }
+   .badge-tipo-candidato { background:#d1fae5; color:#065f46; }
+   .badge-tipo-empresa   { background:#dbeafe; color:#1e40af; }
+   .badge-admin          { background:#fef3c7; color:#92400e; padding:.2rem .6rem; border-radius:12px; font-size:.75rem; font-weight:700; }
+
+   .row-inativo { opacity: .6; }
+   .result-count { margin-top:1rem; font-size:.85rem; color:#6b7280; }
+
+   .admin-btn-primary   { background:#16a34a; color:#fff; border:none; }
+   .admin-btn-secondary { background:#6b7280; color:#fff; border:none; }
+   .admin-btn-success   { background:#16a34a; color:#fff; border:none; }
+</style>
+
+<script>
+   function confirmarAcao(url, mensagem) {
+      document.getElementById('modalConfirmMsg').textContent = mensagem;
+      document.getElementById('modalConfirmBtn').href = url;
+      document.getElementById('modalConfirm').style.display = 'flex';
+      document.getElementById('modalOverlay').style.display = 'block';
+   }
+   function fecharModal() {
+      document.getElementById('modalConfirm').style.display = 'none';
+      document.getElementById('modalOverlay').style.display = 'none';
+   }
+</script>
+
+{% endblock %}

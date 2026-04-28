@@ -262,3 +262,151 @@ def gerenciarNoticias(request):
     }
 
     return render(request, "gerenciarNoticias.html", context)
+
+from django.db.models import Q
+ 
+ 
+@login_required
+def listar_usuarios(request):
+    if not request.user.is_admin:
+        messages.error(request, "Acesso negado")
+        return redirect('core:home')
+ 
+    tipo = request.GET.get('tipo', '')       # candidato | empresa | '' (todos)
+    busca = request.GET.get('busca', '').strip()
+ 
+    usuarios = UsuarioBase.objects.all().order_by('-is_active', 'nome')
+ 
+    if tipo in ('candidato', 'empresa'):
+        usuarios = usuarios.filter(tipo=tipo)
+ 
+    if busca:
+        usuarios = usuarios.filter(
+            Q(nome__icontains=busca) | Q(email__icontains=busca)
+        )
+ 
+    context = {
+        'usuarios': usuarios,
+        'tipo_selecionado': tipo,
+        'busca': busca,
+    }
+    return render(request, "listar_usuarios.html", context)
+ 
+ 
+@login_required
+def detalhe_usuario(request, usuario_id):
+    if not request.user.is_admin:
+        messages.error(request, "Acesso negado")
+        return redirect('core:home')
+ 
+    usuario_base = UsuarioBase.objects.get(id=usuario_id)
+ 
+    # Tenta buscar perfil estendido (candidato)
+    try:
+        perfil = usuario_base.usuario
+    except Exception:
+        perfil = None
+ 
+    context = {
+        'usuario_base': usuario_base,
+        'perfil': perfil,
+    }
+    return render(request, "detalhe_usuario.html", context)
+ 
+ 
+@login_required
+def desativar_usuario(request, usuario_id):
+    if not request.user.is_admin:
+        messages.error(request, "Acesso negado")
+        return redirect('core:home')
+ 
+    usuario = UsuarioBase.objects.get(id=usuario_id)
+ 
+    if usuario.is_admin:
+        messages.error(request, "Não é possível desativar um administrador.")
+        return redirect('administrador:listar_usuarios')
+ 
+    if usuario.is_active:
+        usuario.is_active = False
+        usuario.save()
+        messages.success(request, f"Usuário '{usuario.nome}' desativado com sucesso!")
+    else:
+        usuario.is_active = True
+        usuario.save()
+        messages.success(request, f"Usuário '{usuario.nome}' reativado com sucesso!")
+ 
+    return redirect('administrador:listar_usuarios')
+
+from django.db.models import Q
+ 
+ 
+@login_required
+def listar_usuarios(request):
+    if not request.user.is_admin:
+        messages.error(request, "Acesso negado")
+        return redirect('core:home')
+ 
+    tipo = request.GET.get('tipo', '')       # candidato | empresa | '' (todos)
+    busca = request.GET.get('busca', '').strip()
+ 
+    usuarios = UsuarioBase.objects.all().order_by('-is_active', 'nome')
+ 
+    if tipo in ('candidato', 'empresa'):
+        usuarios = usuarios.filter(tipo=tipo)
+ 
+    if busca:
+        usuarios = usuarios.filter(
+            Q(nome__icontains=busca) | Q(email__icontains=busca)
+        )
+ 
+    context = {
+        'usuarios': usuarios,
+        'tipo_selecionado': tipo,
+        'busca': busca,
+    }
+    return render(request, "listar_usuarios.html", context)
+ 
+ 
+@login_required
+def detalhe_usuario(request, usuario_id):
+    if not request.user.is_admin:
+        messages.error(request, "Acesso negado")
+        return redirect('core:home')
+ 
+    usuario_base = UsuarioBase.objects.get(id=usuario_id)
+ 
+    # Tenta buscar perfil estendido (candidato)
+    try:
+        perfil = usuario_base.usuario
+    except Exception:
+        perfil = None
+ 
+    context = {
+        'usuario_base': usuario_base,
+        'perfil': perfil,
+    }
+    return render(request, "detalhe_usuario.html", context)
+ 
+ 
+@login_required
+def desativar_usuario(request, usuario_id):
+    if not request.user.is_admin:
+        messages.error(request, "Acesso negado")
+        return redirect('core:home')
+ 
+    usuario = UsuarioBase.objects.get(id=usuario_id)
+ 
+    if usuario.is_admin:
+        messages.error(request, "Não é possível desativar um administrador.")
+        return redirect('administrador:listar_usuarios')
+ 
+    if usuario.is_active:
+        usuario.is_active = False
+        usuario.save()
+        messages.success(request, f"Usuário '{usuario.nome}' desativado com sucesso!")
+    else:
+        usuario.is_active = True
+        usuario.save()
+        messages.success(request, f"Usuário '{usuario.nome}' reativado com sucesso!")
+ 
+    return redirect('administrador:listar_usuarios')
