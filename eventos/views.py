@@ -6,7 +6,7 @@ from django.db import models as db_models
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
-from core.models import Hub
+from hubs.models import *
 
 from .models import Evento, InscricaoEvento
 

@@ -1,5 +1,6 @@
 from django.db import models
-from core.models import UsuarioBase, Hub
+from core.models import UsuarioBase
+from hubs.models import *
 
 class Treinamento(models.Model):
     nome = models.CharField(max_length=100)

@@ -1,6 +1,7 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
+from hubs.models import *
 
 app_name = 'administrador'
 

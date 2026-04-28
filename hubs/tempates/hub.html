@@ -1,0 +1,147 @@
+{% extends 'master.html' %}
+{% load static %}
+{% block conteudo %}
+<main class="hub-main">
+  <h1 class="section-bigTitle">{{ hub.nome_hub }}</h1>
+
+  <!-- ══ NOTÍCIAS ══════════════════════════════════════ -->
+  <section id="noticias" class="hub-section">
+    <div class="container">
+      <h2 class="section-title">Notícias</h2>
+      <div class="carousel-wrapper">
+        <button class="carousel-control prev" aria-label="Notícia anterior">‹</button>
+        <div class="news-carousel">
+          <div class="news-track">
+            {% for noticia_hub in noticias %}
+              <div class="news-card">
+                <img src="{% if noticia_hub.noticia.imagem_noticia %}{{ noticia_hub.noticia.imagem_noticia.url }}{% else %}{% static 'img/default-news.jpg' %}{% endif %}"
+                     alt="{{ noticia_hub.noticia.titulo_noticia }}" />
+                <div class="news-content">
+                  <span class="news-author">Por {{ noticia_hub.noticia.fonte }}</span>
+                  <h3>{{ noticia_hub.noticia.titulo_noticia }}</h3>
+                  <p>{{ noticia_hub.noticia.descricao_noticia }}</p>
+                  {% if noticia_hub.noticia.url %}
+                    <a target="_blank" href="{{ noticia_hub.noticia.url }}">saiba mais...</a>
+                  {% endif %}
+                </div>
+              </div>
+            {% empty %}
+              <p class="text-muted">Nenhuma notícia disponível no momento.</p>
+            {% endfor %}
+          </div>
+        </div>
+        <button class="carousel-control next" aria-label="Próxima notícia">›</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ TREINAMENTOS ══════════════════════════════════ -->
+  {% if treinamentos %}
+  <section id="treinamentos" class="hub-section">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="section-title mb-0">Treinamentos</h2>
+        <a href="{% url 'treinamento:listar_treinamentos' %}" class="btn btn-outline-primary btn-sm">
+          Ver todos →
+        </a>
+      </div>
+      <div class="row g-3">
+        {% for t in treinamentos|slice:":3" %}
+          <div class="col-md-4">
+            <div class="card h-100 shadow-sm" style="border-radius:12px; border:none;">
+              <div class="card-body">
+                <h6 class="card-title fw-bold">{{ t.nome }}</h6>
+                {% if t.sessoes.first %}
+                  <p class="card-text text-muted small">
+                    📅 {{ t.sessoes.first.data|date:"d/m/Y" }}
+                  </p>
+                {% endif %}
+                {% if t.local %}<p class="small">📍 {{ t.local }}</p>{% endif %}
+                <a href="{% url 'treinamento:detalhe_treinamento' t.id %}" class="btn btn-sm btn-outline-primary mt-auto">
+                  Detalhes
+                </a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- ══ EVENTOS ═══════════════════════════════════════ -->
+  {% if eventos %}
+  <section id="eventos" class="hub-section">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="section-title mb-0">Eventos</h2>
+        <a href="{% url 'eventos:listar_eventos' %}" class="btn btn-outline-success btn-sm">
+          Ver todos →
+        </a>
+      </div>
+      <div class="row g-3">
+        {% for e in eventos %}
+          <div class="col-md-4">
+            <div class="card h-100 shadow-sm" style="border-radius:12px; border:none;">
+              <div class="card-body">
+                <h6 class="card-title fw-bold">{{ e.nome_evento }}</h6>
+                {% if e.data_evento_inicio %}
+                  <p class="card-text text-muted small">📅 {{ e.data_evento_inicio|date:"d/m/Y" }}</p>
+                {% endif %}
+                {% if e.local_evento %}<p class="small">📍 {{ e.local_evento }}</p>{% endif %}
+                <div class="d-flex justify-content-between align-items-center mt-2">
+                  <a href="{% url 'eventos:detalhe_evento' e.id %}" class="btn btn-sm btn-outline-success">
+                    Detalhes
+                  </a>
+                  {% if e.vagas_disponiveis and not e.lotado %}
+                    <span class="badge bg-success">{{ e.vagas_restantes }} vaga{{ e.vagas_restantes|pluralize }}</span>
+                  {% elif e.lotado %}
+                    <span class="badge bg-danger">Lotado</span>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- ══ ESPAÇOS / AGENDAMENTO ═════════════════════════ -->
+  <section id="espacos" class="hub-section">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="section-title mb-0">Espaços do Hub</h2>
+        <a href="{% url 'agendamento:listar_espacos' %}?hub={{ hub.id }}" class="btn btn-outline-secondary btn-sm">
+          Ver e reservar →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ EMPRESAS PARCEIRAS ════════════════════════════ -->
+  {% if empresas_hub %}
+  <section id="empresas" class="hub-section">
+    <div class="container">
+      <h2 class="section-title">Empresas Parceiras</h2>
+      <div class="row g-3">
+        {% for eh in empresas_hub %}
+          <div class="col-md-3 col-sm-6 text-center">
+            <div class="card p-3 shadow-sm h-100" style="border-radius:12px; border:none;">
+              {% if eh.empresa.user.foto %}
+                <img src="{{ eh.empresa.user.foto.url }}" class="rounded-circle mx-auto mb-2"
+                     style="width:64px; height:64px; object-fit:cover;">
+              {% endif %}
+              <p class="fw-semibold mb-0">{{ eh.empresa.nomefantasia }}</p>
+              <small class="text-muted">{{ eh.empresa.segmento }}</small>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+</main>
+{% endblock %}

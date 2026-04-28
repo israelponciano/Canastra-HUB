@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, User
 from django.db.models.deletion import ProtectedError
 from core.models import *
 from empresa.models import *
+from hubs.models import *
 
 # Create your models here.
 class Vagas(models.Model):

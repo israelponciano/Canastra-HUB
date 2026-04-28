@@ -4,6 +4,7 @@ from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
 from empresa.models import *
 from core.models import *
+from hubs.models import *
 from django.contrib import messages
 from django.http import JsonResponse
 

@@ -22,53 +22,10 @@ def home(request):
         'noticias_home': noticias_home
     })
 
+
 def parceiros(request):
 
     return render(request, 'parceiros.html')
-
-def hubs(request):
-    """View para a central de hubs"""
-    hubs = Hub.objects.filter(isActive=True)
-    return render(request, 'hubs.html', {'hubs': hubs})
-
-def hub_detalhe(request, nome_hub):
-    """View dinâmica para cada hub"""
-    hub = get_object_or_404(Hub, nome_hub=nome_hub, isActive=True)
-    
-    # Buscar notícias relacionadas ao hub
-    noticias = NoticiaHub.objects.filter(
-        hub=hub, 
-        noticia__isActive=True
-    ).select_related('noticia')
-
-    #Treinamento  vinculado ao hub (novo app)
-    treinamneto  = Treinamento.objects.filter(hub=hub).prefetch_related('sessoes').order_by('-id')
-
-    #Empresas parceiras vinculadas ao hub
-    empresas_hub = EmpresaHub.objects.filter(hub=hub).select_related('empresa__user')
-
-    context = {
-        'hub': hub,
-        'noticias': noticias,
-        'treinamento': treinamneto,
-        'empresas_hub': empresas_hub
-    }
-    return render(request, 'hub.html', context)
-
-    # Buscar demandas
-    #demandas = Demanda.objects.filter(hub=hub, isActive=True)
-    
-    # Buscar empresas parceiras
-    #empresas = EmpresaParceira.objects.filter(hub=hub, isActive=True)
-    
-    context = {
-        'hub': hub,
-        'noticias': noticias,
-        #'demandas': demandas,
-        #'empresas': empresas,
-    }
-    
-    return render(request, 'hub.html', context)
 
 def sobre(request):
 

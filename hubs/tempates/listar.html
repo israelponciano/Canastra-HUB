@@ -1,0 +1,30 @@
+{% extends 'master.html' %}
+{% load static %}
+{% block conteudo %}
+{# Idêntico ao core/templates/hubs.html — apenas URLs atualizadas para hubs: #}
+<div class="container my-5">
+  <h2 class="section-title text-center mb-4">Nossos <span style="color:#22c55e">Hubs</span></h2>
+  <div class="row g-4">
+    {% for hub in hubs %}
+    <div class="col-md-4">
+      <a href="{% url 'hubs:hub_detalhe' hub.nome_hub %}" class="text-decoration-none">
+        <div class="card h-100 shadow-sm" style="border-radius:14px; border:none; transition:.2s;"
+             onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
+          {% if hub.foto_hub %}
+            <img src="{{ hub.foto_hub.url }}" class="card-img-top"
+                 style="height:200px; object-fit:cover; border-radius:14px 14px 0 0;"
+                 alt="{{ hub.nome_hub }}">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title fw-bold" style="color:#1d4ed8;">{{ hub.nome_hub }}</h5>
+            <p class="card-text text-muted small">{{ hub.descricao_hub }}</p>
+          </div>
+        </div>
+      </a>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center text-muted">Nenhum hub ativo no momento.</div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

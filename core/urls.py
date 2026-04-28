@@ -20,8 +20,8 @@ urlpatterns = [
     path("get_cidades/", views.get_cidades, name="get_cidades"),
 
     # tela de hubs 
-    path("hubs/", views.hubs, name="hubs"),
-    path('hub/<str:nome_hub>/', views.hub_detalhe, name='hub_detalhe'),
+    #path("hubs/", views.hubs, name="hubs"),
+    #path('hub/<str:nome_hub>/', views.hub_detalhe, name='hub_detalhe'),
     # path("agro/", views.agro, name="agro"),
     # path("apicultura/", views.apicultura, name="apicultura"),
     # path("queijo/", views.queijo, name="queijo"),
