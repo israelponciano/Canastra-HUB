@@ -10,6 +10,8 @@ urlpatterns = [
     path('vagas/', include('vagas.urls')),
     path('administrador/', include('administrador.urls')),
     path('treinamento/', include('treinamento.urls')),
+    path('perfil/', include('perfil.urls')),
+    
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
