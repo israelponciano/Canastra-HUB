@@ -77,7 +77,7 @@ class Cidade(models.Model):
 class Usuario(models.Model):
     user = models.OneToOneField(
         UsuarioBase, on_delete=models.CASCADE, primary_key=True)
-    curso = models.CharField(max_length=100, blank=True, null=True, default='')
+    
 
     # informação pessoal
     nome_social = models.CharField(max_length=255, blank=True, null=True)
