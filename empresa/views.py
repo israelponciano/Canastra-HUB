@@ -108,8 +108,7 @@ def criar_empresa(request):
         segmento=segmento
     )
 
-    # CORREÇÃO: Associa todos os hubs de uma só vez usando o método set()
-    if hubs_selecionados_ids == '' or hubs_selecionados_ids is None:
+    if hubs_selecionados_ids:
         empresa.hubs.set(hubs_selecionados_ids)
 
     messages.success(request, 'Empresa cadastrada com sucesso!')
