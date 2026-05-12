@@ -152,22 +152,3 @@ def get_cidades(request):
         'total': len(cidades_data)
     })
 
-
-@require_http_methods(["GET"])
-def get_hubs(request):
-    """View para retornar todos os hubs disponíveis"""
-    hubs = Hub.objects.all().order_by('nome_hub').values('id', 'nome_hub', 'descricao')
-
-    hubs_data = [
-        {
-            'id': hub['id'],
-            'nome': hub['nome_hub'],
-            'descricao': hub['descricao'] if hub['descricao'] else ''
-        }
-        for hub in hubs
-    ]
-
-    return JsonResponse({
-        'hubs': hubs_data,
-        'total': len(hubs_data)
-    })
