@@ -152,7 +152,7 @@ class Usuario(models.Model):
 
     # informações adicionais
     remoto = models.BooleanField(default=False)
-    interesses_hobbies = models.TextField(blank=True, null=True)
+    interesses_hobbies = models.TextField(max_length=500,blank=True, null=True)
 
     # ANEXOS (considere modelo separado para múltiplos arquivos)
     curriculo_pdf = models.FileField(
