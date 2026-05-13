@@ -61,42 +61,6 @@ def criar_vagas(request):
         'estados': estados,
     })
 
-
-@require_http_methods(["GET"])
-def get_cidades(request):
-    """View para retornar cidades via AJAX baseado no estado selecionado"""
-    estado_id = request.GET.get('estado_id')
-
-    print(f"DEBUG: estado_id recebido = {estado_id}")
-
-    # Validação básica do parâmetro
-    if not estado_id or not estado_id.isdigit():
-        return JsonResponse({
-            'cidades': [],
-            'error': 'ID do estado inválido'
-        })
-
-    # Verificar se o estado existe
-    if not Estado.objects.filter(id=estado_id).exists():
-        return JsonResponse({
-            'cidades': [],
-            'error': 'Estado não encontrado'
-        })
-
-    cidades = Cidade.objects.filter(
-        estado_cidade_id=estado_id).order_by('nome_cidade')
-
-    print(f"DEBUG: {cidades.count()} cidades encontradas")
-
-    cidades_data = [
-        {'id': cidade.id, 'nome': cidade.nome_cidade} for cidade in cidades
-    ]
-
-    return JsonResponse({
-        'cidades': cidades_data,
-        'total': len(cidades_data)
-    })
-
 # bucar vagas
 
 

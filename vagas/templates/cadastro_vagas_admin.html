@@ -121,7 +121,7 @@ $(document).ready(function() {
         
         // Requisição AJAX
         $.ajax({
-            url: '/vagas/get_cidades/',
+            url: "{% url 'core:get_cidades' %}",
             method: 'GET',
             data: { 'estado_id': estado_id },
             success: function(response) {
