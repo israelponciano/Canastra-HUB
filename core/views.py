@@ -105,6 +105,14 @@ def cadastro_usuario(request):
         return render_cadastro_usuario(request)
 
     nomeUser = request.POST.get('txtNome')
+
+    if not nomeUser or not nomeUser.strip():
+        messages.error(request, 'O nome é obrigatório.')
+        return render_cadastro_usuario(request)
+
+    if len(nomeUser.strip()) < 3:
+        messages.error(request, 'O nome deve possuir no mínimo 3 caracteres.')
+        return render_cadastro_usuario(request)
     nomeSocial = request.POST.get('txtNomeSocial')
     dataNasc = request.POST.get('txtDataNasc')
     genero = request.POST.get('txtGenero')
