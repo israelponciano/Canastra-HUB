@@ -98,6 +98,20 @@ def cadastro_usuario(request):
         return redirect('core:home')
     if request.method == 'POST':
         nomeUser = request.POST.get('txtNome')
+    
+    #Validação do nome
+        if not nomeUser or not nomeUser.strip():
+            messages.error(request, 'O nome é obrigatório.')
+
+            estados = Estado.objects.all().order_by('nome_estado')
+            return render(request, 'cadastro_usuario.html', {'estados': estados})
+        
+        if len(nomeUser.strip()) < 3:
+            messages.error(request, 'O nome deve possuir no mínimo 3 caracteres.')
+
+            estados = Estado.objects.all().order_by('nome_estado')
+            return render(request, 'cadastro_usuario.html', {'estados': estados})
+
         nomeSocial = request.POST.get('txtNomeSocial')
         dataNasc = request.POST.get('txtDataNasc')
         genero = request.POST.get('txtGenero')
