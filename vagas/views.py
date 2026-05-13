@@ -67,8 +67,6 @@ def get_cidades(request):
     """View para retornar cidades via AJAX baseado no estado selecionado"""
     estado_id = request.GET.get('estado_id')
 
-    print(f"DEBUG: estado_id recebido = {estado_id}")
-
     # Validação básica do parâmetro
     if not estado_id or not estado_id.isdigit():
         return JsonResponse({
@@ -85,8 +83,6 @@ def get_cidades(request):
 
     cidades = Cidade.objects.filter(
         estado_cidade_id=estado_id).order_by('nome_cidade')
-
-    print(f"DEBUG: {cidades.count()} cidades encontradas")
 
     cidades_data = [
         {'id': cidade.id, 'nome': cidade.nome_cidade} for cidade in cidades
