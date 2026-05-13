@@ -9,20 +9,12 @@ urlpatterns = [
     path("", views.home, name="home"),
     path("login/", views.login, name="login"),
     path("logout/", views.logout, name="logout"),
-    path('perfil/', views.perfil, name='perfil'),
-    path('perfil/atualizar/', views.atualizarPerfil, name='atualizarPerfil'),
-    path('api/cidades/', views.buscar_cidades, name='buscarCidades'),
     
     # cadastros de usuario    
     path("cadastro/", views.cadastro, name="cadastro"),
     path("cadastro_usuario/", views.cadastro_usuario, name="cadastro_usuario"),
     path("cadastro_usuario_completo/", views.cadastro_completo, name="cadastro_completo"),
     path("get_cidades/", views.get_cidades, name="get_cidades"),
-    
-    # cadastros de eventos    
-    path("cadastro_eventos/", views.cadastro_eventos, name="cadastro_eventos"),
-    path("criar_eventos/", views.criar_eventos, name="criar_eventos"),
-    path('buscar_eventos/', views.buscar_eventos, name='buscar_eventos'),
 
     # tela de hubs 
     path("hubs/", views.hubs, name="hubs"),

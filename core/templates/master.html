@@ -149,8 +149,8 @@
               <div class="nav-dropdown">
                 <span class="nav-link nav-link-dropdown">Eventos <span class="dropdown-arrow">▼</span></span>
                 <div class="nav-dropdown-content">
-                  <a href="{% url 'core:buscar_eventos' %}">Ver Eventos</a>
-                  <a href="{% url 'core:cadastro_eventos' %}">Cadastrar Evento</a>
+                  <a href="{% url 'eventos:listar_eventos' %}">Ver Eventos</a>
+                  <a href="{% url 'eventos:criar_evento' %}">Cadastrar Evento</a>
                 </div>
               </div>
 
@@ -165,7 +165,7 @@
             {% else %}
               <!-- Links simples (Usuário/Admin/Visitante) -->
               <a href="{% url 'vagas:buscar_vagas' %}" class="nav-link">Vagas</a>
-              <a href="{% url 'core:buscar_eventos' %}" class="nav-link">Eventos</a>
+              <a href="{% url 'eventos:listar_eventos' %}" class="nav-link">Eventos</a>
               <a href="{% url 'treinamento:listar_treinamentos' %}" class="nav-link">Treinamentos</a>
             {% endif %}
 
@@ -187,7 +187,7 @@
                     <a href="{% url 'administrador:areaAdm' %}" class="nav-link-home-dropdown">Admin</a>
                   {% endif %}
                   {% if not request.path == '/perfil/' %}
-                    <a class="nav-link-home-dropdown" href="{% url 'core:perfil' %}">Perfil</a>
+                    <a class="nav-link-home-dropdown" href="{% url 'perfil:perfil' %}">Perfil</a>
                   {% endif %}
                   <a class="nav-link-home-dropdown" href="{% url 'core:logout' %}">Sair</a>
                 </div>
@@ -219,8 +219,8 @@
               <div class="mobile-dropdown">
                 <span class="nav-link mobile-dropdown-toggle">Eventos <span class="dropdown-arrow">▼</span></span>
                 <div class="mobile-dropdown-content">
-                  <a href="{% url 'core:buscar_eventos' %}">Ver Eventos</a>
-                  <a href="{% url 'core:cadastro_eventos' %}">Cadastrar Evento</a>
+                  <a href="{% url 'eventos:listar_eventos' %}">Ver Eventos</a>
+                  <a href="{% url 'eventos:criar_evento' %}">Cadastrar Evento</a>
                 </div>
               </div>
 
@@ -235,7 +235,7 @@
             {% else %}
               <!-- Links simples Mobile (Usuário/Admin/Visitante) -->
               <a href="{% url 'vagas:buscar_vagas' %}" class="nav-link">Vagas</a>
-              <a href="{% url 'core:buscar_eventos' %}" class="nav-link">Eventos</a>
+              <a href="{% url 'eventos:listar_eventos' %}" class="nav-link">Eventos</a>
               <a href="{% url 'treinamento:listar_treinamentos' %}" class="nav-link">Treinamentos</a>
             {% endif %}
 
@@ -243,7 +243,7 @@
             <a href="{% url 'core:parceiros' %}" class="nav-link">Parceiros</a>
             <a href="{% url 'core:sobre' %}" class="nav-link">Sobre</a>
             {% if user.is_authenticated %}
-              <a href="{% url 'core:perfil' %}" class="nav-link">Perfil</a>
+              <a href="{% url 'perfil:perfil' %}" class="nav-link">Perfil</a>
               <a href="{% url 'core:logout' %}" class="nav-link">Sair</a>
             {% else %}
               <a href="{% url 'core:login' %}" class="btn btn-primary">Acessar</a>

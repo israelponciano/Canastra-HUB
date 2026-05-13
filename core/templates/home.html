@@ -4,7 +4,7 @@
   {% if request.session.incompleto %}
     <div id="alert-bar" class="alert-bar">
       <div class="alert-content">
-        <span>Seu cadastro ainda não foi finalizado. <a href="{% url 'core:perfil' %}" class="alert-link">Clique aqui para completa-lo</a>.</span>
+        <span>Seu cadastro ainda não foi finalizado. <a href="{% url 'perfil:perfil' %}" class="alert-link">Clique aqui para completa-lo</a>.</span>
         <button class="close-btn" onclick="closeAlert()">×</button>
       </div>
     </div>
@@ -68,7 +68,7 @@
             <h2 class="hub-title">Conheça o <span style="color:#22c55e">Hub Canastra</span></h2>
             <p class="hub-description">Uma plataforma inovadora que conecta produtores, especialistas e tecnologia para impulsionar a região. Descubra conteúdos exclusivos, networking qualificado e oportunidades de crescimento em diversos setores.</p>
             <p class="hub-subtitle">Junte-se à nossa comunidade e transforme sua experiência com conhecimento especializado em agricultura, apicultura, cafeicultura e muito mais.</p>
-            <button class="btn btn-outline" onclick="window.location.href='{% url 'core:sobre' %}'">
+            <button class="btn btn-outline" onclick="window.location.href='{% url "core:sobre" %}'">
               Saiba Mais
               <span class="btn-arrow">→</span>
             </button>
@@ -92,7 +92,8 @@
             <p class="signup-description">Cadastre-se e receba conteúdos exclusivos, novidades e oportunidades do Hub Canastra diretamente no seu e-mail.</p>
           </div>
 
-          {% comment %} <div class="signup-form-container">
+          {% comment %} 
+          <div class="signup-form-container">
             <form id="signup-form" class="signup-form">
               <div class="form-group">
                 <label for="name" class="form-label">Nome Completo</label>
@@ -106,7 +107,9 @@
                 <span class="form-error" id="email-error"></span>
               </div> {% endcomment %}
 
-              <button type="submit" class="btn btn-accent btn-lg" onclick="window.location.href='{% url 'core:cadastro' %}'">Cadastrar Agora</button>
+              <button type="submit" class="btn btn-accent btn-lg" onclick="window.location.href='{% url 'core:cadastro' %}'">
+                Cadastrar Agora
+              </button>
             </form>
 
             <!-- Success Message -->

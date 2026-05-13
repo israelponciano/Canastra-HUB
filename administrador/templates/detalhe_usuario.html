@@ -1,0 +1,201 @@
+{% extends 'masterAdm.html' %}
+{% load static %}
+{% block conteudo %}
+
+<main class="efeito" id="efeito">
+   <section id="detalhe-usuario">
+      <h2 class="section-title">Detalhe do <span>Usuário</span></h2>
+
+      <div class="detalhe-card">
+
+         <!-- Cabeçalho do perfil -->
+         <div class="detalhe-header">
+            {% if usuario_base.foto %}
+               <img src="{{ usuario_base.foto.url }}" class="detalhe-avatar" alt="{{ usuario_base.nome }}" />
+            {% else %}
+               <img src="{% static 'img/perfil_base.png' %}" class="detalhe-avatar" alt="Sem foto" />
+            {% endif %}
+
+            <div class="detalhe-header-info">
+               <h3>{{ usuario_base.nome }}</h3>
+               <p class="detalhe-email">{{ usuario_base.email }}</p>
+
+               <div class="detalhe-badges">
+                  <span class="badge-tipo badge-tipo-{{ usuario_base.tipo }}">{{ usuario_base.tipo|capfirst }}</span>
+
+                  {% if usuario_base.is_active %}
+                     <span class="badge-status badge-ativo">Ativo</span>
+                  {% else %}
+                     <span class="badge-status badge-inativo">Desativado</span>
+                  {% endif %}
+
+                  {% if usuario_base.is_admin %}
+                     <span class="badge-admin">Administrador</span>
+                  {% endif %}
+               </div>
+            </div>
+
+            <div class="detalhe-acoes">
+               {% if not usuario_base.is_admin %}
+                  {% if usuario_base.is_active %}
+                     <a href="{% url 'administrador:desativar_usuario' usuario_base.id %}"
+                        class="admin-btn admin-btn-danger"
+                        onclick="return confirm('Desativar o usuário {{ usuario_base.nome }}?')">
+                        Desativar usuário
+                     </a>
+                  {% else %}
+                     <a href="{% url 'administrador:desativar_usuario' usuario_base.id %}"
+                        class="admin-btn admin-btn-success"
+                        onclick="return confirm('Reativar o usuário {{ usuario_base.nome }}?')">
+                        Reativar usuário
+                     </a>
+                  {% endif %}
+               {% endif %}
+
+               <a href="{% url 'administrador:listar_usuarios' %}" class="admin-btn admin-btn-secondary">
+                  ← Voltar
+               </a>
+            </div>
+         </div>
+
+         <!-- Dados básicos -->
+         <div class="detalhe-section">
+            <h4 class="detalhe-section-title">Dados da Conta</h4>
+            <div class="detalhe-grid">
+               <div class="detalhe-field">
+                  <span class="field-label">ID</span>
+                  <span class="field-value">{{ usuario_base.id }}</span>
+               </div>
+               <div class="detalhe-field">
+                  <span class="field-label">Nome</span>
+                  <span class="field-value">{{ usuario_base.nome }}</span>
+               </div>
+               <div class="detalhe-field">
+                  <span class="field-label">E-mail</span>
+                  <span class="field-value">{{ usuario_base.email }}</span>
+               </div>
+               <div class="detalhe-field">
+                  <span class="field-label">Tipo</span>
+                  <span class="field-value">{{ usuario_base.tipo|capfirst }}</span>
+               </div>
+            </div>
+         </div>
+
+         <!-- Dados do perfil (candidato) -->
+         {% if perfil %}
+         <div class="detalhe-section">
+            <h4 class="detalhe-section-title">Dados Pessoais</h4>
+            <div class="detalhe-grid">
+               {% if perfil.nome_social %}
+               <div class="detalhe-field">
+                  <span class="field-label">Nome Social</span>
+                  <span class="field-value">{{ perfil.nome_social }}</span>
+               </div>
+               {% endif %}
+               <div class="detalhe-field">
+                  <span class="field-label">Data de Nascimento</span>
+                  <span class="field-value">{{ perfil.data_nascimento|date:"d/m/Y" }}</span>
+               </div>
+               <div class="detalhe-field">
+                  <span class="field-label">Gênero</span>
+                  <span class="field-value">{{ perfil.genero }}</span>
+               </div>
+               <div class="detalhe-field">
+                  <span class="field-label">Estado Civil</span>
+                  <span class="field-value">{{ perfil.estado_civil }}</span>
+               </div>
+               <div class="detalhe-field">
+                  <span class="field-label">Nacionalidade</span>
+                  <span class="field-value">{{ perfil.nacionalidade }}</span>
+               </div>
+               <div class="detalhe-field">
+                  <span class="field-label">Telefone</span>
+                  <span class="field-value">{{ perfil.telefone }}</span>
+               </div>
+            </div>
+         </div>
+
+         <div class="detalhe-section">
+            <h4 class="detalhe-section-title">Endereço</h4>
+            <div class="detalhe-grid">
+               <div class="detalhe-field">
+                  <span class="field-label">CEP</span>
+                  <span class="field-value">{{ perfil.cep }}</span>
+               </div>
+               <div class="detalhe-field">
+                  <span class="field-label">Rua</span>
+                  <span class="field-value">{{ perfil.rua }}, {{ perfil.numero }}{% if perfil.complemento %} — {{ perfil.complemento }}{% endif %}</span>
+               </div>
+               <div class="detalhe-field">
+                  <span class="field-label">Bairro</span>
+                  <span class="field-value">{{ perfil.bairro }}</span>
+               </div>
+               <div class="detalhe-field">
+                  <span class="field-label">Cidade / Estado</span>
+                  <span class="field-value">{{ perfil.cidade }} / {{ perfil.estado }}</span>
+               </div>
+            </div>
+         </div>
+
+         {% if perfil.cargo_pretendido %}
+         <div class="detalhe-section">
+            <h4 class="detalhe-section-title">Objetivo Profissional</h4>
+            <div class="detalhe-grid">
+               <div class="detalhe-field">
+                  <span class="field-label">Cargo Pretendido</span>
+                  <span class="field-value">{{ perfil.cargo_pretendido }}</span>
+               </div>
+               {% if perfil.curso %}
+               <div class="detalhe-field">
+                  <span class="field-label">Curso</span>
+                  <span class="field-value">{{ perfil.curso }}</span>
+               </div>
+               {% endif %}
+            </div>
+         </div>
+         {% endif %}
+         {% else %}
+         <div class="detalhe-section">
+            <p class="no-profile">Perfil complementar não cadastrado para este usuário.</p>
+         </div>
+         {% endif %}
+
+      </div><!-- /.detalhe-card -->
+   </section>
+</main>
+
+<style>
+   .detalhe-card { background:#fff; border-radius:12px; padding:2rem; box-shadow:0 2px 8px rgba(0,0,0,.08); max-width:900px; margin:0 auto; }
+
+   .detalhe-header { display:flex; align-items:flex-start; gap:1.5rem; flex-wrap:wrap; margin-bottom:2rem; padding-bottom:1.5rem; border-bottom:1px solid #e5e7eb; }
+   .detalhe-avatar { width:90px; height:90px; border-radius:50%; object-fit:cover; border:3px solid #d1fae5; }
+   .detalhe-header-info { flex:1; }
+   .detalhe-header-info h3 { margin:0 0 .25rem; font-size:1.4rem; }
+   .detalhe-email { color:#6b7280; margin:.25rem 0 .75rem; }
+   .detalhe-badges { display:flex; gap:.5rem; flex-wrap:wrap; }
+   .detalhe-acoes { display:flex; flex-direction:column; gap:.5rem; align-items:flex-end; }
+
+   .detalhe-section { margin-bottom:1.75rem; }
+   .detalhe-section-title { font-size:1rem; font-weight:700; color:#16a34a; margin-bottom:.75rem; border-left:3px solid #16a34a; padding-left:.5rem; }
+   .detalhe-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:.75rem 1.5rem; }
+   .detalhe-field { display:flex; flex-direction:column; gap:.2rem; }
+   .field-label { font-size:.75rem; font-weight:600; color:#6b7280; text-transform:uppercase; letter-spacing:.04em; }
+   .field-value { font-size:.95rem; color:#111827; }
+
+   .badge-tipo { display:inline-block; padding:.2rem .6rem; border-radius:12px; font-size:.8rem; font-weight:600; }
+   .badge-tipo-candidato { background:#d1fae5; color:#065f46; }
+   .badge-tipo-empresa   { background:#dbeafe; color:#1e40af; }
+   .badge-status { display:inline-block; padding:.2rem .6rem; border-radius:12px; font-size:.8rem; font-weight:600; }
+   .badge-ativo   { background:#d1fae5; color:#065f46; }
+   .badge-inativo { background:#fee2e2; color:#991b1b; }
+   .badge-admin   { background:#fef3c7; color:#92400e; padding:.2rem .6rem; border-radius:12px; font-size:.75rem; font-weight:700; }
+
+   .admin-btn-primary   { background:#16a34a; color:#fff; border:none; padding:.5rem 1rem; border-radius:8px; cursor:pointer; text-decoration:none; display:inline-block; font-size:.9rem; }
+   .admin-btn-danger    { background:#dc2626; color:#fff; border:none; padding:.5rem 1rem; border-radius:8px; cursor:pointer; text-decoration:none; display:inline-block; font-size:.9rem; }
+   .admin-btn-success   { background:#16a34a; color:#fff; border:none; padding:.5rem 1rem; border-radius:8px; cursor:pointer; text-decoration:none; display:inline-block; font-size:.9rem; }
+   .admin-btn-secondary { background:#6b7280; color:#fff; border:none; padding:.5rem 1rem; border-radius:8px; cursor:pointer; text-decoration:none; display:inline-block; font-size:.9rem; }
+
+   .no-profile { color:#6b7280; font-style:italic; }
+</style>
+
+{% endblock %}
