@@ -51,8 +51,6 @@ def criar_empresa(request):
         # CORREÇÃO: Pega a lista de hubs, não apenas um. O nome deve ser 'hubs'
         hubs_selecionados_ids = request.POST.getlist('hubs[]')
 
-        print(f"hubs selecionados {hubs_selecionados_ids}")
-
         foto_empresa = request.FILES.get('fileFoto')
         cnpj = limpar_numeros(request.POST.get('txtCnpj'))
         razao_social = request.POST.get('txtRazaoSocial')
