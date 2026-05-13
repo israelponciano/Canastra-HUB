@@ -189,8 +189,12 @@ class ExperienciaProfissional(models.Model):
     data_fim3 = models.DateField(blank=True, null=True)  
     
     def __str__(self):
-        return f"{self.cargo} - {self.nome_empresa}"
-        
+        pares = zip(
+            [self.cargo1, self.cargo2, self.cargo3],
+            [self.nome_empresa1, self.nome_empresa2, self.nome_empresa3],
+        )
+        return "\n".join(f"{cargo} - {empresa}" for cargo, empresa in pares)
+            
 
 class CursoExtraCurricular(models.Model):
     usuario = models.ForeignKey(
@@ -214,7 +218,11 @@ class CursoExtraCurricular(models.Model):
     link_certificado3 = models.URLField(blank=True, null=True)
 
     def __str__(self):
-        return self.nome_curso
+        return "\n".join([
+            self.nome_curso1, 
+            self.nome_curso2, 
+            self.nome_curso3
+        ])
 
 
 class Idioma(models.Model):
@@ -230,7 +238,11 @@ class Idioma(models.Model):
     nivel_fluencia3 = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.idioma}"
+        return "\n".join([
+            self.idioma1,
+            self.idioma2,
+            self.idioma3
+        ])
 
 
 class Hub(models.Model):
