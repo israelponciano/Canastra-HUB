@@ -1,0 +1,118 @@
+{% extends 'master.html' %}
+{% load static %}
+{% block conteudo %}
+<div class="container my-5">
+
+  <!-- Cabeçalho -->
+  <div class="d-flex justify-content-between align-items-start mb-4 flex-wrap gap-2">
+    <div>
+      <h1 class="mb-1">{{ evento.nome_evento }}</h1>
+      {% if evento.hub %}
+        <span class="badge bg-primary fs-6">{{ evento.hub.nome_hub }}</span>
+      {% endif %}
+    </div>
+    <a href="{% url 'eventos:listar_eventos' %}" class="btn btn-outline-secondary">
+      ← Voltar para lista
+    </a>
+  </div>
+
+  <div class="row g-4">
+
+    <!-- Coluna principal -->
+    <div class="col-lg-8">
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Sobre o evento</h5>
+          <p class="card-text">{{ evento.descricao_evento|default:"Sem descrição disponível." }}</p>
+          <hr>
+          <ul class="list-unstyled mb-0">
+            {% if evento.local_evento %}
+              <li class="mb-2"><strong>📍 Local:</strong> {{ evento.local_evento }}</li>
+            {% endif %}
+            {% if evento.publico_evento %}
+              <li class="mb-2"><strong>👥 Público-alvo:</strong> {{ evento.publico_evento }}</li>
+            {% endif %}
+            {% if evento.data_evento_inicio %}
+              <li class="mb-2">
+                <strong>📅 Data:</strong>
+                {{ evento.data_evento_inicio|date:"d/m/Y" }}
+                {% if evento.data_evento_fim and evento.data_evento_fim != evento.data_evento_inicio %}
+                  → {{ evento.data_evento_fim|date:"d/m/Y" }}
+                {% endif %}
+              </li>
+            {% endif %}
+            {% if evento.horario_evento %}
+              <li class="mb-2"><strong>🕐 Horário:</strong> {{ evento.horario_evento|time:"H\hi" }}</li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+      <div class="card shadow-sm mb-4">
+        <div class="card-body text-center">
+
+          {% if evento.vagas_disponiveis > 0 %}
+            <p class="mb-2">
+              <strong>Vagas:</strong>
+              <span class="badge {% if evento.lotado %}bg-danger{% else %}bg-success{% endif %} fs-6">
+                {% if evento.lotado %}Lotado{% else %}{{ evento.vagas_restantes }} disponíve{{ evento.vagas_restantes|pluralize:"l,is" }}{% endif %}
+              </span>
+            </p>
+          {% else %}
+            <p class="text-muted small mb-2">Vagas ilimitadas</p>
+          {% endif %}
+
+          <p class="text-muted small">{{ evento.inscritos_count }} inscrito{{ evento.inscritos_count|pluralize }}</p>
+
+          {% if pode_inscrever %}
+            {% if ja_inscrito %}
+              <span class="badge bg-success d-block mb-3 py-2 fs-6">✓ Você está inscrito</span>
+              <form method="POST" action="{% url 'eventos:cancelar_inscricao' evento.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-danger w-100"
+                        onclick="return confirm('Cancelar sua inscrição neste evento?')">
+                  Cancelar inscrição
+                </button>
+              </form>
+            {% elif evento.lotado %}
+              <button class="btn btn-secondary w-100" disabled>Evento lotado</button>
+            {% else %}
+              <form method="POST" action="{% url 'eventos:inscrever' evento.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success w-100">Inscrever-se</button>
+              </form>
+            {% endif %}
+          {% elif not request.user.is_authenticated %}
+            <a href="{% url 'core:login' %}" class="btn btn-outline-primary w-100">
+              Faça login para se inscrever
+            </a>
+          {% endif %}
+
+          {% if request.session.perfil == 'empresa' or request.session.perfil == 'admin' %}
+            <hr>
+            <a href="{% url 'eventos:editar_evento' evento.id %}" class="btn btn-outline-secondary w-100 mb-2">
+              ✏️ Editar evento
+            </a>
+            <a href="{% url 'eventos:gerenciar_inscricoes' evento.id %}" class="btn btn-outline-info w-100 mb-2">
+              👥 Gerenciar inscritos
+            </a>
+            <a href="{% url 'eventos:exportar_csv' evento.id %}" class="btn btn-outline-success w-100 mb-2">
+              ⬇️ Exportar CSV
+            </a>
+            {% if request.session.perfil == 'admin' %}
+              <a href="{% url 'eventos:remover_evento' evento.id %}" class="btn btn-outline-danger w-100">
+                🗑️ Remover evento
+              </a>
+            {% endif %}
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

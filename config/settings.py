@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     "administrador",
     "treinamento",
     "perfil",
-    
+    "eventos",
 ]
 
 MIDDLEWARE = [

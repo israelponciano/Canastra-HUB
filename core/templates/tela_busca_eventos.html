@@ -111,7 +111,7 @@
   <div class="container mt-4">
     <div class="row mb-4">
       <div class="col-md-10 offset-md-1">
-        <form action="{% url 'core:buscar_eventos' %}" method="GET" class="d-flex">
+        <form action="{% url 'eventos:listar_eventos' %}" method="GET" class="d-flex">
           <h4>Fique por dentro dos nossos Eventos!</h4>
           <input type="text" name="q" class="form-control form-control-lg me-2" placeholder="Buscar por nome, horario ou palavra-chave..." value="{{ termo_busca }}" />
           <button type="submit" class="btn btn-primary">Buscar</button>

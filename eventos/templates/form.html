@@ -1,0 +1,123 @@
+{% extends 'master.html' %}
+{% load static %}
+{% block conteudo %}
+<style>
+  .form-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+  .form-container h2 {
+    margin-bottom: 1.5rem;
+    color: #22c55e;
+    font-weight: bold;
+  }
+  .submit-btn { text-align: right; }
+  .submit-btn button {
+    background-color: #22c55e;
+    color: #fff;
+    font-size: 18px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+  }
+  .form-label {
+    color: #333 !important; /* Um cinza bem escuro quase preto */
+    font-weight: 600;       /* Deixa o título um pouco mais grosso */
+    display: block;         /* Garante que ele ocupe a linha acima do input */
+    margin-bottom: 5px;
+  }
+  .submit-btn button:hover { background-color: #1a9e4b; }
+</style>
+
+<div class="form-container">
+  <h2 align="center">
+    {% if evento %}Editar Evento{% else %}Cadastrar Evento{% endif %}
+  </h2>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <form method="POST">
+    {% csrf_token %}
+
+    <div class="row mb-3">
+      <div class="col-md-8">
+        <label class="form-label">Nome do Evento *</label>
+        <input type="text" name="nome" class="form-control" required
+               value="{{ evento.nome_evento|default:'' }}">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Vagas Disponíveis <small class="text-muted">(0 = ilimitado)</small></label>
+        <input type="number" name="vagas_disponiveis" class="form-control" min="0"
+               value="{{ evento.vagas_disponiveis|default:0 }}">
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-3">
+        <label class="form-label">Data Início</label>
+        <input type="date" name="data_evento_inicio" class="form-control"
+               value="{{ evento.data_evento_inicio|date:'Y-m-d'|default:'' }}">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Data Fim</label>
+        <input type="date" name="data_evento_fim" class="form-control"
+               value="{{ evento.data_evento_fim|date:'Y-m-d'|default:'' }}">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Horário</label>
+        <input type="time" name="horario_evento" class="form-control"
+               value="{{ evento.horario_evento|time:'H:i'|default:'' }}">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Hub</label>
+        <select name="hub" class="form-select">
+          <option value="">— Nenhum —</option>
+          {% for h in hubs %}
+            <option value="{{ h.id }}"
+              {% if evento.hub_id == h.id %}selected{% endif %}>
+              {{ h.nome_hub }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label class="form-label">Local do Evento</label>
+        <input type="text" name="local_evento" class="form-control"
+               value="{{ evento.local_evento|default:'' }}">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Público-Alvo</label>
+        <input type="text" name="publico_evento" class="form-control"
+               value="{{ evento.publico_evento|default:'' }}">
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Descrição</label>
+      <textarea name="descricao_evento" class="form-control" rows="4"
+                maxlength="500">{{ evento.descricao_evento|default:'' }}</textarea>
+    </div>
+
+    <div class="submit-btn d-flex gap-2 justify-content-end">
+      <a href="{% url 'eventos:listar_eventos' %}" class="btn btn-outline-secondary px-4">Cancelar</a>
+      <button type="submit">
+        {% if evento %}Salvar Alterações{% else %}Cadastrar Evento{% endif %}
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}
