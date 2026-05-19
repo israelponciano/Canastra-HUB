@@ -91,81 +91,89 @@ def cadastro(request):
     # 5. Renderiza o template de busca
     return render(request, 'tela_busca_eventos.html', contexto)
 
+def render_cadastro_usuario(request):
+    estados = Estado.objects.all().order_by('nome_estado')
+    return render(request, 'cadastro_usuario.html', {'estados': estados})
+
+
 def cadastro_usuario(request):
     if request.user.is_authenticated:
         messages.warning(
             request, f'Você ja está logado, não é possivel realizar outro cadastro.')
         return redirect('core:home')
-    if request.method == 'POST':
-        nomeUser = request.POST.get('txtNome')
-        nomeSocial = request.POST.get('txtNomeSocial')
-        dataNasc = request.POST.get('txtDataNasc')
-        genero = request.POST.get('txtGenero')
-        estadoCivil = request.POST.get('txtEstadoCivil')
-        nacionalidade = request.POST.get('txtNacionalidade')
-        email = request.POST.get('txtEmail')
-        telefone = request.POST.get('txtTelefone')
-        senha = request.POST.get('txtSenha')
-        foto_user = request.FILES.get('fileFoto')
-        cep = request.POST.get('txtCep')
-        rua = request.POST.get('txtRua')
-        numero = request.POST.get('txtNumero')
-        bairro = request.POST.get('txtBairro')
-        complemento = request.POST.get('txtComplemento')
+    if request.method != 'POST':
+        return render_cadastro_usuario(request)
 
-        cidade_id = request.POST.get('cidade')
-        if not cidade_id:
-            messages.error(request, 'Selecione uma cidade.')
-        return redirect('core:cadastro_usuario')
-        estado_id = request.POST.get('estado')
+    nomeUser = request.POST.get('txtNome')
+    nomeSocial = request.POST.get('txtNomeSocial')
+    dataNasc = request.POST.get('txtDataNasc')
+    genero = request.POST.get('txtGenero')
+    estadoCivil = request.POST.get('txtEstadoCivil')
+    nacionalidade = request.POST.get('txtNacionalidade')
+    email = request.POST.get('txtEmail')
+    telefone = request.POST.get('txtTelefone')
+    senha = request.POST.get('txtSenha')
+    confirmacaoSenha = request.POST.get('txtConfirmarSenha')
+    foto_user = request.FILES.get('fileFoto')
+    cep = request.POST.get('txtCep')
+    rua = request.POST.get('txtRua')
+    numero = request.POST.get('txtNumero')
+    bairro = request.POST.get('txtBairro')
+    complemento = request.POST.get('txtComplemento')
+    estado_id = request.POST.get('estado')
+    cidade_id = request.POST.get('cidade')
+    
+    if senha != confirmacaoSenha:
+        messages.error(request,"As senhas devem ser iguais.")
+        return render_cadastro_usuario(request)
 
-        if not Estado.objects.filter(id=estado_id).exists():
-            messages.error(request, 'Estado inválido.')
-            estados = Estado.objects.all().order_by('nome_estado')
-            return render(request, 'cadastro_usuario.html', {'estados': estados})
+    if not cidade_id:
+        messages.error(request, 'Selecione uma cidade.')
+        return render_cadastro_usuario(request)
 
-        if not Cidade.objects.filter(id=cidade_id).exists():
-            messages.error(request, 'Cidade inválida.')
-            estados = Estado.objects.all().order_by('nome_estado')
-            return render(request, 'cadastro_usuario.html', {'estados': estados})
-        # Buscar os objetos Estado e Cidade no Banco
-        estado = Estado.objects.get(id=estado_id)
-        cidade = Cidade.objects.get(id=cidade_id).first()
+    if not Estado.objects.filter(id=estado_id).exists():
+        messages.error(request, 'Estado inválido.')
+        return render_cadastro_usuario(request)
 
-        # Criar usuário base
-        user = UsuarioBase.objects.create_user(
-            email=email,
-            password=senha,
-            nome=nomeUser,
-            tipo='usuario'
-        )
-        user.foto = foto_user
-        user.save()
-        # Cria usuario com os outros campos faltantes
-        usuario = Usuario.objects.create(
-            user=user,
-            nome_social=nomeSocial,
-            data_nascimento=dataNasc,
-            genero=genero,
-            estado_civil=estadoCivil,
-            nacionalidade=nacionalidade,
-            telefone=telefone,
-            cep=cep,
-            rua=rua,
-            numero=numero,
-            bairro=bairro,
-            estado=estado,
-            cidade=cidade,
-            complemento=complemento
-        )
-        request.session['usuario_email'] = usuario.user.email
+    if not Cidade.objects.filter(id=cidade_id).exists():
+        messages.error(request, 'Cidade inválida.')
+        return render_cadastro_usuario(request)
+    
+    # Buscar os objetos Estado e Cidade no Banco
+    estado = Estado.objects.get(id=estado_id)
+    cidade = Cidade.objects.get(id=cidade_id).first()
 
-        messages.success(request, 'Cadastro inicial realizado! Complete seu perfil profissional!')
-        return redirect('core:login')
+    # Criar usuário base
+    user = UsuarioBase.objects.create_user(
+        email=email,
+        password=senha,
+        nome=nomeUser,
+        tipo='usuario'
+    )
+    user.foto = foto_user
+    user.save()
 
-    estados = Estado.objects.all().order_by('nome_estado')
-    return render(request, 'cadastro_usuario.html', {'estados': estados})
+    # Cria usuario com os outros campos faltantes
+    usuario = Usuario.objects.create(
+        user=user,
+        nome_social=nomeSocial,
+        data_nascimento=dataNasc,
+        genero=genero,
+        estado_civil=estadoCivil,
+        nacionalidade=nacionalidade,
+        telefone=telefone,
+        cep=cep,
+        rua=rua,
+        numero=numero,
+        bairro=bairro,
+        estado=estado,
+        cidade=cidade,
+        complemento=complemento
+    )
+    request.session['usuario_email'] = usuario.user.email
 
+    messages.success(request, 'Cadastro inicial realizado! Complete seu perfil profissional!')
+    return redirect('core:login')
 
 def cadastro_completo(request):
     usuario_email = request.session.get('email_atual')
