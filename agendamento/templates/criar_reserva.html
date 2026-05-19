@@ -1,0 +1,52 @@
+{% extends "master.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-body p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        <h2 class="fw-bold text-success">Agendar Espaço</h2>
+                        <p class="text-muted">Escolha a sala e o horário desejado. O convite será enviado para o seu e-mail.</p>
+                    </div>
+
+                    <form method="POST" autocomplete="off">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label for="sala" class="form-label fw-semibold text-secondary">Selecione a Sala</label>
+                            <select class="form-select form-control-lg" id="sala" name="sala" required>
+                                <option value="" disabled selected>Escolha uma opção...</option>
+                                <option value="A">Sala de Reuniões A</option>
+                                <option value="B">Sala de Atendimento B</option>
+                            </select>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="inicio" class="form-label fw-semibold text-secondary">Data e Hora de Início</label>
+                                <input type="datetime-local" class="form-control form-control-lg" id="inicio" name="inicio" required>
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label for="fim" class="form-label fw-semibold text-secondary">Data e Hora de Término</label>
+                                <input type="datetime-local" class="form-control form-control-lg" id="fim" name="fim" required>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-success btn-lg fw-bold rounded-3 py-3">
+                                Confirmar Agendamento
+                            </button>
+                            <a href="#" class="btn btn-light btn-lg text-secondary rounded-3 py-2">
+                                Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
