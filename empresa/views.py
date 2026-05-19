@@ -30,93 +30,92 @@ def cadastro_empresa(request):
 
 
 def criar_empresa(request):
+    
     if request.user.is_authenticated:
         messages.warning(
             request, f'Você ja está logado, não é possivel realizar outro cadastro.')
         return redirect('core:home')
-    if request.method == 'POST':
-        nomefantasia = request.POST.get('txtNome')
-        email = request.POST.get('txtEmail')
-        senha = request.POST.get('txtSenha')
-        segmento = request.POST.get('txtSegmento')
-        tipo_empresa = request.POST.get('txtTipo')
-        telefone = limpar_numeros(request.POST.get('txtTelefone'))
-        rua = request.POST.get('txtRua')
-        cep = limpar_numeros(request.POST.get('txtCep'))
-        numero = request.POST.get('txtNumero')
-        complemento = request.POST.get('txtComplemento')
-        cidade_id = request.POST.get('cidade')
-        estado_id = request.POST.get('estado')
+    
+    if request.method != 'POST':
+        return cadastro_empresa(request)
+    
+    nomefantasia = request.POST.get('txtNome')
+    email = request.POST.get('txtEmail')
+    senha = request.POST.get('txtSenha')
+    confirmacaoSenha = request.POST.get('txtConfirmarSenha')
+    segmento = request.POST.get('txtSegmento')
+    tipo_empresa = request.POST.get('txtTipo')
+    telefone = limpar_numeros(request.POST.get('txtTelefone'))
+    rua = request.POST.get('txtRua')
+    cep = limpar_numeros(request.POST.get('txtCep'))
+    numero = request.POST.get('txtNumero')
+    complemento = request.POST.get('txtComplemento')
+    cidade_id = request.POST.get('cidade')
+    estado_id = request.POST.get('estado')
 
-        # CORREÇÃO: Pega a lista de hubs, não apenas um. O nome deve ser 'hubs'
-        hubs_selecionados_ids = request.POST.getlist('hubs[]')
+    # CORREÇÃO: Pega a lista de hubs, não apenas um. O nome deve ser 'hubs'
+    hubs_selecionados_ids = request.POST.getlist('hubs[]')
 
-        print(f"hubs selecionados {hubs_selecionados_ids}")
+    print(f"hubs selecionados {hubs_selecionados_ids}")
 
-        foto_empresa = request.FILES.get('fileFoto')
-        cnpj = limpar_numeros(request.POST.get('txtCnpj'))
-        razao_social = request.POST.get('txtRazaoSocial')
+    foto_empresa = request.FILES.get('fileFoto')
+    cnpj = limpar_numeros(request.POST.get('txtCnpj'))
+    razao_social = request.POST.get('txtRazaoSocial')
 
-        if not validar_email(email):
-            messages.error(request, 'Email inválido.')
-            return render(request, 'cadastro_empresa.html', {'estados': estados, 'hubs': hubs})
-        # Validar se estado e cidade existem
-        if not Estado.objects.filter(id=estado_id).exists():
-            messages.error(request, 'Estado inválido.')
-            estados = Estado.objects.all().order_by('nome_estado')
-            hubs = Hub.objects.all().order_by('nome_hub')
-            return render(request, 'cadastro_empresa.html', {'estados': estados, 'hubs': hubs})
+    if senha != confirmacaoSenha:
+        messages.error(request,"As senhas devem ser iguais.")
+        return cadastro_empresa(request)
+    
+    if not validar_email(email):
+        messages.error(request, 'Email inválido.')
+        return cadastro_empresa(request)
+    
+    if not Estado.objects.filter(id=estado_id).exists():
+        messages.error(request, 'Estado inválido.')
+        return cadastro_empresa(request)
 
-        if not Cidade.objects.filter(id=cidade_id).exists():
-            messages.error(request, 'Cidade inválida.')
-            estados = Estado.objects.all().order_by('nome_estado')
-            hubs = Hub.objects.all().order_by('nome_hub')
-            return render(request, 'cadastro_empresa.html', {'estados': estados, 'hubs': hubs})
+    if not Cidade.objects.filter(id=cidade_id).exists():
+        messages.error(request, 'Cidade inválida.')
+        return cadastro_empresa(request)
+    
+    # Buscar os objetos Estado e Cidade no banco
+    estado = Estado.objects.get(id=estado_id)
+    cidade = Cidade.objects.get(id=cidade_id)
 
-        # Buscar os objetos Estado e Cidade no banco
-        estado = Estado.objects.get(id=estado_id)
-        cidade = Cidade.objects.get(id=cidade_id)
+    # Criar usuário
+    user = UsuarioBase.objects.create_user(
+        email=email,
+        password=senha,
+        nome=nomefantasia,
+        tipo='empresa'
+    )
 
-        # Criar usuário
-        user = UsuarioBase.objects.create_user(
-            email=email,
-            password=senha,
-            nome=nomefantasia,
-            tipo='empresa'
-        )
+    user.foto = foto_empresa
+    user.save()
 
-        user.foto = foto_empresa
-        user.save()
+    # Criar empresa
+    empresa = Empresa.objects.create(
+        user=user,
+        nomefantasia=nomefantasia,
+        tipo_empresa=tipo_empresa,
+        razao_social=razao_social,
+        cnpj=cnpj,
+        telefone=telefone,
+        rua=rua,
+        cep=cep,
+        numero=numero,
+        complemento=complemento,
+        cidade=cidade,
+        estado=estado,
+        segmento=segmento
+    )
 
-        # Criar empresa
-        empresa = Empresa.objects.create(
-            user=user,
-            nomefantasia=nomefantasia,
-            tipo_empresa=tipo_empresa,
-            razao_social=razao_social,
-            cnpj=cnpj,
-            telefone=telefone,
-            rua=rua,
-            cep=cep,
-            numero=numero,
-            complemento=complemento,
-            cidade=cidade,
-            estado=estado,
-            segmento=segmento
-        )
+    # CORREÇÃO: Associa todos os hubs de uma só vez usando o método set()
+    if hubs_selecionados_ids == '' or hubs_selecionados_ids is None:
+        empresa.hubs.set(hubs_selecionados_ids)
 
-        # CORREÇÃO: Associa todos os hubs de uma só vez usando o método set()
-        if hubs_selecionados_ids == '' or hubs_selecionados_ids is None:
-            empresa.hubs.set(hubs_selecionados_ids)
-
-        messages.success(request, 'Empresa cadastrada com sucesso!')
-        return redirect('core:login')
-
-    # GET request - carregar página com dados do banco
-    estados = Estado.objects.all().order_by('nome_estado')
-    hubs = Hub.objects.all().order_by('nome_hub')
-    return render(request, 'cadastro_empresa.html', {'estados': estados, 'hubs': hubs})
-
+    messages.success(request, 'Empresa cadastrada com sucesso!')
+    return redirect('core:login')
 
 @require_http_methods(["GET"])
 def get_cidades(request):
