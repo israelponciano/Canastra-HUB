@@ -21,11 +21,12 @@ class GetMatcherTest(TestCase):
 
     def test_retorna_instancia_job_matcher(self):
         mock = MagicMock()
-        with patch('matching.service.JobMatcher', return_value=mock):
+        with patch('matching.service.JobMatcher', return_value=mock) as MockCls:
             with override_settings(CHROMADB_PATH='/tmp/test_chroma'):
                 from matching.service import get_matcher
                 result = get_matcher()
         self.assertEqual(result, mock)
+        MockCls.assert_called_once_with(persist_directory='/tmp/test_chroma')
 
     def test_retorna_mesma_instancia_em_chamadas_repetidas(self):
         mock = MagicMock()
