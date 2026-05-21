@@ -30,7 +30,7 @@ def sync_vaga(sender, instance, **kwargs):
         get_matcher().update_job(
             text=build_job_text(instance),
             job_title=instance.cargo_vaga or "",
-            company=instance.empresa.nomefantasia,
+            company=instance.empresa.nomefantasia or "",
             job_id=str(instance.id),
         )
     except Exception:
