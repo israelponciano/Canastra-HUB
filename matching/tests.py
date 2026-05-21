@@ -126,3 +126,74 @@ class BuildJobTextTest(TestCase):
     def test_inclui_segmento(self):
         text = self._call(_mock_vaga(segmento='Agronegócio'))
         self.assertIn('Agronegócio', text)
+
+
+class SyncUsuarioSignalTest(TestCase):
+    def test_chama_update_resume_ao_salvar_usuario(self):
+        mock_matcher = MagicMock()
+        mock_usuario = MagicMock()
+        mock_usuario.pk = 7
+        mock_usuario.user.nome = 'João'
+
+        with patch('matching.signals.get_matcher', return_value=mock_matcher):
+            with patch('matching.signals.build_resume_text', return_value='texto currículo'):
+                from matching.signals import sync_usuario
+                sync_usuario(sender=None, instance=mock_usuario)
+
+        mock_matcher.update_resume.assert_called_once_with(
+            text='texto currículo',
+            candidate_name='João',
+            candidate_id='7',
+        )
+
+    def test_nao_propaga_excecao_do_matcher(self):
+        mock_matcher = MagicMock()
+        mock_matcher.update_resume.side_effect = Exception("ChromaDB error")
+        mock_usuario = MagicMock()
+        mock_usuario.pk = 99
+        mock_usuario.user.nome = 'Ana'
+
+        with patch('matching.signals.get_matcher', return_value=mock_matcher):
+            with patch('matching.signals.build_resume_text', return_value='texto'):
+                from matching.signals import sync_usuario
+                try:
+                    sync_usuario(sender=None, instance=mock_usuario)
+                except Exception:
+                    self.fail("sync_usuario propagou Exception — deve silenciar erros do matcher")
+
+
+class SyncVagaSignalTest(TestCase):
+    def test_chama_update_job_ao_salvar_vaga(self):
+        mock_matcher = MagicMock()
+        mock_vaga = MagicMock()
+        mock_vaga.id = 3
+        mock_vaga.cargo_vaga = 'Dev Python'
+        mock_vaga.empresa.nomefantasia = 'TechCo'
+
+        with patch('matching.signals.get_matcher', return_value=mock_matcher):
+            with patch('matching.signals.build_job_text', return_value='texto vaga'):
+                from matching.signals import sync_vaga
+                sync_vaga(sender=None, instance=mock_vaga)
+
+        mock_matcher.update_job.assert_called_once_with(
+            text='texto vaga',
+            job_title='Dev Python',
+            company='TechCo',
+            job_id='3',
+        )
+
+    def test_nao_propaga_excecao_do_matcher(self):
+        mock_matcher = MagicMock()
+        mock_matcher.update_job.side_effect = Exception("erro")
+        mock_vaga = MagicMock()
+        mock_vaga.id = 5
+        mock_vaga.cargo_vaga = 'Analista'
+        mock_vaga.empresa.nomefantasia = 'Corp'
+
+        with patch('matching.signals.get_matcher', return_value=mock_matcher):
+            with patch('matching.signals.build_job_text', return_value='texto'):
+                from matching.signals import sync_vaga
+                try:
+                    sync_vaga(sender=None, instance=mock_vaga)
+                except Exception:
+                    self.fail("sync_vaga propagou Exception — deve silenciar erros do matcher")
