@@ -1,6 +1,10 @@
 # matching/urls.py
 from django.urls import path
+from . import views
 
 app_name = "matching"
 
-urlpatterns = []
+urlpatterns = [
+    path("candidatos/<int:vaga_id>/", views.candidatos_para_vaga, name="candidatos_para_vaga"),
+    path("vagas-para/<int:usuario_pk>/", views.vagas_para_usuario, name="vagas_para_usuario"),
+]

@@ -1,7 +1,9 @@
 # matching/tests.py
-from django.test import TestCase
+import json
+from django.test import TestCase, Client
 from unittest.mock import patch, MagicMock
 from django.test import override_settings
+from matching.schemas import MatchResult
 
 
 class MatchingAppSmoke(TestCase):
@@ -197,3 +199,108 @@ class SyncVagaSignalTest(TestCase):
                     sync_vaga(sender=None, instance=mock_vaga)
                 except Exception:
                     self.fail("sync_vaga propagou Exception — deve silenciar erros do matcher")
+
+
+class CandidatosParaVagaViewTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+
+    def test_retorna_200_com_lista_de_candidatos(self):
+        resultados = [
+            MatchResult(entity_id='1', name='João', score=0.9),
+            MatchResult(entity_id='2', name='Maria', score=0.75),
+        ]
+        mock_matcher = MagicMock()
+        mock_matcher.match_resumes_for_job.return_value = resultados
+
+        with patch('matching.views.get_matcher', return_value=mock_matcher):
+            response = self.client.get('/matching/candidatos/42/')
+
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(len(data['resultados']), 2)
+        self.assertEqual(data['resultados'][0]['nome'], 'João')
+        self.assertAlmostEqual(data['resultados'][0]['score'], 0.9)
+
+    def test_retorna_404_quando_vaga_nao_indexada(self):
+        mock_matcher = MagicMock()
+        mock_matcher.match_resumes_for_job.side_effect = ValueError("Vaga '42' não encontrada.")
+
+        with patch('matching.views.get_matcher', return_value=mock_matcher):
+            response = self.client.get('/matching/candidatos/42/')
+
+        self.assertEqual(response.status_code, 404)
+        data = json.loads(response.content)
+        self.assertIn('erro', data)
+
+    def test_retorna_400_com_parametro_top_invalido(self):
+        mock_matcher = MagicMock()
+        mock_matcher.match_resumes_for_job.return_value = []
+
+        with patch('matching.views.get_matcher', return_value=mock_matcher):
+            response = self.client.get('/matching/candidatos/1/?top=abc')
+
+        self.assertEqual(response.status_code, 400)
+
+    def test_repassa_parametro_top_ao_matcher(self):
+        mock_matcher = MagicMock()
+        mock_matcher.match_resumes_for_job.return_value = []
+
+        with patch('matching.views.get_matcher', return_value=mock_matcher):
+            self.client.get('/matching/candidatos/1/?top=3')
+
+        mock_matcher.match_resumes_for_job.assert_called_once_with(
+            job_id='1', top_k=3, min_score=0.0
+        )
+
+
+class VagasParaUsuarioViewTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+
+    def test_retorna_200_com_lista_de_vagas(self):
+        resultados = [
+            MatchResult(entity_id='10', name='Dev Python', company='TechCo', score=0.88),
+        ]
+        mock_matcher = MagicMock()
+        mock_matcher.match_jobs_for_resume.return_value = resultados
+
+        with patch('matching.views.get_matcher', return_value=mock_matcher):
+            response = self.client.get('/matching/vagas-para/7/')
+
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(len(data['resultados']), 1)
+        self.assertEqual(data['resultados'][0]['cargo'], 'Dev Python')
+        self.assertEqual(data['resultados'][0]['empresa'], 'TechCo')
+
+    def test_retorna_404_quando_candidato_nao_indexado(self):
+        mock_matcher = MagicMock()
+        mock_matcher.match_jobs_for_resume.side_effect = ValueError("Candidato '7' não encontrado.")
+
+        with patch('matching.views.get_matcher', return_value=mock_matcher):
+            response = self.client.get('/matching/vagas-para/7/')
+
+        self.assertEqual(response.status_code, 404)
+        data = json.loads(response.content)
+        self.assertIn('erro', data)
+
+    def test_repassa_parametro_min_score_ao_matcher(self):
+        mock_matcher = MagicMock()
+        mock_matcher.match_jobs_for_resume.return_value = []
+
+        with patch('matching.views.get_matcher', return_value=mock_matcher):
+            self.client.get('/matching/vagas-para/7/?min_score=0.5')
+
+        mock_matcher.match_jobs_for_resume.assert_called_once_with(
+            candidate_id='7', top_k=5, min_score=0.5
+        )
+
+    def test_retorna_400_com_min_score_invalido(self):
+        mock_matcher = MagicMock()
+        mock_matcher.match_jobs_for_resume.return_value = []
+
+        with patch('matching.views.get_matcher', return_value=mock_matcher):
+            response = self.client.get('/matching/vagas-para/7/?min_score=nao_numero')
+
+        self.assertEqual(response.status_code, 400)
