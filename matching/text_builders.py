@@ -25,7 +25,7 @@ def build_resume_text(usuario: Usuario) -> str:
         curso = getattr(usuario, f'curso_graduacao{n}')
         situacao = getattr(usuario, f'situacao_academica{n}')
         if any([instituicao, grau, curso]):
-            linha = " ".join(filter(None, [grau, curso, "em", instituicao, situacao]))
+            linha = " ".join(filter(None, [grau, curso, ("em " + instituicao) if instituicao else None, situacao]))
             parts.append(f"formação: {linha}")
 
     for n in ('1', '2', '3'):
@@ -42,7 +42,9 @@ def build_resume_text(usuario: Usuario) -> str:
             cargo = getattr(exp, f'cargo{n}')
             empresa = getattr(exp, f'nome_empresa{n}')
             if cargo or empresa:
-                parts.append(f"experiência: {cargo or ''} em {empresa or ''}")
+                linha_exp = " em ".join(filter(None, [cargo, empresa]))
+                if linha_exp:
+                    parts.append(f"experiência: {linha_exp}")
     except ExperienciaProfissional.DoesNotExist:
         pass
 
