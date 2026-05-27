@@ -118,7 +118,6 @@ def criar_empresa(request):
     if not estado_id.isdigit() or not cidade_id.isdigit():
         return _erro_cadastro(request, 'Seleção de estado ou cidade inválida.')
 
-
     try:
         estado = Estado.objects.get(id=estado_id)
     except Estado.DoesNotExist:
