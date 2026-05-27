@@ -1,15 +1,11 @@
-from django.shortcuts import redirect, get_object_or_404
-from django.shortcuts import render, redirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
 from django.db import models
-from empresa.models import *
-from core.models import *
-from vagas.models import *
+from core.models import Usuario, Estado, Cidade, UsuarioBase
 from django.contrib import messages
 from django.http import JsonResponse
-from .models import Vagas, UsuarioVaga  # Importe UsuarioVaga aqui
+from vagas.models import Vagas, UsuarioVaga, CursoVaga
 
 import re
 
