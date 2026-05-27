@@ -1,0 +1,116 @@
+{% extends 'master.html' %}
+{% load static %}
+{% block conteudo %}
+
+
+
+<div class="container my-5">
+
+  {% if messages %}
+    <div class="mb-3">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+          {{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <div class="row g-4">
+
+    <!-- ── Coluna lateral: foto e dados básicos ── -->
+    <div class="col-lg-3">
+      <div class="card shadow-sm text-center p-3" style="border-radius:14px; border:none;">
+
+        <!-- Foto do perfil -->
+        <form method="POST" action="{% url 'perfil:atualizar_perfil' %}" enctype="multipart/form-data" id="form-foto">
+          {% csrf_token %}
+          <input type="hidden" name="apenas_foto" value="1">
+          <div class="position-relative d-inline-block mb-3">
+            <img id="preview-foto"
+                 src="{% if user.foto %}{{ user.foto.url }}{% else %}{% static 'img/perfil_base.png' %}{% endif %}"
+                 alt="Foto de perfil"
+                 class="rounded-circle border"
+                 style="width:120px; height:120px; object-fit:cover; cursor:pointer;"
+                 onclick="document.getElementById('id-input-foto').click()">
+            <span class="position-absolute bottom-0 end-0 bg-success text-white rounded-circle d-flex align-items-center justify-content-center"
+                  style="width:28px; height:28px; font-size:14px; cursor:pointer;"
+                  onclick="document.getElementById('id-input-foto').click()">✏️</span>
+          </div>
+          <input type="file" id="id-input-foto" name="foto" accept="image/jpeg,image/png"
+                 class="d-none" onchange="previewFoto(this); document.getElementById('form-foto').submit()">
+        </form>
+
+        <h5 class="fw-bold mb-0">{{ user.nome }}</h5>
+        <p class="text-muted small mb-3">{{ user.email }}</p>
+
+        {% if request.session.perfil == 'empresa' and empresa %}
+          <span class="badge bg-primary mb-1">{{ empresa.nomefantasia }}</span><br>
+          <span class="badge bg-light text-dark border">{{ empresa.segmento }}</span>
+        {% elif request.session.perfil == 'usuario' and usuario %}
+          {% if usuario.cargo_pretendido %}<span class="badge bg-success mb-1">{{ usuario.cargo_pretendido }}</span>{% endif %}
+          {% if usuario.area_interesse %}<br><span class="badge bg-light text-dark border">{{ usuario.area_interesse }}</span>{% endif %}
+        {% endif %}
+
+        <hr>
+        <ul class="list-unstyled text-start small text-muted">
+          {% if request.session.perfil == 'usuario' and usuario %}
+            {% if usuario.telefone %}<li>📱 {{ usuario.telefone }}</li>{% endif %}
+            {% if usuario.cidade %}<li>📍 {{ usuario.cidade }} / {{ usuario.estado.sigla_estado }}</li>{% endif %}
+          {% elif request.session.perfil == 'empresa' and empresa %}
+            {% if empresa.telefone %}<li>📱 {{ empresa.telefone }}</li>{% endif %}
+            {% if empresa.cidade %}<li>📍 {{ empresa.cidade }} / {{ empresa.estado.sigla_estado }}</li>{% endif %}
+          {% endif %}
+        </ul>
+
+      </div>
+    </div>
+
+    <!-- ── Coluna principal: formulário ── -->
+    <div class="col-lg-9">
+      <form method="POST" action="{% url 'perfil:atualizar_perfil' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- ════ DADOS BÁSICOS ════ -->
+        <div class="card shadow-sm mb-4" style="border-radius:14px; border:none;">
+          <div class="card-body">
+            <h5 class="fw-bold mb-3" style="color:#22c55e;">Dados Básicos</h5>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Nome completo</label>
+                <input type="text" name="nome" class="form-control" value="{{ user.nome }}">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">E-mail</label>
+                <input type="email" class="form-control" value="{{ user.email }}" disabled>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {% if request.session.perfil == 'usuario' and usuario %}
+          {% include 'perfil/_form_usuario.html' %}
+        {% elif request.session.perfil == 'empresa' and empresa %}
+          {% include 'perfil/_form_empresa.html' %}
+        {% endif %}
+
+        <div class="text-end mt-2 mb-4">
+          <button type="submit" class="btn btn-success px-5">Salvar Alterações</button>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function previewFoto(input) {
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = e => { document.getElementById('preview-foto').src = e.target.result; };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+</script>
+{% endblock %}
