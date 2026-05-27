@@ -8,18 +8,18 @@ from core.models import *
 class Empresa(models.Model):
     user = models.OneToOneField(
         UsuarioBase, on_delete=models.CASCADE, primary_key=True)
-    nomefantasia = models.CharField(max_length=100, default=False)
-    tipo_empresa = models.CharField(max_length=100, default=False)
-    razao_social = models.CharField(max_length=255, default=False)
-    cnpj = models.CharField(max_length=20, default=False)
-    telefone = models.CharField(max_length=20, default=False)
-    rua = models.CharField(max_length=255, default=False)
-    cep = models.CharField(max_length=10, default=False)
-    numero = models.IntegerField(default=False)
-    complemento = models.CharField(max_length=25, default=False)
+    nomefantasia = models.CharField(max_length=100, default="")
+    tipo_empresa = models.CharField(max_length=100, default="")
+    razao_social = models.CharField(max_length=255, default="")
+    cnpj = models.CharField(max_length=20, default="")
+    telefone = models.CharField(max_length=20, default="")
+    rua = models.CharField(max_length=255, default="")
+    cep = models.CharField(max_length=10, default="")
+    numero = models.IntegerField(null=True, blank=True)
+    complemento = models.CharField(max_length=25, default="")
     cidade = models.ForeignKey(Cidade, on_delete=models.PROTECT)
     estado = models.ForeignKey(Estado, on_delete=models.PROTECT)
-    segmento = models.CharField(max_length=100, default=False)
+    segmento = models.CharField(max_length=100, default="")
 
     hubs = models.ManyToManyField(Hub, through='EmpresaHub', blank=True, null= True)
 
