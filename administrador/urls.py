@@ -11,14 +11,14 @@ urlpatterns = [
     path("cadastrarHub/", views.cadastrarHub, name="cadastrarHub"),
     path("gerenciarHubs/", views.gerenciarHubs, name="gerenciarHubs"),
     path("alterarHub/", views.alterarHub, name="alterarHub"),
-    path("deletaHub/<int:hubs_id>", views.deletaHub, name="deletaHub"),
+    path("deletaHub/<int:noticia_id>", views.deletaHub, name="deletaHub"),
 
     # gerencia as noticias
     path("cadastrarNoticias/", views.cadastrarNoticias, name="cadastrarNoticias"),
     path("gerenciarNoticias/", views.gerenciarNoticias, name="gerenciarNoticias"),
     path("alterarNoticias/", views.alterarNoticias, name="alterarNoticias"),
-    path("deletaNoticias/<int:hubs_id>", views.deletaNoticias, name="deletaNoticias"),
-
+    path("deletaNoticias/<int:noticia_id>", views.deletaNoticias, name="deletaNoticias"),
+  
     #gerencia os usuários
     path("listar_usuarios/", views.listar_usuarios, name="listar_usuarios"),
     path("detalhe_usuario/<int:usuario_id>/", views.detalhe_usuario, name="detalhe_usuario"),

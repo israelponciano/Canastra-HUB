@@ -18,7 +18,7 @@ class Vagas(models.Model):
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, related_name='vagas')
 
     def __str__(self):
-        return f"Vaga: {self.cargo_vaga}, {self.tipo_vaga}"
+        return f"Vaga: {self.cargo_vaga}, {self.descricao_vaga}"
     
 class UsuarioVaga(models.Model):
     vaga = models.ForeignKey(Vagas, on_delete=models.CASCADE)
@@ -27,7 +27,7 @@ class UsuarioVaga(models.Model):
 
     
     def __str__(self):
-        return f"{self.usuario.username} -> {self.vaga.cargo_vaga}"
+        return f"{self.usuario.nome_social} -> {self.vaga.cargo_vaga}"
 
 class CursoVaga(models.Model):
     vaga = models.ForeignKey(Vagas, on_delete=models.CASCADE)
