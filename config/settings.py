@@ -9,6 +9,15 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
+from pathlib import Path
+from dotenv import load_dotenv
+import os
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+dotenv_path = BASE_DIR / '.env'
+
+
 
 from pathlib import Path
 
@@ -115,6 +124,7 @@ DATABASES = {
         'PORT': os.environ.get('DB_PORT'),
     }
 }
+
 
 # Settings for messages
 MESSAGE_TAGS = {
