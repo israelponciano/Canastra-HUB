@@ -183,7 +183,6 @@ def cadastro_usuario(request):
 
 def cadastro_completo(request):
     usuario_email = request.session.get('email_atual')
-    print(usuario_email)
     if not usuario_email:
         messages.error(request, 'Você deve realizar o cadastro inicial primeiro!')
         return redirect('core:cadastro_usuario')
@@ -466,10 +465,7 @@ def login(request):
         email = request.POST.get('txtEmail')
         senha = request.POST.get('txtSenha')
 
-        print(email, senha)
-
         usuario = authenticate(request, username=email, password=senha)
-        print(usuario)
         
         if usuario is not None:
             request.session.flush()
@@ -502,7 +498,6 @@ def login(request):
             return redirect('core:home')
         
         else:
-            print("Usuario ou senha invalidos")
             messages.error(request, 'Usuário ou senha inválidos.')
 
     return render(request, 'login.html')
