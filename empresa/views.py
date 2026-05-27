@@ -43,17 +43,22 @@ def cadastro_empresa(request):
 
 
 def criar_empresa(request):
+    
     if request.user.is_authenticated:
         messages.warning(
             request, f'Você ja está logado, não é possivel realizar outro cadastro.')
         return redirect('core:home')
     
     if request.method != 'POST':
-        return render(request, 'cadastro_empresa.html', _get_contexto_cadastro())
+       return cadastro_empresa(request)
     
+    senha = request.POST.get('txtSenha', '').strip()
+    confirmacaoSenha = request.POST.get('txtConfirmarSenha', '').strip()
+    if senha != confirmacaoSenha:
+       return _erro_cadastro(request, 'As senhas devem ser iguais.')    
+
     nomefantasia = request.POST.get('txtNome', '').strip()
     email = request.POST.get('txtEmail', '').strip()
-    senha = request.POST.get('txtSenha', '').strip()
     segmento = request.POST.get('txtSegmento', '').strip()
     tipo_empresa = request.POST.get('txtTipo', '').strip()
     telefone = limpar_numeros(request.POST.get('txtTelefone'))

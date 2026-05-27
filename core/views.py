@@ -91,6 +91,11 @@ def cadastro(request):
     # 5. Renderiza o template de busca
     return render(request, 'tela_busca_eventos.html', contexto)
 
+def render_cadastro_usuario(request):
+    estados = Estado.objects.all().order_by('nome_estado')
+    return render(request, 'cadastro_usuario.html', {'estados': estados})
+
+
 def cadastro_usuario(request):
     if request.user.is_authenticated:
         messages.warning(
@@ -112,14 +117,18 @@ def cadastro_usuario(request):
             estados = Estado.objects.all().order_by('nome_estado')
             return render(request, 'cadastro_usuario.html', {'estados': estados})
 
+        senha = request.POST.get('txtSenha')
+        confirmacaoSenha = request.POST.get('txtConfirmarSenha')
+        if senha != confirmacaoSenha:
+            messages.error(request, "As senhas devem ser iguais.")
+            return render(request, 'cadastro_usuario.html', {'estados': Estado.objects.all().order_by('nome_estado')})
         nomeSocial = request.POST.get('txtNomeSocial')
         dataNasc = request.POST.get('txtDataNasc')
         genero = request.POST.get('txtGenero')
         estadoCivil = request.POST.get('txtEstadoCivil')
         nacionalidade = request.POST.get('txtNacionalidade')
         email = request.POST.get('txtEmail')
-        telefone = request.POST.get('txtTelefone')
-        senha = request.POST.get('txtSenha')
+        telefone = request.POST.get('txtTelefone')                        
         foto_user = request.FILES.get('fileFoto')
         cep = request.POST.get('txtCep')
         rua = request.POST.get('txtRua')
@@ -177,9 +186,53 @@ def cadastro_usuario(request):
         messages.success(request, 'Cadastro inicial realizado! Complete seu perfil profissional!')
         return redirect('core:login')
 
-    estados = Estado.objects.all().order_by('nome_estado')
-    return render(request, 'cadastro_usuario.html', {'estados': estados})
+    if not cidade_id:
+        messages.error(request, 'Selecione uma cidade.')
+        return render_cadastro_usuario(request)
 
+    if not Estado.objects.filter(id=estado_id).exists():
+        messages.error(request, 'Estado inválido.')
+        return render_cadastro_usuario(request)
+
+    if not Cidade.objects.filter(id=cidade_id).exists():
+        messages.error(request, 'Cidade inválida.')
+        return render_cadastro_usuario(request)
+    
+    # Buscar os objetos Estado e Cidade no Banco
+    estado = Estado.objects.get(id=estado_id)
+    cidade = Cidade.objects.get(id=cidade_id).first()
+
+    # Criar usuário base
+    user = UsuarioBase.objects.create_user(
+        email=email,
+        password=senha,
+        nome=nomeUser,
+        tipo='usuario'
+    )
+    user.foto = foto_user
+    user.save()
+
+    # Cria usuario com os outros campos faltantes
+    usuario = Usuario.objects.create(
+        user=user,
+        nome_social=nomeSocial,
+        data_nascimento=dataNasc,
+        genero=genero,
+        estado_civil=estadoCivil,
+        nacionalidade=nacionalidade,
+        telefone=telefone,
+        cep=cep,
+        rua=rua,
+        numero=numero,
+        bairro=bairro,
+        estado=estado,
+        cidade=cidade,
+        complemento=complemento
+    )
+    request.session['usuario_email'] = usuario.user.email
+
+    messages.success(request, 'Cadastro inicial realizado! Complete seu perfil profissional!')
+    return redirect('core:login')
 
 def cadastro_completo(request):
     usuario_email = request.session.get('email_atual')
