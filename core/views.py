@@ -10,6 +10,8 @@ from decimal import Decimal, InvalidOperation
 from datetime import datetime
 
 from treinamento.models import Treinamento
+from vagas.models import Vagas
+from eventos.models import Evento
 
 def home(request):
     # Buscar notícias ativas que devem aparecer na home
@@ -41,8 +43,16 @@ def hub_detalhe(request, nome_hub):
         noticia__isActive=True
     ).select_related('noticia')
 
+    eventos = Evento.objects.filter(
+        hub=hub
+    ).order_by('-id')
+
+    vagas = Vagas.objects.filter(
+        hub=hub
+    ).order_by('-data_publicacao')
+
     #Treinamento  vinculado ao hub (novo app)
-    treinamneto  = Treinamento.objects.filter(hub=hub).prefetch_related('sessoes').order_by('-id')
+    treinamentos  = Treinamento.objects.filter(hub=hub).prefetch_related('sessoes').order_by('-id')
 
     #Empresas parceiras vinculadas ao hub
     empresas_hub = EmpresaHub.objects.filter(hub=hub).select_related('empresa__user')
@@ -50,7 +60,9 @@ def hub_detalhe(request, nome_hub):
     context = {
         'hub': hub,
         'noticias': noticias,
-        'treinamento': treinamneto,
+        'treinamentos': treinamentos,
+        'vagas': vagas,
+        'eventos': eventos,
         'empresas_hub': empresas_hub
     }
     return render(request, 'hub.html', context)
