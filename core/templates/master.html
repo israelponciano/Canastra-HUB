@@ -147,7 +147,7 @@
                 </div>
               </div>
 
-              <a href="{% url 'realizar_reserva' %}" class="nav-link">Agendamento</a>
+              <a class="nav-link" href="{% url 'minhas_reservas' %}">Agendamentos</a>
 
               <div class="nav-dropdown">
                 <span class="nav-link nav-link-dropdown">Treinamentos <span class="dropdown-arrow">▼</span></span>
@@ -159,7 +159,7 @@
             {% else %}
               <a href="{% url 'vagas:buscar_vagas' %}" class="nav-link">Vagas</a>
               <a href="{% url 'eventos:listar_eventos' %}" class="nav-link">Eventos</a>
-              <a href="{% url 'realizar_reserva' %}" class="nav-link">Agendamento</a>
+              <a href="{% url 'minhas_reservas' %}" class="nav-link">Agendamento</a>
               <a href="{% url 'treinamento:listar_treinamentos' %}" class="nav-link">Treinamentos</a>
             {% endif %}
 
@@ -214,7 +214,7 @@
                 </div>
               </div>
 
-              <a href="{% url 'realizar_reserva' %}" class="nav-link">Agendamento</a>
+              <a href="{% url 'minhas_reservas' %}" class="nav-link">Agendamento</a>
 
               <div class="mobile-dropdown">
                 <span class="nav-link mobile-dropdown-toggle">Treinamentos <span class="dropdown-arrow">▼</span></span>
@@ -226,7 +226,7 @@
             {% else %}
               <a href="{% url 'vagas:buscar_vagas' %}" class="nav-link">Vagas</a>
               <a href="{% url 'eventos:listar_eventos' %}" class="nav-link">Eventos</a>
-              <a href="{% url 'realizar_reserva' %}" class="nav-link">Agendamento</a>
+              <a href="{% url 'minhas_reservas' %}" class="nav-link">Agendamento</a>
               <a href="{% url 'treinamento:listar_treinamentos' %}" class="nav-link">Treinamentos</a>
             {% endif %}
 

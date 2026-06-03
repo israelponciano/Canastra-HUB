@@ -1,122 +1,32 @@
 {% extends 'master.html' %}
 {% load static %}
 
-{% block extra_head %}
-<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.min.css" rel="stylesheet" />
-<style>
-    /* Container principal do Calendário */
-    .calendar-container {
-        background: #ffffff;
-        padding: 2.5rem;
-        border-radius: 16px;
-        box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important; /* shadow-sm */
-        border: none;
-        height: 100%;
-    }
-
-    /* Título do cabeçalho do calendário (Mês/Ano) */
-    .fc .fc-toolbar-title {
-        font-size: 1.25rem !important;
-        font-weight: 700 !important;
-        color: #334155 !important;
-    }
-
-    /* Botões do Calendário */
-    .fc .fc-button-primary {
-        background-color: #ffffff !important;
-        border: 1px solid #e2e8f0 !important;
-        color: #475569 !important;
-        font-weight: 600 !important;
-        font-size: 0.875rem !important;
-        padding: 8px 14px !important;
-        border-radius: 8px !important;
-        transition: all 0.2s ease;
-    }
-
-    .fc .fc-button-primary:hover {
-        background-color: #f8fafc !important;
-        color: #22c55e !important;
-        border-color: #cbd5e1 !important;
-    }
-
-    /* Botão ativo/selecionado */
-    .fc .fc-button-primary:not(:disabled).fc-button-active,
-    .fc .fc-button-primary:not(:disabled):active {
-        background-color: rgba(34, 197, 94, 0.1) !important;
-        color: #22c55e !important;
-        border-color: #22c55e !important;
-        font-weight: 700 !important;
-    }
-
-    .fc .fc-button-group {
-        gap: 2px;
-    }
-
-    /* Estilização da Grade Horária */
-    .fc th {
-        background-color: #f8fafc !important;
-        padding: 10px 0 !important;
-        font-weight: 600 !important;
-        color: #475569 !important;
-        border: 1px solid #f1f5f9 !important;
-        font-size: 0.9rem;
-    }
-
-    .fc td {
-        border: 1px solid #f1f5f9 !important;
-    }
-
-    /* Linha que indica a hora atual */
-    .fc .fc-timegrid-now-indicator-line {
-        border-color: #22c55e !important;
-    }
-    .fc .fc-timegrid-now-indicator-arrow {
-        border-top-color: #22c55e !important;
-        border-bottom-color: #22c55e !important;
-    }
-
-    /* Blocos de Eventos (Verde Translúcido) */
-    .fc-v-event {
-        background-color: rgba(34, 197, 94, 0.12) !important;
-        border-left: 4px solid #22c55e !important;
-        border-top: none !important;
-        border-right: none !important;
-        border-bottom: none !important;
-        border-radius: 6px !important;
-        padding: 4px 8px !important;
-    }
-
-    .fc-v-event .fc-event-main {
-        color: #16a34a !important;
-        font-weight: 600 !important;
-        font-size: 0.8rem !important;
-    }
-
-    .fc-v-event:hover {
-        background-color: rgba(34, 197, 94, 0.2) !important;
-        box-shadow: 0 2px 8px rgba(34, 197, 94, 0.15);
-    }
-
-    @media (min-width: 992px) {
-        .card-formulario-reserva {
-            height: 100%;
-        }
-    }
-</style>
-{% endblock %}
-
 {% block conteudo %}
 <div class="container" style="margin-top: 4rem; margin-bottom: 4rem;">
-    <div class="row g-4 justify-content-center align-items-stretch">
-        
-        <div class="col-12 col-md-6 col-lg-5">
-            <div class="card card-formulario-reserva border-0 shadow-sm" style="border-radius: 16px; background-color: #ffffff; padding: 2.5rem;">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+
+            <div class="card border-0 shadow-sm" style="border-radius: 16px; background-color: #ffffff; padding: 2.5rem;">
                 <div class="card-body p-0">
                     
+                    <a href="{% url 'minhas_reservas' %}" class="btn btn-sm btn-link text-muted fw-bold p-0 mb-3 text-decoration-none d-inline-flex align-items-center">
+                        ⬅️ Voltar para o mapa de ocupação
+                    </a>    
+
                     <div class="text-center mb-4">
                         <h2 class="fw-bold" style="color: #22c55e; margin-bottom: 0.5rem;">Reservar Espaço</h2>
-                        <p class="text-muted small">Selecione a sala, o dia e o período desejado.</p>
+                        <p class="text-muted small">Selecione a sala e defina o bloco fixo de 1h30 pretendido.</p>
                     </div>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            {% if message.tags == 'error' %}
+                                <div class="alert alert-danger border-0 small p-2" style="border-radius: 6px;">
+                                    ⚠️ {{ message }}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
 
                     <form method="POST" action="{% url 'realizar_reserva' %}">
                         {% csrf_token %}
@@ -125,30 +35,35 @@
                             <label for="sala" class="form-label fw-semibold" style="color: #333;">Qual é a Sala?</label>
                             <select class="form-select form-control-lg" id="sala" name="sala" style="border-radius: 8px;" required>
                                 <option value="" disabled selected>Escolha uma opção...</option>
-                                <option value="A">Sala A (Coworking)</option>
-                                <option value="B">Sala B (Atendimento)</option>
+                                <option value="treinamentos">Espaço de Treinamentos</option>
+                                <option value="reunioes">Sala de Reuniões</option>
+                                <option value="laboratorio">Laboratório de Práticas Gerais</option>
+                                <option value="fast">FAST - Fábrica de Soluções Tecnológicas</option>
                             </select>
                         </div>
 
                         <div class="mb-3">
-                            <label for="data_reserva" class="form-label fw-semibold" style="color: #333;">Qual o dia da reserva?</label>
+                            <label for="data_reserva" class="form-label fw-semibold" style="color: #333;">Data do Agendamento</label>
                             <input type="date" class="form-control form-control-lg" id="data_reserva" name="data_reserva" style="border-radius: 8px;" required>
                         </div>
 
                         <div class="mb-4">
-                            <label for="bloco_horario" class="form-label fw-semibold" style="color: #333;">Escolha o horário disponível</label>
+                            <label for="bloco_horario" class="form-label fw-semibold" style="color: #333;">Períodos Disponíveis</label>
                             <select class="form-select form-control-lg" id="bloco_horario" name="bloco_horario" style="border-radius: 8px;" required>
-                                <option value="" disabled selected>Selecione um horário...</option>
+                                <option value="" disabled selected>Escolha um horário...</option>
                                 <optgroup label="Manhã">
-                                    <option value="07:00-08:30">07:00 às 08:30</option>
-                                    <option value="08:30-10:00">08:30 às 10:00</option>
-                                    <option value="10:00-11:30">10:00 às 11:30</option>
-                                    <option value="11:30-13:00">11:30 às 13:00</option>
+                                    <option value="08:00-09:30">08:00 às 09:30</option>
+                                    <option value="09:30-11:00">09:30 às 11:00</option>
+                                    <option value="11:00-12:30">11:00 às 12:30</option>
                                 </optgroup>
                                 <optgroup label="Tarde">
-                                    <option value="13:00-14:30">13:00 às 14:30</option>
-                                    <option value="14:30-16:00">14:30 às 16:00</option>
-                                    <option value="16:00-17:30">16:00 às 17:30</option>
+                                    <option value="13:30-15:00">13:30 às 15:00</option>
+                                    <option value="15:00-16:30">15:00 às 16:30</option>
+                                    <option value="16:30-18:00">16:30 às 18:00</option>
+                                </optgroup>
+                                <optgroup label="Noite">
+                                    <option value="18:30-20:00">18:30 às 20:00</option>
+                                    <option value="20:00-21:30">20:00 às 21:30</option>
                                 </optgroup>
                             </select>
                         </div>
@@ -158,39 +73,17 @@
                                 Confirmar e Agendar
                             </button>
                         </div>
-                        <div class="text-center d-grid">
-                            <button type="button" class="btn btn-lg fw-bold text-white shadow-sm" style="background-color: #22c55e; border: none; border-radius: 8px; padding: 12px;">
-                                <a href="{% url 'minhas_reservas' %}">minhas_reservas</a>
-                            </button>
-                        </div>
                     </form>
 
                 </div>
             </div>
-        </div>
 
-        <div class="col-12 col-md-6 col-lg-7">
-            <div class="calendar-container">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <div>
-                        <h4 class="fw-bold mb-1" style="color: #334155; font-size: 1.25rem;">Horários Ocupados</h4>
-                        <p class="text-muted small mb-0">Consulte a disponibilidade em tempo real antes de agendar.</p>
-                    </div>
-                </div>
-                
-                <div id="calendar-display"></div>
-            </div>
         </div>
-
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.11/locales/pt-br.global.min.js"></script>
-
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // 1. Validação de data mínima (JavaScript corrigido sem erros de sintaxe)
         const inputData = document.getElementById("data_reserva");
         const agora = new Date();
         const ano = agora.getFullYear();
@@ -198,35 +91,6 @@
         const dia = String(agora.getDate()).padStart(2, '0');
         
         inputData.min = `${ano}-${mes}-${dia}`;
-
-        // 2. Inicialização segura do FullCalendar
-        var calendarEl = document.getElementById('calendar-display');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'timeGridWeek',
-            locale: 'pt-br',
-            slotMinTime: '07:00:00',
-            slotMaxTime: '22:00:00',
-            allDaySlot: false,
-            nowIndicator: true,
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'timeGridWeek,timeGridDay,dayGridMonth'
-            },
-            buttonText: {
-                today: 'Hoje',
-                month: 'Mês',
-                week: 'Semana',
-                day: 'Dia'
-            },
-            events: "{% url 'api_reservas' %}",
-            
-            eventClick: function(info) {
-                alert(info.event.title);
-            }
-        });
-        
-        calendar.render();
     });
 </script>
-{% endblock %}
+{% endblock %}  
