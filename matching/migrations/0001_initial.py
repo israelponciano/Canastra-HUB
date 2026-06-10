@@ -7,8 +7,8 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('core', '0001_initial'),
-        ('vagas', '0001_initial'),
+        ('core', '0011_merge_20260610_2009'),
+        ('vagas', '0002_alter_vagas_requisito_vaga'),
     ]
 
     operations = [
