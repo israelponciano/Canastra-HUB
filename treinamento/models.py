@@ -10,6 +10,7 @@ class Treinamento(models.Model):
     descricao = models.TextField(max_length=250, blank=True, null=True)
     vagas_disponiveis = models.PositiveIntegerField(default=0)       # novo
     tipo_setc = models.CharField(max_length=100, blank=True, null=True)  # apagar
+    isActivate = models.BooleanField(default=True)  # novo
     hub = models.ForeignKey(                                          # novo
         Hub, on_delete=models.SET_NULL,
         null=True, blank=True, related_name='treinamentos'

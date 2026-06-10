@@ -3,6 +3,12 @@ from django.contrib import messages
 from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from core.models import * 
+from django.shortcuts import get_object_or_404
+from eventos.models import Evento
+from eventos.models import InscricaoEvento
+
+from eventos.models import Evento
+from treinamento.models import Treinamento
 
 # Create your views here.
 
@@ -410,3 +416,187 @@ def desativar_usuario(request, usuario_id):
         messages.success(request, f"Usuário '{usuario.nome}' reativado com sucesso!")
  
     return redirect('administrador:listar_usuarios')
+
+@login_required
+def alterar_status_usuario(request, usuario_id):
+
+    if not request.user.is_admin:
+        messages.error(request, "Acesso negado.")
+        return redirect('administrador:listar_usuarios')
+
+    usuario = get_object_or_404(
+        UsuarioBase,
+        id=usuario_id
+    )
+
+    # não permite desativar o próprio admin
+    if usuario.id == request.user.id:
+        messages.warning(
+            request,
+            "Você não pode desativar seu próprio usuário."
+        )
+        return redirect('administrador:listar_usuarios')
+
+    usuario.is_active = not usuario.is_active
+    usuario.save()
+
+    if usuario.is_active:
+        messages.success(
+            request,
+            "Usuário reativado com sucesso."
+        )
+    else:
+        messages.success(
+            request,
+            "Usuário desativado com sucesso."
+        )
+
+    return redirect('administrador:listar_usuarios')
+
+@login_required
+def gerenciarEventos(request):
+    if not request.user.is_admin:
+        messages.error(request, "Acesso negado")
+        return redirect('core:home')
+
+    busca = request.GET.get('busca', '').strip()
+
+    eventos = Evento.objects.all().order_by('-criado_em')
+
+    if busca:
+        eventos = eventos.filter(
+            nome_evento__icontains=busca
+        )
+
+    context = {
+        'eventos': eventos,
+        'busca': busca,
+    }
+
+    return render(
+        request,
+        'gerenciarEventos.html',
+        context
+    )
+
+@login_required
+def alterar_status_evento(request, evento_id):
+    if not request.user.is_admin:
+        messages.error(request, "Acesso negado")
+        return redirect('core:home')
+
+    evento = get_object_or_404(Evento, id=evento_id)
+
+    evento.isActivate = not evento.isActivate
+    evento.save()
+
+    if evento.isActivate:
+        messages.success(request, "Evento reativado com sucesso.")
+    else:
+        messages.success(request, "Evento desativado com sucesso.")
+
+    return redirect('administrador:gerenciarEventos')
+
+@login_required
+def inscritos_evento(request, evento_id):
+    if not request.user.is_admin:
+        messages.error(request, "Acesso negado")
+        return redirect('core:home')
+
+    evento = get_object_or_404(Evento, id=evento_id)
+
+    inscricoes = (
+        InscricaoEvento.objects
+        .filter(evento=evento)
+        .select_related('usuario')
+    )
+
+    return render(
+        request,
+        "inscritos_evento.html",
+        {
+            "evento": evento,
+            "inscricoes": inscricoes
+        }
+    )
+    
+@login_required
+def removerEvento(request, evento_id):
+    if not request.user.is_admin:
+        messages.error(request, "Acesso negado")
+        return redirect('core:home')
+
+    evento = get_object_or_404(Evento, id=evento_id)
+
+    evento.isActivate = False
+    evento.save()
+
+    messages.success(
+        request,
+        f"Evento '{evento.nome_evento}' desativado com sucesso!"
+    )
+
+    return redirect('administrador:gerenciarEventos')
+
+@login_required
+def alterar_status_evento(request, evento_id):
+    if not request.user.is_admin:
+        messages.error(request, "Acesso negado")
+        return redirect('core:home')
+
+    evento = get_object_or_404(Evento, id=evento_id)
+
+    evento.isActivate = not evento.isActivate
+    evento.save()
+
+    if evento.isActivate:
+        messages.success(request, "Evento reativado com sucesso.")
+    else:
+        messages.success(request, "Evento desativado com sucesso.")
+
+    return redirect('administrador:gerenciarEventos')
+
+@login_required
+def gerenciarTreinamentos(request):
+    if not request.user.is_admin:
+        messages.error(request, "Acesso negado")
+        return redirect('core:home')
+
+    busca = request.GET.get('busca', '').strip()
+
+    treinamentos = Treinamento.objects.all().order_by('-id')
+
+    if busca:
+        treinamentos = treinamentos.filter(
+            nome__icontains=busca
+        )
+
+    return render(
+        request,
+        "gerenciarTreinamentos.html",
+        {
+            "treinamentos": treinamentos,
+            "busca": busca
+        }
+    )
+
+@login_required
+def alterar_status_treinamento(request, treinamento_id):
+    if not request.user.is_admin:
+        messages.error(request, "Acesso negado")
+        return redirect('core:home')
+
+    treinamento = get_object_or_404(
+        Treinamento,
+        id=treinamento_id
+    )
+
+    treinamento.isActivate = not treinamento.isActivate
+    treinamento.save()
+
+    if treinamento.isActivate:
+        messages.success(request, "Treinamento reativado com sucesso.")
+    else:
+        messages.success(request, "Treinamento desativado com sucesso.")
+
+    return redirect('administrador:gerenciarTreinamentos')
