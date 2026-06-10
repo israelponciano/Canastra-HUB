@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 import re
 import unicodedata
 import uuid
@@ -11,6 +12,20 @@ from sentence_transformers import SentenceTransformer
 
 from .schemas import ResumeChunk, JobChunk, MatchResult
 
+@dataclass
+class ResumeModel:
+    text: str
+    candidate_name: str
+    candidate_id: str
+    curriculo_text: str = ""
+    carta_apresentacao_text: str = ""
+
+@dataclass
+class JobModel:
+    text: str
+    job_title: str
+    company: str
+    job_id: Optional[str] = None
 
 class JobMatcher:
     _TYPOGRAPHY_MAP: dict = str.maketrans({
@@ -74,35 +89,35 @@ class JobMatcher:
 
     # ── public API ────────────────────────────────────────────────────────────
 
-    def add_resume(self, text: str, candidate_name: str, candidate_id: Optional[str] = None) -> str:
-        candidate_id = candidate_id or str(uuid.uuid4())
-        text = self._preprocess(text)
+    def add_resume(self, resume: ResumeModel) -> str:
+        candidate_id = resume.candidate_id or str(uuid.uuid4())
+        text = self._preprocess(resume.text)
         chunks = [
             ResumeChunk(text=c["text"], section=c["section"],
-                        candidate_id=candidate_id, candidate_name=candidate_name)
+                        candidate_id=candidate_id, candidate_name=resume.candidate_name)
             for c in self._chunk_text(text, self._RESUME_HEADERS)
         ]
         self._upsert(self._resumes, chunks)
         return candidate_id
 
-    def add_job(self, text: str, job_title: str, company: str, job_id: Optional[str] = None) -> str:
-        job_id = job_id or str(uuid.uuid4())
-        text = self._preprocess(text)
+    def add_job(self, job: JobModel) -> str:
+        job_id = job.job_id or str(uuid.uuid4())
+        text = self._preprocess(job.text)
         chunks = [
             JobChunk(text=c["text"], section=c["section"],
-                     job_id=job_id, job_title=job_title, company=company)
+                     job_id=job_id, job_title=job.job_title, company=job.company)
             for c in self._chunk_text(text, self._JOB_HEADERS)
         ]
         self._upsert(self._jobs, chunks)
         return job_id
 
-    def update_resume(self, text: str, candidate_name: str, candidate_id: str) -> str:
-        self._delete_by_field(self._resumes, "candidate_id", candidate_id)
-        return self.add_resume(text, candidate_name, candidate_id)
+    def update_resume(self, resume: ResumeModel) -> str:
+        self._delete_by_field(self._resumes, "candidate_id", resume.candidate_id)
+        return self.add_resume(resume)
 
-    def update_job(self, text: str, job_title: str, company: str, job_id: str) -> str:
-        self._delete_by_field(self._jobs, "job_id", job_id)
-        return self.add_job(text, job_title, company, job_id)
+    def update_job(self, job: JobModel) -> str:
+        self._delete_by_field(self._jobs, "job_id", job.job_id)
+        return self.add_job(job)
 
     def match_jobs_for_resume(self, candidate_id: str, top_k: int = 5, min_score: float = 0.0) -> list[MatchResult]:
         chunks = self._get_chunks(self._resumes, "candidate_id", candidate_id)
@@ -118,6 +133,51 @@ class JobMatcher:
 
     def stats(self) -> dict:
         return {"resumes": self._resumes.count(), "jobs": self._jobs.count()}
+
+    def match_structured_resumes_for_job(
+        self, vaga, top_k: int = 5, min_score: float = 0.0
+    ) -> list[MatchResult]:
+        """Pipeline de 4 critérios ponderados para rankear candidatos por vaga."""
+        from core.models import Usuario
+        from .scoring import composite_score
+
+        results = []
+        for usuario in Usuario.objects.select_related("user").all():
+            sc = composite_score(usuario, vaga, self.model)
+            if sc["score"] < min_score:
+                continue
+            results.append(MatchResult(
+                entity_id=str(usuario.pk),
+                name=usuario.user.nome,
+                score=sc["score"],
+                breakdown=sc["breakdown"],
+            ))
+        return sorted(results, key=lambda r: r.score, reverse=True)[:top_k]
+
+    def match_structured_jobs_for_resume(
+        self, usuario, top_k: int = 5, min_score: float = 0.0
+    ) -> list[MatchResult]:
+        """Pipeline de 4 critérios ponderados para recomendar vagas por candidato."""
+        from vagas.models import Vagas
+        from .scoring import composite_score
+
+        results = []
+        for vaga in Vagas.objects.filter(status="ativa").select_related("empresa"):
+            sc = composite_score(usuario, vaga, self.model)
+            if sc["score"] < min_score:
+                continue
+            try:
+                company = vaga.empresa.nomefantasia or ""
+            except Exception:
+                company = ""
+            results.append(MatchResult(
+                entity_id=str(vaga.pk),
+                name=vaga.cargo_vaga or "",
+                company=company,
+                score=sc["score"],
+                breakdown=sc["breakdown"],
+            ))
+        return sorted(results, key=lambda r: r.score, reverse=True)[:top_k]
 
     # ── internals ─────────────────────────────────────────────────────────────
 

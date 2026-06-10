@@ -1,0 +1,8 @@
+django-admin
+django
+psycopg2-binary
+pillow
+python-dotenv
+chromadb
+sentence-transformers
+pymupdf
