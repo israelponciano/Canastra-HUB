@@ -20,9 +20,7 @@ def candidatos_para_vaga(request, vaga_id):
     if page is None or page_size is None:
         return JsonResponse({"erro": "Parâmetros inválidos."}, status=400)
 
-    try:
-        Vagas.objects.select_related("empresa").get(pk=vaga_id)
-    except Vagas.DoesNotExist:
+    if not Vagas.objects.filter(pk=vaga_id).exists():
         return JsonResponse({"erro": "Vaga não encontrada."}, status=404)
 
     qs = (
@@ -59,9 +57,7 @@ def vagas_para_usuario(request, usuario_pk):
     if page is None or page_size is None:
         return JsonResponse({"erro": "Parâmetros inválidos."}, status=400)
 
-    try:
-        Usuario.objects.select_related("user").get(pk=usuario_pk)
-    except Usuario.DoesNotExist:
+    if not Usuario.objects.filter(pk=usuario_pk).exists():
         return JsonResponse({"erro": "Candidato não encontrado."}, status=404)
 
     qs = (

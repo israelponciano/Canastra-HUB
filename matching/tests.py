@@ -553,7 +553,7 @@ class CandidatosParaVagaViewTest(TestCase):
     @patch('matching.views.Vagas')
     def test_retorna_resultados_paginados_ordenados_por_score(self, mock_vagas_cls, mock_ms_cls):
         # Configura vaga existente
-        mock_vagas_cls.objects.select_related.return_value.get.return_value = MagicMock()
+        mock_vagas_cls.objects.filter.return_value.exists.return_value = True
 
         # Configura queryset com 2 resultados
         score1 = MagicMock()
@@ -589,9 +589,7 @@ class CandidatosParaVagaViewTest(TestCase):
 
     @patch('matching.views.Vagas')
     def test_retorna_404_para_vaga_inexistente(self, mock_vagas_cls):
-        from vagas.models import Vagas
-        mock_vagas_cls.DoesNotExist = Vagas.DoesNotExist
-        mock_vagas_cls.objects.select_related.return_value.get.side_effect = Vagas.DoesNotExist
+        mock_vagas_cls.objects.filter.return_value.exists.return_value = False
         from matching.views import candidatos_para_vaga
         request = self.factory.get('/matching/candidatos/999/')
         response = candidatos_para_vaga(request, vaga_id=999)
@@ -611,7 +609,7 @@ class VagasParaUsuarioViewTest(TestCase):
     @patch('matching.views.MatchScore')
     @patch('matching.views.Usuario')
     def test_retorna_resultados_paginados_ordenados_por_score(self, mock_usuario_cls, mock_ms_cls):
-        mock_usuario_cls.objects.select_related.return_value.get.return_value = MagicMock()
+        mock_usuario_cls.objects.filter.return_value.exists.return_value = True
 
         score1 = MagicMock()
         score1.vaga_id = 10
@@ -638,13 +636,17 @@ class VagasParaUsuarioViewTest(TestCase):
 
     @patch('matching.views.Usuario')
     def test_retorna_404_para_usuario_inexistente(self, mock_usuario_cls):
-        from core.models import Usuario
-        mock_usuario_cls.DoesNotExist = Usuario.DoesNotExist
-        mock_usuario_cls.objects.select_related.return_value.get.side_effect = Usuario.DoesNotExist
+        mock_usuario_cls.objects.filter.return_value.exists.return_value = False
         from matching.views import vagas_para_usuario
         request = self.factory.get('/matching/vagas-para/999/')
         response = vagas_para_usuario(request, usuario_pk=999)
         self.assertEqual(response.status_code, 404)
+
+    def test_retorna_400_para_page_invalida(self):
+        from matching.views import vagas_para_usuario
+        request = self.factory.get('/matching/vagas-para/1/', {'page': 'xyz'})
+        response = vagas_para_usuario(request, usuario_pk=1)
+        self.assertEqual(response.status_code, 400)
 
 
 # ── Testes de persistência de MatchScore ──────────────────────────────────────
