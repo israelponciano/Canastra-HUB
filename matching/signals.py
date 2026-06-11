@@ -41,6 +41,7 @@ def _upsert_scores_for_usuario(usuario):
             records,
             update_conflicts=True,
             unique_fields=['usuario', 'vaga'],
+            # updated_at must be explicit: auto_now=True is not set by bulk_create
             update_fields=['score', 'breakdown', 'updated_at'],
         )
 
@@ -73,6 +74,7 @@ def _upsert_scores_for_vaga(vaga):
             records,
             update_conflicts=True,
             unique_fields=['usuario', 'vaga'],
+            # updated_at must be explicit: auto_now=True is not set by bulk_create
             update_fields=['score', 'breakdown', 'updated_at'],
         )
 

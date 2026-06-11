@@ -658,17 +658,23 @@ class VagasParaUsuarioViewTest(TestCase):
 # ── Testes de persistência de MatchScore ──────────────────────────────────────
 
 class MatchScorePersistenceOnUsuarioSaveTest(TestCase):
-    """Signal sync_usuario deve criar/atualizar MatchScore para todas as vagas."""
+    """Signal sync_usuario deve chamar _upsert_scores_for_usuario."""
 
+    @patch('matching.signals.get_matcher', return_value=MagicMock())
     @patch('matching.signals._upsert_scores_for_usuario')
-    def test_signal_calls_upsert_on_usuario_save(self, mock_upsert):
+    def test_signal_calls_upsert_on_usuario_save(self, mock_upsert, mock_get_matcher):
         usuario = MagicMock()
         from matching.signals import sync_usuario
         sync_usuario(sender=None, instance=usuario, created=True)
         mock_upsert.assert_called_once_with(usuario)
 
+
+class MatchScorePersistenceOnVagaSaveTest(TestCase):
+    """Signal sync_vaga deve chamar _upsert_scores_for_vaga."""
+
+    @patch('matching.signals.get_matcher', return_value=MagicMock())
     @patch('matching.signals._upsert_scores_for_vaga')
-    def test_signal_calls_upsert_on_vaga_save(self, mock_upsert):
+    def test_signal_calls_upsert_on_vaga_save(self, mock_upsert, mock_get_matcher):
         vaga = MagicMock()
         from matching.signals import sync_vaga
         sync_vaga(sender=None, instance=vaga, created=True)
