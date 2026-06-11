@@ -657,6 +657,113 @@ class VagasParaUsuarioViewTest(TestCase):
 
 # ── Testes de persistência de MatchScore ──────────────────────────────────────
 
+from django.test import RequestFactory
+
+
+class CandidatosParaVagaViewTest(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+
+    @patch('matching.views.MatchScore')
+    @patch('matching.views.Vagas')
+    def test_retorna_resultados_paginados_ordenados_por_score(self, mock_vagas_cls, mock_ms_cls):
+        # Configura vaga existente
+        mock_vagas_cls.objects.select_related.return_value.get.return_value = MagicMock()
+
+        # Configura queryset com 2 resultados
+        score1 = MagicMock()
+        score1.usuario_id = 1
+        score1.usuario.user.nome = "Ana"
+        score1.score = 0.9
+        score1.breakdown = {}
+
+        score2 = MagicMock()
+        score2.usuario_id = 2
+        score2.usuario.user.nome = "Beto"
+        score2.score = 0.7
+        score2.breakdown = {}
+
+        mock_qs = MagicMock()
+        mock_qs.count.return_value = 2
+        mock_qs.__getitem__ = MagicMock(return_value=[score1, score2])
+        mock_ms_cls.objects.filter.return_value.order_by.return_value.select_related.return_value = mock_qs
+
+        from matching.views import candidatos_para_vaga
+        request = self.factory.get('/matching/candidatos/1/', {'page': '1', 'page_size': '20'})
+        response = candidatos_para_vaga(request, vaga_id=1)
+
+        self.assertEqual(response.status_code, 200)
+        import json
+        data = json.loads(response.content)
+        self.assertIn('total', data)
+        self.assertIn('page', data)
+        self.assertIn('pages', data)
+        self.assertIn('resultados', data)
+        self.assertEqual(data['total'], 2)
+        self.assertEqual(data['page'], 1)
+
+    @patch('matching.views.Vagas')
+    def test_retorna_404_para_vaga_inexistente(self, mock_vagas_cls):
+        from vagas.models import Vagas
+        mock_vagas_cls.DoesNotExist = Vagas.DoesNotExist
+        mock_vagas_cls.objects.select_related.return_value.get.side_effect = Vagas.DoesNotExist
+        from matching.views import candidatos_para_vaga
+        request = self.factory.get('/matching/candidatos/999/')
+        response = candidatos_para_vaga(request, vaga_id=999)
+        self.assertEqual(response.status_code, 404)
+
+    def test_retorna_400_para_page_invalida(self):
+        from matching.views import candidatos_para_vaga
+        request = self.factory.get('/matching/candidatos/1/', {'page': 'abc'})
+        response = candidatos_para_vaga(request, vaga_id=1)
+        self.assertEqual(response.status_code, 400)
+
+
+class VagasParaUsuarioViewTest(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+
+    @patch('matching.views.MatchScore')
+    @patch('matching.views.Usuario')
+    def test_retorna_resultados_paginados_ordenados_por_score(self, mock_usuario_cls, mock_ms_cls):
+        mock_usuario_cls.objects.select_related.return_value.get.return_value = MagicMock()
+
+        score1 = MagicMock()
+        score1.vaga_id = 10
+        score1.vaga.cargo_vaga = "Dev"
+        score1.vaga.empresa.nomefantasia = "Co"
+        score1.score = 0.85
+        score1.breakdown = {}
+
+        mock_qs = MagicMock()
+        mock_qs.count.return_value = 1
+        mock_qs.__getitem__ = MagicMock(return_value=[score1])
+        mock_ms_cls.objects.filter.return_value.order_by.return_value.select_related.return_value = mock_qs
+
+        from matching.views import vagas_para_usuario
+        request = self.factory.get('/matching/vagas-para/1/')
+        response = vagas_para_usuario(request, usuario_pk=1)
+
+        self.assertEqual(response.status_code, 200)
+        import json
+        data = json.loads(response.content)
+        self.assertIn('total', data)
+        self.assertIn('resultados', data)
+        self.assertEqual(data['total'], 1)
+
+    @patch('matching.views.Usuario')
+    def test_retorna_404_para_usuario_inexistente(self, mock_usuario_cls):
+        from core.models import Usuario
+        mock_usuario_cls.DoesNotExist = Usuario.DoesNotExist
+        mock_usuario_cls.objects.select_related.return_value.get.side_effect = Usuario.DoesNotExist
+        from matching.views import vagas_para_usuario
+        request = self.factory.get('/matching/vagas-para/999/')
+        response = vagas_para_usuario(request, usuario_pk=999)
+        self.assertEqual(response.status_code, 404)
+
+
+# ── Testes de persistência de MatchScore ──────────────────────────────────────
+
 class MatchScorePersistenceOnUsuarioSaveTest(TestCase):
     """Signal sync_usuario deve chamar _upsert_scores_for_usuario."""
 
