@@ -4,7 +4,7 @@ import logging
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from core.models import Usuario
+from core.models import Usuario, ExperienciaProfissional
 from vagas.models import Vagas
 from matching.matcher import JobModel, ResumeModel
 from .service import get_matcher
@@ -96,6 +96,14 @@ def sync_usuario(sender, instance, **kwargs):
         _upsert_scores_for_usuario(instance)
     except Exception:
         logger.exception("Erro ao persistir MatchScore para usuario %s", instance.pk)
+
+
+@receiver(post_save, sender=ExperienciaProfissional, dispatch_uid="matching.sync_experiencia")
+def sync_experiencia(sender, instance, **kwargs):
+    try:
+        _upsert_scores_for_usuario(instance.usuario)
+    except Exception:
+        logger.exception("Erro ao persistir MatchScore para experiencia do usuario %s", instance.usuario_id)
 
 
 @receiver(post_save, sender=Vagas, dispatch_uid="matching.sync_vaga")

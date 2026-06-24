@@ -20,8 +20,6 @@ def build_resume_text(usuario: Usuario) -> str:
         parts.append(f"disponibilidade: {usuario.disponibilidade}")
     if usuario.remoto:
         parts.append("disponível para trabalho remoto")
-    if usuario.curso:
-        parts.append(f"curso: {usuario.curso}")
 
     for n in ('1', '2', '3'):
         instituicao = getattr(usuario, f'instituicao_nome{n}')

@@ -33,3 +33,4 @@ class EmpresaHub(models.Model):
 
     def __str__(self):
         return f"{self.empresa.user.nome} - {self.hub.nome_hub}"
+    

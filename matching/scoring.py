@@ -6,17 +6,25 @@ from datetime import date
 import numpy as np
 
 # ── Mapeamento ordinal de grau de escolaridade ────────────────────────────────
-# Técnico(1) → Tecnólogo(2) → Bacharelado(3) → Pós/Especialização(4) → Mestrado(5) → Doutorado(6)
+# Escala alinhada com ESCOLARIDADE em vagas/models.py (0–10):
+# 0=Fund.Incompleto 1=Fund.Completo 2=Médio Incompleto 3=Médio Completo
+# 4=Técnico 5=Superior Incompleto 6=Superior Completo 7=Pós/MBA 8=Mestrado 9=Doutorado 10=Pós-Doutorado
 _EDUCATION_LEVELS: dict[str, int] = {
-    "técnico": 1, "tecnico": 1, "técnica": 1, "tecnica": 1,
-    "tecnólogo": 2, "tecnologo": 2, "tecnóloga": 2, "tecnologa": 2,
-    "tecnológico": 2, "tecnologico": 2,
-    "bacharelado": 3, "graduação": 3, "graduacao": 3,
-    "licenciatura": 3, "superior": 3,
-    "pós-graduação": 4, "pos-graduacao": 4, "pós graduação": 4,
-    "especialização": 4, "especializacao": 4, "mba": 4,
-    "mestrado": 5, "mestre": 5,
-    "doutorado": 6, "doutor": 6, "phd": 6, "ph.d": 6,
+    "fundamental incompleto": 0,
+    "fundamental completo": 1,
+    "médio incompleto": 2, "medio incompleto": 2,
+    "médio completo": 3, "medio completo": 3, "ensino médio": 3, "ensino medio": 3,
+    "técnico": 4, "tecnico": 4, "técnica": 4, "tecnica": 4,
+    "superior incompleto": 5,
+    "tecnólogo": 6, "tecnologo": 6, "tecnóloga": 6, "tecnologa": 6,
+    "tecnológico": 6, "tecnologico": 6,
+    "bacharelado": 6, "graduação": 6, "graduacao": 6,
+    "licenciatura": 6, "superior completo": 6, "superior": 6,
+    "pós-graduação": 7, "pos-graduacao": 7, "pós graduação": 7,
+    "especialização": 7, "especializacao": 7, "mba": 7,
+    "mestrado": 8, "mestre": 8,
+    "doutorado": 9, "doutor": 9, "phd": 9, "ph.d": 9,
+    "pós-doutorado": 10, "pos-doutorado": 10,
 }
 
 # λ: meia-vida de 36 meses (3 anos) → λ = ln(2)/36
@@ -57,8 +65,8 @@ def _cosine(a: np.ndarray, b: np.ndarray) -> float:
 
 
 def _unit_range(sim: float) -> float:
-    """Projeta similaridade de cosseno [-1, 1] para [0, 1]."""
-    return max(0.0, min(1.0, (sim + 1.0) / 2.0))
+    """Clamp cosine similarity to [0, 1] — sentence-transformer scores are already non-negative in practice."""
+    return max(0.0, min(1.0, sim))
 
 
 def _job_area_embedding(vaga, model) -> np.ndarray | None:

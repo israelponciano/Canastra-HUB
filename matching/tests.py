@@ -673,3 +673,55 @@ class MatchScorePersistenceOnVagaSaveTest(TestCase):
         from matching.signals import sync_vaga
         sync_vaga(sender=None, instance=vaga, created=True)
         mock_upsert.assert_called_once_with(vaga)
+
+
+# ── Testes de score_formacao ──────────────────────────────────────────────────
+
+class ScoreFormacaoTest(TestCase):
+    """
+    Valida que score_formacao usa a mesma escala 0-10 do campo nivel_formacao_req
+    (ESCOLARIDADE em vagas/models.py).
+    """
+
+    def _make_model(self):
+        """Mock do SentenceTransformer que retorna embeddings idênticos (cosseno = 1.0)."""
+        m = MagicMock()
+        m.encode.return_value = np.ones((1, 16), dtype=float)
+        return m
+
+    def test_match_perfeito_bacharelado_retorna_1(self):
+        """Candidato com bacharelado (6) para vaga que exige bacharelado (6) → 1.0."""
+        from matching.scoring import score_formacao
+        usuario = _mock_usuario(grau_escolaridade1='bacharelado', curso_graduacao1='Sistemas de Informação')
+        vaga = _mock_vaga()
+        vaga.nivel_formacao_req = 6  # Ensino Superior Completo no ESCOLARIDADE
+        s = score_formacao(usuario, vaga, self._make_model())
+        self.assertAlmostEqual(s, 1.0, places=2,
+            msg="Bacharelado vs requisito bacharelado deve ser 1.0, não 0.5")
+
+    def test_sem_requisito_retorna_1(self):
+        """Vaga sem requisito de formação → 1.0 independente do candidato."""
+        from matching.scoring import score_formacao
+        usuario = _mock_usuario()
+        vaga = _mock_vaga()
+        vaga.nivel_formacao_req = 0
+        self.assertEqual(score_formacao(usuario, vaga, self._make_model()), 1.0)
+
+    def test_candidato_acima_do_requisito_retorna_1(self):
+        """Doutorado (9) para vaga que exige bacharelado (6) → 1.0."""
+        from matching.scoring import score_formacao
+        usuario = _mock_usuario(grau_escolaridade1='doutorado', curso_graduacao1='Computação')
+        vaga = _mock_vaga()
+        vaga.nivel_formacao_req = 6
+        s = score_formacao(usuario, vaga, self._make_model())
+        self.assertAlmostEqual(s, 1.0, places=2)
+
+    def test_candidato_abaixo_do_requisito_retorna_menor_que_1(self):
+        """Técnico (4) para vaga que exige mestrado (8) → score < 1.0."""
+        from matching.scoring import score_formacao
+        usuario = _mock_usuario(grau_escolaridade1='técnico', curso_graduacao1='Informática')
+        vaga = _mock_vaga()
+        vaga.nivel_formacao_req = 8  # Mestrado
+        s = score_formacao(usuario, vaga, self._make_model())
+        self.assertLess(s, 1.0,
+            msg="Técnico para vaga de mestrado deve ter score < 1.0")
