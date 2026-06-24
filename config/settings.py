@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "treinamento",
     "perfil",
     "eventos",
+    "agendamento",
 ]
 
 MIDDLEWARE = [
@@ -179,3 +180,12 @@ NUMBER_GRID_MODAL = 20
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+import os
+from pathlib import Path
+# Se você usa python-dotenv ou decouple, certifique-se de que eles estão carregando o .env
+
+APPS_SCRIPT_URL = os.getenv('APPS_SCRIPT_URL')
+APPS_SCRIPT_TOKEN = os.getenv('APPS_SCRIPT_TOKEN')
+ID_SALA_A = os.getenv('ID_SALA_A')
+ID_SALA_B = os.getenv('ID_SALA_B')
