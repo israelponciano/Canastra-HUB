@@ -5,119 +5,196 @@
   .form-container {
     max-width: 900px;
     margin: 2rem auto;
-    padding: 2rem;
+  }
+
+  .detalhe-card {
     background: #fff;
     border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
   }
-  .form-container h2 {
+
+  .section-title {
+    text-align: center;
     margin-bottom: 1.5rem;
-    color: #22c55e;
-    font-weight: bold;
+    font-weight: 700;
   }
-  .submit-btn { text-align: right; }
-  .submit-btn button {
-    background-color: #22c55e;
-    color: #fff;
-    font-size: 18px;
-    padding: 10px 20px;
-    border: none;
+
+  .section-title span {
+    color: #16a34a;
+  }
+
+  .detalhe-section {
+    margin-bottom: 1.5rem;
+  }
+
+  .detalhe-section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #16a34a;
+    margin-bottom: .75rem;
+    border-left: 3px solid #16a34a;
+    padding-left: .5rem;
+  }
+
+  .form-control,
+  .form-select {
     border-radius: 8px;
   }
-  .form-label {
-    color: #333 !important; /* Um cinza bem escuro quase preto */
-    font-weight: 600;       /* Deixa o título um pouco mais grosso */
-    display: block;         /* Garante que ele ocupe a linha acima do input */
-    margin-bottom: 5px;
+
+  .admin-btn-success {
+    background: #16a34a;
+    color: #fff;
+    border: none;
+    padding: .6rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
   }
-  .submit-btn button:hover { background-color: #1a9e4b; }
+
+  .admin-btn-secondary {
+    background: #6b7280;
+    color: #fff;
+    border: none;
+    padding: .6rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+  }
+
+  .admin-btn-success:hover {
+    color: #fff;
+  }
+
+  .admin-btn-secondary:hover {
+    color: #fff;
+  }
 </style>
 
 <div class="form-container">
-  <h2 align="center">
-    {% if evento %}Editar Evento{% else %}Cadastrar Evento{% endif %}
-  </h2>
+  <div class="detalhe-card">
+    <h2 class="section-title">
+      {% if evento %}
+      Editar <span>Evento</span>
+      {% else %}
+      Cadastrar <span>Evento</span>
+      {% endif %}
+    </h2>
 
-  {% if messages %}
+    {% if messages %}
     {% for message in messages %}
-      <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      </div>
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
     {% endfor %}
-  {% endif %}
+    {% endif %}
 
-  <form method="POST">
-    {% csrf_token %}
+    <form method="POST">
+      {% csrf_token %}
 
-    <div class="row mb-3">
-      <div class="col-md-8">
-        <label class="form-label">Nome do Evento *</label>
-        <input type="text" name="nome" class="form-control" required
-               value="{{ evento.nome_evento|default:'' }}">
-      </div>
-      <div class="col-md-4">
-        <label class="form-label">Vagas Disponíveis <small class="text-muted">(0 = ilimitado)</small></label>
-        <input type="number" name="vagas_disponiveis" class="form-control" min="0"
-               value="{{ evento.vagas_disponiveis|default:0 }}">
-      </div>
-    </div>
+      <!-- Informações do Evento -->
+      <div class="detalhe-section">
+        <h4 class="detalhe-section-title">
+          Informações do Evento
+        </h4>
 
-    <div class="row mb-3">
-      <div class="col-md-3">
-        <label class="form-label">Data Início</label>
-        <input type="date" name="data_evento_inicio" class="form-control"
-               value="{{ evento.data_evento_inicio|date:'Y-m-d'|default:'' }}">
-      </div>
-      <div class="col-md-3">
-        <label class="form-label">Data Fim</label>
-        <input type="date" name="data_evento_fim" class="form-control"
-               value="{{ evento.data_evento_fim|date:'Y-m-d'|default:'' }}">
-      </div>
-      <div class="col-md-3">
-        <label class="form-label">Horário</label>
-        <input type="time" name="horario_evento" class="form-control"
-               value="{{ evento.horario_evento|time:'H:i'|default:'' }}">
-      </div>
-      <div class="col-md-3">
-        <label class="form-label">Hub</label>
-        <select name="hub" class="form-select">
-          <option value="">— Nenhum —</option>
-          {% for h in hubs %}
-            <option value="{{ h.id }}"
-              {% if evento.hub_id == h.id %}selected{% endif %}>
-              {{ h.nome_hub }}
-            </option>
-          {% endfor %}
-        </select>
-      </div>
-    </div>
+        <div class="row mb-3">
+          <div class="col-md-8">
+            <label class="form-label">Nome do Evento *</label>
+            <input type="text" name="nome" class="form-control" required value="{{ evento.nome_evento|default:'' }}">
+          </div>
 
-    <div class="row mb-3">
-      <div class="col-md-6">
-        <label class="form-label">Local do Evento</label>
-        <input type="text" name="local_evento" class="form-control"
-               value="{{ evento.local_evento|default:'' }}">
-      </div>
-      <div class="col-md-6">
-        <label class="form-label">Público-Alvo</label>
-        <input type="text" name="publico_evento" class="form-control"
-               value="{{ evento.publico_evento|default:'' }}">
-      </div>
-    </div>
+          <div class="col-md-4">
+            <label class="form-label">
+              Vagas Disponíveis
+              <small class="text-muted">(0 = ilimitado)</small>
+            </label>
 
-    <div class="mb-3">
-      <label class="form-label">Descrição</label>
-      <textarea name="descricao_evento" class="form-control" rows="4"
-                maxlength="500">{{ evento.descricao_evento|default:'' }}</textarea>
-    </div>
+            <input type="number" name="vagas_disponiveis" class="form-control" min="0"
+              value="{{ evento.vagas_disponiveis|default:0 }}">
+          </div>
+        </div>
+      </div>
 
-    <div class="submit-btn d-flex gap-2 justify-content-end">
-      <a href="{% url 'eventos:listar_eventos' %}" class="btn btn-outline-secondary px-4">Cancelar</a>
-      <button type="submit">
-        {% if evento %}Salvar Alterações{% else %}Cadastrar Evento{% endif %}
-      </button>
-    </div>
-  </form>
-</div>
-{% endblock %}
+      <!-- Datas e Organização -->
+      <div class="detalhe-section">
+        <h4 class="detalhe-section-title">
+          Datas e Organização
+        </h4>
+
+        <div class="row mb-3">
+          <div class="col-md-3">
+            <label class="form-label">Data Início</label>
+            <input type="date" name="data_evento_inicio" class="form-control"
+              value="{{ evento.data_evento_inicio|date:'Y-m-d'|default:'' }}">
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label">Data Fim</label>
+            <input type="date" name="data_evento_fim" class="form-control"
+              value="{{ evento.data_evento_fim|date:'Y-m-d'|default:'' }}">
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label">Horário</label>
+            <input type="time" name="horario_evento" class="form-control"
+              value="{{ evento.horario_evento|time:'H:i'|default:'' }}">
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label">Hub</label>
+            <select name="hub" class="form-select">
+              <option value="">— Nenhum —</option>
+              {% for h in hubs %}
+              <option value="{{ h.id }}" {% if evento.hub_id == h.id %}selected{% endif %}>
+                {{ h.nome_hub }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detalhes -->
+      <div class="detalhe-section">
+        <h4 class="detalhe-section-title">
+          Detalhes do Evento
+        </h4>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Local do Evento</label>
+            <input type="text" name="local_evento" class="form-control" value="{{ evento.local_evento|default:'' }}">
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Público-Alvo</label>
+            <input type="text" name="publico_evento" class="form-control"
+              value="{{ evento.publico_evento|default:'' }}">
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Descrição</label>
+
+          <textarea name="descricao_evento" class="form-control" rows="5"
+            maxlength="500">{{ evento.descricao_evento|default:'' }}</textarea>
+        </div>
+      </div>
+
+      <div class="d-flex gap-2 justify-content-end mt-4">
+        <a href="{% url 'eventos:listar_eventos' %}" class="admin-btn-secondary">
+          ← Voltar
+        </a>
+
+        <button type="submit" class="admin-btn-success">
+          {% if evento %}
+          Salvar Alterações
+          {% else %}
+          Cadastrar Evento
+          {% endif %}
+        </button>
+      </div>
+
+    </form>
+  </div>
+  {% endblock %}
