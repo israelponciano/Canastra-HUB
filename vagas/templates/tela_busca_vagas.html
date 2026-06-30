@@ -145,23 +145,21 @@
 
           {% if user.is_authenticated and not request.session.incompleto %}
 
-          {% if evento.id in inscritos %}
+          {% if vaga.id in inscritos %}
 
-          <form action="{% url 'eventos:cancelar_inscricao' evento.id %}" method="POST" class="mt-2">
+          <form action="{% url 'vagas:cancelar_candidatura' vaga.id %}" method="POST">
             {% csrf_token %}
-
             <button type="submit" class="btn btn-danger btn-sm">
-              Cancelar Inscrição
+              Cancelar candidatura
             </button>
           </form>
 
           {% else %}
 
-          <form action="{% url 'eventos:inscrever' evento.id %}" method="POST" class="mt-2">
+          <form action="{% url 'vagas:candidatar_vaga' vaga.id %}" method="POST">
             {% csrf_token %}
-
             <button type="submit" class="btn btn-success btn-sm">
-              Se Inscrever
+              Candidatar-se
             </button>
           </form>
 
