@@ -35,7 +35,7 @@
           <td>{{ c.usuario.user.email }}</td>
           <td>{{ c.data_candidatura|date:"d/m/Y H:i" }}</td>
           <td>
-            <a href="{% url 'perfil:perfil' %}" class="btn btn-sm btn-outline-primary">Ver Perfil</a>
+            <a href="{% url 'empresa:perfil_candidato' c.usuario.user.id %}" class="btn btn-sm btn-outline-primary">Ver Perfil</a>
           </td>
         </tr>
         {% endfor %}

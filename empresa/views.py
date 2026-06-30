@@ -289,3 +289,39 @@ def candidatos_vaga(request, vaga_id):
         'candidaturas': candidaturas,
     })
 
+
+@login_required
+def perfil_candidato(request, usuario_id):
+    if request.session.get('perfil') != 'empresa':
+        messages.error(request, 'Acesso negado.')
+        return redirect('core:home')
+
+    empresa = _get_empresa_logada(request)
+    if not empresa:
+        messages.error(request, 'Empresa não encontrada.')
+        return redirect('core:home')
+
+    candidato_base = get_object_or_404(UsuarioBase, id=usuario_id, tipo='usuario')
+    if not UsuarioVaga.objects.filter(vaga__empresa=empresa, usuario__user=candidato_base).exists():
+        messages.error(request, 'Candidato não encontrado para suas vagas.')
+        return redirect('empresa:minhas_vagas')
+
+    try:
+        perfil = candidato_base.usuario
+    except Exception:
+        perfil = None
+
+    from core.models import ExperienciaProfissional
+    experiencias = []
+    if perfil:
+        try:
+            experiencias = list(ExperienciaProfissional.objects.filter(usuario=perfil))
+        except Exception:
+            pass
+
+    return render(request, 'empresa/perfil_candidato.html', {
+        'candidato': candidato_base,
+        'perfil': perfil,
+        'experiencias': experiencias,
+    })
+
