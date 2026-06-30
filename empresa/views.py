@@ -208,3 +208,84 @@ def get_cidades(request):
         'total': len(cidades_data)
     })
 
+
+from django.db.models import Count
+from vagas.models import Vagas, UsuarioVaga
+from core.models import UsuarioBase
+
+
+def _get_empresa_logada(request):
+    email = request.session.get('email_atual')
+    if not email:
+        return None
+    try:
+        return UsuarioBase.objects.get(email=email).empresa
+    except Exception:
+        return None
+
+
+@login_required
+def minhas_vagas(request):
+    if request.session.get('perfil') != 'empresa':
+        messages.error(request, 'Acesso negado.')
+        return redirect('core:home')
+
+    empresa = _get_empresa_logada(request)
+    if not empresa:
+        messages.error(request, 'Empresa não encontrada.')
+        return redirect('core:home')
+
+    vagas = (
+        Vagas.objects
+        .filter(empresa=empresa)
+        .annotate(num_candidatos=Count('usuariovaga'))
+        .order_by('-data_publicacao')
+    )
+    return render(request, 'empresa/minhas_vagas.html', {'vagas': vagas})
+
+
+@login_required
+def detalhe_minha_vaga(request, vaga_id):
+    if request.session.get('perfil') != 'empresa':
+        messages.error(request, 'Acesso negado.')
+        return redirect('core:home')
+
+    empresa = _get_empresa_logada(request)
+    if not empresa:
+        messages.error(request, 'Empresa não encontrada.')
+        return redirect('core:home')
+
+    vaga = get_object_or_404(Vagas, id=vaga_id, empresa=empresa)
+    num_candidatos = UsuarioVaga.objects.filter(vaga=vaga).count()
+    from vagas.models import CursoVaga
+    cursos = CursoVaga.objects.filter(vaga=vaga)
+    return render(request, 'empresa/detalhe_minha_vaga.html', {
+        'vaga': vaga,
+        'num_candidatos': num_candidatos,
+        'cursos': cursos,
+    })
+
+
+@login_required
+def candidatos_vaga(request, vaga_id):
+    if request.session.get('perfil') != 'empresa':
+        messages.error(request, 'Acesso negado.')
+        return redirect('core:home')
+
+    empresa = _get_empresa_logada(request)
+    if not empresa:
+        messages.error(request, 'Empresa não encontrada.')
+        return redirect('core:home')
+
+    vaga = get_object_or_404(Vagas, id=vaga_id, empresa=empresa)
+    candidaturas = (
+        UsuarioVaga.objects
+        .filter(vaga=vaga)
+        .select_related('usuario__user')
+        .order_by('data_candidatura')
+    )
+    return render(request, 'empresa/candidatos_vaga.html', {
+        'vaga': vaga,
+        'candidaturas': candidaturas,
+    })
+
