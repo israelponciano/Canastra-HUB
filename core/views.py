@@ -42,7 +42,7 @@ def hub_detalhe(request, nome_hub):
     ).select_related('noticia')
 
     #Treinamento  vinculado ao hub (novo app)
-    treinamneto  = Treinamento.objects.filter(hub=hub).prefetch_related('sessoes').order_by('-id')
+    treinamentos  = Treinamento.objects.filter(hub=hub).prefetch_related('sessoes').order_by('-id')
 
     #Empresas parceiras vinculadas ao hub
     empresas_hub = EmpresaHub.objects.filter(hub=hub).select_related('empresa__user')
@@ -50,25 +50,11 @@ def hub_detalhe(request, nome_hub):
     context = {
         'hub': hub,
         'noticias': noticias,
-        'treinamento': treinamneto,
+        'treinamentos': treinamentos,
         'empresas_hub': empresas_hub
     }
     return render(request, 'hub.html', context)
 
-    # Buscar demandas
-    #demandas = Demanda.objects.filter(hub=hub, isActive=True)
-    
-    # Buscar empresas parceiras
-    #empresas = EmpresaParceira.objects.filter(hub=hub, isActive=True)
-    
-    context = {
-        'hub': hub,
-        'noticias': noticias,
-        #'demandas': demandas,
-        #'empresas': empresas,
-    }
-    
-    return render(request, 'hub.html', context)
 
 def sobre(request):
 
@@ -118,7 +104,7 @@ def cadastro_usuario(request):
             return render(request, 'cadastro_usuario.html', {'estados': estados})
 
         senha = request.POST.get('txtSenha')
-        confirmacaoSenha = request.POST.get('txtConfirmarSenha')
+        confirmacaoSenha = request.POST.get('confirmar_Senha')
         if senha != confirmacaoSenha:
             messages.error(request, "As senhas devem ser iguais.")
             return render(request, 'cadastro_usuario.html', {'estados': Estado.objects.all().order_by('nome_estado')})
