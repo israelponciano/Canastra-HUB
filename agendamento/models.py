@@ -36,5 +36,4 @@ class Reserva(models.Model):
         ordering = ['-inicio']
 
     def __str__(self):
-        # Retorna o nome amigável da sala usando o método get_sala_display() do Django
         return f"{self.usuario.email} - {self.get_sala_display()} ({self.inicio.strftime('%d/%m/%Y %H:%M')})"

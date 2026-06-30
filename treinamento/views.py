@@ -20,7 +20,10 @@ def _is_gestor(request):
 
 def listar_treinamentos(request):
     termo = request.GET.get('q', '').strip()
-    treinamentos = Treinamento.objects.prefetch_related('sessoes').order_by('-id')
+
+    treinamentos = Treinamento.objects.filter(
+        isActivate=True
+    ).prefetch_related('sessoes').order_by('-id')
 
     if termo:
         treinamentos = treinamentos.filter(
@@ -38,6 +41,7 @@ def listar_treinamentos(request):
                 usuario=request.user
             ).values_list('treinamento_id', flat=True)
         )
+
         em_espera = set(
             ListaEspera.objects.filter(
                 usuario=request.user

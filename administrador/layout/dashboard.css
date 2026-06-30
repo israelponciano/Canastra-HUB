@@ -1,0 +1,32 @@
+<style>
+
+.admin-dashboard{
+    max-width:1100px;
+    margin:50px auto;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+}
+
+.dashboard-card{
+    background:white;
+    border-radius:16px;
+    padding:30px;
+    text-align:center;
+    text-decoration:none;
+    color:#222;
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.dashboard-card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 8px 20px rgba(0,0,0,.15);
+}
+
+.dashboard-card h3{
+    color:#16a34a;
+    margin-bottom:10px;
+}
+
+</style>

@@ -1,0 +1,144 @@
+{% extends 'masterAdm.html' %}
+{% load static %}
+{% block conteudo %}
+
+<main class="efeito" id="efeito">
+    <section id="gerenciar-treinamentos">
+
+        <h2 class="section-title">
+            Gerenciar <span>Treinamentos</span>
+        </h2>
+
+        <form method="GET" class="admin-filter-form">
+            <div class="filter-row">
+
+                <input type="text" name="busca" placeholder="Buscar treinamento..." value="{{ busca }}"
+                    class="filter-input" />
+
+                <button type="submit" class="admin-btn admin-btn-primary">
+                    Filtrar
+                </button>
+
+            </div>
+        </form>
+
+        <div class="admin-card">
+
+            <div class="admin-header admin-header-treinamentos">
+                <div>ID</div>
+                <div>Treinamento</div>
+                <div>Hub</div>
+                <div>Local</div>
+                <div>Status</div>
+                <div>Ações</div>
+            </div>
+
+            {% for treinamento in treinamentos %}
+
+            <div class="admin-row admin-row-treinamentos">
+
+                <div class="admin-cell">
+                    {{ treinamento.id }}
+                </div>
+
+                <div class="admin-cell">
+                    {{ treinamento.nome }}
+                </div>
+
+                <div class="admin-cell">
+                    {{ treinamento.hub|default:"-" }}
+                </div>
+
+                <div class="admin-cell">
+                    {{ treinamento.local|default:"-" }}
+                </div>
+
+                <div class="admin-cell text-center">
+
+                    {% if treinamento.isActivate %}
+                    <img src="{% static 'img/status_green.png' %}" width="18">
+                    {% else %}
+                    <img src="{% static 'img/status_red.png' %}" width="18">
+                    {% endif %}
+
+                </div>
+
+                <div class="admin-cell acoes">
+                    <div class="admin-actions">
+
+                        <a href="{% url 'treinamento:editar_treinamento' treinamento.id %}" class="admin-btn"
+                            title="Editar">
+                            <img src="{% static 'img/update.png' %}">
+                        </a>
+
+                        <a href="{% url 'treinamento:gerenciar_inscricoes' treinamento.id %}" class="admin-btn"
+                            title="Ver inscritos">
+                            👥
+                        </a>
+
+                        {% if treinamento.isActivate %}
+                        <a href="{% url 'administrador:alterar_status_treinamento' treinamento.id %}"
+                            class="admin-btn admin-btn-danger" title="Desativar">
+
+                            <img src="{% static 'img/delete.png' %}">
+                        </a>
+                        {% else %}
+                        <a href="{% url 'administrador:alterar_status_treinamento' treinamento.id %}"
+                            class="admin-btn admin-btn-success" title="Reativar">
+
+                            <img src="{% static 'img/active.png' %}">
+                        </a>
+                        {% endif %}
+
+                    </div>
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="admin-row">
+                <div class="admin-cell">
+                    Nenhum treinamento encontrado.
+                </div>
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        <p class="result-count">
+            {{ treinamentos|length }} treinamento(s) encontrado(s)
+        </p>
+
+    </section>
+</main>
+
+<style>
+    .admin-header-treinamentos {
+        grid-template-columns: 60px 1fr 180px 180px 70px 120px;
+    }
+
+    .admin-row-treinamentos {
+        grid-template-columns: 60px 1fr 180px 180px 70px 120px;
+    }
+
+    .admin-filter-form {
+        margin-bottom: 1.5rem;
+    }
+
+    .filter-row {
+        display: flex;
+        gap: .75rem;
+        align-items: center;
+    }
+
+    .filter-input {
+        flex: 1;
+        padding: .7rem 1rem;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+    }
+</style>
+
+{% endblock %}

@@ -2,9 +2,65 @@
 {% load static %}
 {% block conteudo %}
 
-<main class="efeito" id="efeito">
-      <h2 class="section-title">Área <span>Administrador<span></h2>
-      <h1 align="center">Use a navbar para navegar</h1>
-      
-</main>
+<div class="admin-dashboard">
+
+    <a href="{% url 'administrador:gerenciarHubs' %}" class="dashboard-card">
+        <h3>🏢 Hubs</h3>
+        <p>Gerenciar hubs cadastrados</p>
+    </a>
+
+    <a href="{% url 'administrador:gerenciarNoticias' %}" class="dashboard-card">
+        <h3>📰 Notícias</h3>
+        <p>Gerenciar notícias</p>
+    </a>
+
+    <a href="{% url 'administrador:listar_usuarios' %}" class="dashboard-card">
+        <h3>👤 Usuários</h3>
+        <p>Gerenciar usuários</p>
+    </a>
+
+    <a href="{% url 'administrador:gerenciarEventos' %}" class="dashboard-card">
+        <h3>📅 Eventos</h3>
+        <p>Gerenciar eventos</p>
+    </a>
+
+    <a href="{% url 'administrador:gerenciarTreinamentos' %}" class="dashboard-card">
+        <h3>🎓 Treinamentos</h3>
+        <p>Gerenciar treinamentos</p>
+    </a>
+
+</div>
+
+<style>
+
+.admin-dashboard{
+    max-width:1100px;
+    margin:50px auto;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+}
+
+.dashboard-card{
+    background:white;
+    border-radius:16px;
+    padding:30px;
+    text-align:center;
+    text-decoration:none;
+    color:#222;
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.dashboard-card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 8px 20px rgba(0,0,0,.15);
+}
+
+.dashboard-card h3{
+    color:#16a34a;
+    margin-bottom:10px;
+}
+
+</style>
 {% endblock %}

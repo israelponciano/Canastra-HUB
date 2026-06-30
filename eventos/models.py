@@ -11,6 +11,8 @@ class Evento(models.Model):
     publico_evento = models.CharField(max_length=255, blank=True, null=True)
     descricao_evento = models.TextField(max_length=500, blank=True, null=True)
     vagas_disponiveis = models.PositiveIntegerField(default=0)
+    isActivate = models.BooleanField(default=True)
+
     hub = models.ForeignKey(
         Hub,
         on_delete=models.SET_NULL,
@@ -18,6 +20,7 @@ class Evento(models.Model):
         blank=True,
         related_name='eventos',
     )
+
     criado_em = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -26,7 +29,7 @@ class Evento(models.Model):
         ordering = ['-data_evento_inicio']
 
     def __str__(self):
-        return f"{self.nome_evento}"
+        return self.nome_evento
 
     @property
     def inscritos_count(self):
@@ -35,7 +38,7 @@ class Evento(models.Model):
     @property
     def vagas_restantes(self):
         if self.vagas_disponiveis == 0:
-            return None  # Sem limite
+            return None
         return max(0, self.vagas_disponiveis - self.inscritos_count)
 
     @property
@@ -46,6 +49,7 @@ class Evento(models.Model):
 
 
 class InscricaoEvento(models.Model):
+
     STATUS_PRESENCA = [
         ('pendente', 'Pendente'),
         ('presente', 'Presente'),
@@ -57,14 +61,18 @@ class InscricaoEvento(models.Model):
         on_delete=models.CASCADE,
         related_name='inscricoes',
     )
+
     usuario = models.ForeignKey(
         UsuarioBase,
-        on_delete=models.CASCADE,
-        related_name='inscricoes_eventos',
+        on_delete=models.CASCADE
     )
+
     data_inscricao = models.DateTimeField(auto_now_add=True)
+
     presenca = models.CharField(
-        max_length=10, choices=STATUS_PRESENCA, default='pendente'
+        max_length=10,
+        choices=STATUS_PRESENCA,
+        default='pendente'
     )
 
     class Meta:
