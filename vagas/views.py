@@ -19,7 +19,7 @@ def cadastro_vagas(request):
     estados = Estado.objects.all().order_by('nome_estado')
     return render(request, 'cadastro_vagas.html', {'estados': estados})
 
- 
+@login_required 
 def criar_vagas(request):
     usuario_email = request.session.get('email_atual')
 

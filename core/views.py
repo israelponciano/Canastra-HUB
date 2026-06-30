@@ -67,20 +67,6 @@ def hub_detalhe(request, nome_hub):
     }
     return render(request, 'hub.html', context)
 
-    # Buscar demandas
-    #demandas = Demanda.objects.filter(hub=hub, isActive=True)
-    
-    # Buscar empresas parceiras
-    #empresas = EmpresaParceira.objects.filter(hub=hub, isActive=True)
-    
-    context = {
-        'hub': hub,
-        'noticias': noticias,
-        #'demandas': demandas,
-        #'empresas': empresas,
-    }
-    
-    return render(request, 'hub.html', context)
 
 def sobre(request):
 
@@ -130,7 +116,7 @@ def cadastro_usuario(request):
             return render(request, 'cadastro_usuario.html', {'estados': estados})
 
         senha = request.POST.get('txtSenha')
-        confirmacaoSenha = request.POST.get('txtConfirmarSenha')
+        confirmacaoSenha = request.POST.get('confirmar_Senha')
         if senha != confirmacaoSenha:
             messages.error(request, "As senhas devem ser iguais.")
             return render(request, 'cadastro_usuario.html', {'estados': Estado.objects.all().order_by('nome_estado')})
