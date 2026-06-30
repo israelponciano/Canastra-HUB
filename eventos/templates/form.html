@@ -5,91 +5,50 @@
   .form-container {
     max-width: 900px;
     margin: 2rem auto;
-  }
-
-  .detalhe-card {
+    padding: 2rem;
     background: #fff;
     border-radius: 12px;
-    padding: 2rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   }
-
-  .section-title {
-    text-align: center;
+  .form-container h2 {
     margin-bottom: 1.5rem;
-    font-weight: 700;
+    color: #22c55e;
+    font-weight: bold;
   }
-
-  .section-title span {
-    color: #16a34a;
-  }
-
-  .detalhe-section {
-    margin-bottom: 1.5rem;
-  }
-
-  .detalhe-section-title {
-    font-size: 1rem;
-    font-weight: 700;
-    color: #16a34a;
-    margin-bottom: .75rem;
-    border-left: 3px solid #16a34a;
-    padding-left: .5rem;
-  }
-
-  .form-control,
-  .form-select {
-    border-radius: 8px;
-  }
-
-  .admin-btn-success {
-    background: #16a34a;
+  .submit-btn { text-align: right; }
+  .submit-btn button {
+    background-color: #22c55e;
     color: #fff;
+    font-size: 18px;
+    padding: 10px 20px;
     border: none;
-    padding: .6rem 1rem;
     border-radius: 8px;
-    text-decoration: none;
   }
-
-  .admin-btn-secondary {
-    background: #6b7280;
-    color: #fff;
-    border: none;
-    padding: .6rem 1rem;
-    border-radius: 8px;
-    text-decoration: none;
+  .form-label {
+    color: #333 !important; /* Um cinza bem escuro quase preto */
+    font-weight: 600;       /* Deixa o título um pouco mais grosso */
+    display: block;         /* Garante que ele ocupe a linha acima do input */
+    margin-bottom: 5px;
   }
-
-  .admin-btn-success:hover {
-    color: #fff;
-  }
-
-  .admin-btn-secondary:hover {
-    color: #fff;
-  }
+  .submit-btn button:hover { background-color: #1a9e4b; }
 </style>
 
 <div class="form-container">
-  <div class="detalhe-card">
-    <h2 class="section-title">
-      {% if evento %}
-      Editar <span>Evento</span>
-      {% else %}
-      Cadastrar <span>Evento</span>
-      {% endif %}
-    </h2>
+  <h2 align="center">
+    {% if evento %}Editar Evento{% else %}Cadastrar Evento{% endif %}
+  </h2>
 
-    {% if messages %}
+  {% if messages %}
     {% for message in messages %}
-    <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
-      {{ message }}
-      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
     {% endfor %}
-    {% endif %}
+  {% endif %}
 
-    <form method="POST">
-      {% csrf_token %}
+  <form method="POST">
+    {% csrf_token %}
 
     <div class="row mb-3">
       <div class="col-md-8">
@@ -132,6 +91,7 @@
           {% endfor %}
         </select>
       </div>
+    </div>
 
     <div class="row mb-3">
       <div class="col-md-6">
@@ -144,6 +104,7 @@
         <input type="text" name="publico_evento" class="form-control custom-input"
                value="{{ evento.publico_evento|default:'' }}">
       </div>
+    </div>
 
     <div class="mb-3">
       <label class="form-label">Descrição</label>
@@ -151,15 +112,12 @@
                 maxlength="500">{{ evento.descricao_evento|default:'' }}</textarea>
     </div>
 
-        <button type="submit" class="admin-btn-success">
-          {% if evento %}
-          Salvar Alterações
-          {% else %}
-          Cadastrar Evento
-          {% endif %}
-        </button>
-      </div>
-
-    </form>
-  </div>
-  {% endblock %}
+    <div class="submit-btn d-flex gap-2 justify-content-end">
+      <a href="{% url 'eventos:listar_eventos' %}" class="btn btn-outline-secondary px-4">Cancelar</a>
+      <button type="submit">
+        {% if evento %}Salvar Alterações{% else %}Cadastrar Evento{% endif %}
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}

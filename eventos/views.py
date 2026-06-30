@@ -26,10 +26,7 @@ def _is_gestor(request):
 
 def listar_eventos(request):
     termo = request.GET.get('q', '').strip()
-
-    eventos = Evento.objects.filter(
-        isActivate=True
-    ).select_related('hub').order_by('-data_evento_inicio')
+    eventos = Evento.objects.select_related('hub').order_by('-data_evento_inicio')
 
     if termo:
         eventos = eventos.filter(
@@ -39,7 +36,6 @@ def listar_eventos(request):
         ).distinct()
 
     inscritos = set()
-
     if request.user.is_authenticated:
         inscritos = set(
             InscricaoEvento.objects.filter(
@@ -220,33 +216,12 @@ def gerenciar_inscricoes(request, evento_id):
         return redirect('eventos:listar_eventos')
 
     evento = get_object_or_404(Evento, id=evento_id)
+    inscricoes = evento.inscricoes.select_related('usuario').order_by('data_inscricao')
 
-    inscricoes = evento.inscricoes.select_related(
-        'usuario'
-    ).order_by('data_inscricao')
-
-    total_inscritos = inscricoes.count()
-
-    vagas_disponiveis = max(
-        0,
-        evento.vagas_disponiveis - total_inscritos
-    )
-
-    presencas_confirmadas = inscricoes.filter(
-        presenca='presente'
-    ).count()
-
-    return render(
-        request,
-        'inscritos.html',
-        {
-            'evento': evento,
-            'inscricoes': inscricoes,
-            'total_inscritos': total_inscritos,
-            'vagas_disponiveis': vagas_disponiveis,
-            'presencas_confirmadas': presencas_confirmadas,
-        }
-    )
+    return render(request, 'inscritos.html', {
+        'evento': evento,
+        'inscricoes': inscricoes,
+    })
 
 
 @login_required
