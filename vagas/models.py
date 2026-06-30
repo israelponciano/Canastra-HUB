@@ -16,6 +16,7 @@ class Vagas(models.Model):
     status = models.CharField(max_length=255, blank=True, null=True, default='ativa')
     
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, related_name='vagas')
+    hub = models.ForeignKey(Hub, on_delete=models.CASCADE, related_name='vagas', null=True, blank=True)
 
     def __str__(self):
         return f"Vaga: {self.cargo_vaga}, {self.descricao_vaga}"

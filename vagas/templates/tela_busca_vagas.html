@@ -145,23 +145,21 @@
 
           {% if user.is_authenticated and not request.session.incompleto %}
 
-          {% if evento.id in inscritos %}
+          {% if vaga.ja_candidatada %}
 
-          <form action="{% url 'eventos:cancelar_inscricao' evento.id %}" method="POST" class="mt-2">
+          <form action="{% url 'vagas:cancelar_candidatura' vaga.id %}" method="POST">
             {% csrf_token %}
-
-            <button type="submit" class="btn btn-danger btn-sm">
-              Cancelar Inscrição
+            <button type="submit" class="btn btn-danger btn-sm mt-2">
+              Cancelar Candidatura
             </button>
           </form>
 
           {% else %}
 
-          <form action="{% url 'eventos:inscrever' evento.id %}" method="POST" class="mt-2">
+          <form action="{% url 'vagas:candidatar_vaga' vaga.id %}" method="POST">
             {% csrf_token %}
-
-            <button type="submit" class="btn btn-success btn-sm">
-              Se Inscrever
+            <button type="submit" class="btn btn-success btn-sm mt-2">
+              Candidatar-se
             </button>
           </form>
 
@@ -176,10 +174,14 @@
           {% else %}
 
           <a href="{% url 'core:login' %}" class="btn btn-primary btn-sm mt-2">
-            Login para Inscrever-se
+            Login para candidatar-se
           </a>
 
           {% endif %}
+
+          <a href="{% url 'vagas:detalhe_vaga' vaga.id %}" class="btn btn-outline-secondary btn-sm mt-2">
+            Ver Detalhes
+          </a>
 
 
           <span class="float-end text-muted small mt-3">Publicada em: {{ vaga.data_publicacao|date:'d/m/Y' }}</span>
