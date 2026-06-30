@@ -91,100 +91,65 @@
     <form method="POST">
       {% csrf_token %}
 
-      <!-- Informações do Evento -->
-      <div class="detalhe-section">
-        <h4 class="detalhe-section-title">
-          Informações do Evento
-        </h4>
+    <div class="row mb-3">
+      <div class="col-md-8">
+        <label class="form-label">Nome do Evento *</label>
+        <input type="text" name="nome" class="form-control custom-input" required
+               value="{{ evento.nome_evento|default:'' }}">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Vagas Disponíveis <small class="text-muted">(0 = ilimitado)</small></label>
+        <input type="number" name="vagas_disponiveis" class="form-control custom-input" min="0"
+               value="{{ evento.vagas_disponiveis|default:0 }}">
+      </div>
+    </div>
 
-        <div class="row mb-3">
-          <div class="col-md-8">
-            <label class="form-label">Nome do Evento *</label>
-            <input type="text" name="nome" class="form-control" required value="{{ evento.nome_evento|default:'' }}">
-          </div>
-
-          <div class="col-md-4">
-            <label class="form-label">
-              Vagas Disponíveis
-              <small class="text-muted">(0 = ilimitado)</small>
-            </label>
-
-            <input type="number" name="vagas_disponiveis" class="form-control" min="0"
-              value="{{ evento.vagas_disponiveis|default:0 }}">
-          </div>
-        </div>
+    <div class="row mb-3">
+      <div class="col-md-3">
+        <label class="form-label">Data Início</label>
+        <input type="date" name="data_evento_inicio" class="form-control custom-input"
+               value="{{ evento.data_evento_inicio|date:'Y-m-d'|default:'' }}">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Data Fim</label>
+        <input type="date" name="data_evento_fim" class="form-control custom-input"
+               value="{{ evento.data_evento_fim|date:'Y-m-d'|default:'' }}">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Horário</label>
+        <input type="time" name="horario_evento" class="form-control custom-input"
+               value="{{ evento.horario_evento|time:'H:i'|default:'' }}">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Hub</label>
+        <select name="hub" class="form-select custom-input">
+          <option value="">— Nenhum —</option>
+          {% for h in hubs %}
+            <option value="{{ h.id }}"
+              {% if evento.hub_id == h.id %}selected{% endif %}>
+              {{ h.nome_hub }}
+            </option>
+          {% endfor %}
+        </select>
       </div>
 
-      <!-- Datas e Organização -->
-      <div class="detalhe-section">
-        <h4 class="detalhe-section-title">
-          Datas e Organização
-        </h4>
-
-        <div class="row mb-3">
-          <div class="col-md-3">
-            <label class="form-label">Data Início</label>
-            <input type="date" name="data_evento_inicio" class="form-control"
-              value="{{ evento.data_evento_inicio|date:'Y-m-d'|default:'' }}">
-          </div>
-
-          <div class="col-md-3">
-            <label class="form-label">Data Fim</label>
-            <input type="date" name="data_evento_fim" class="form-control"
-              value="{{ evento.data_evento_fim|date:'Y-m-d'|default:'' }}">
-          </div>
-
-          <div class="col-md-3">
-            <label class="form-label">Horário</label>
-            <input type="time" name="horario_evento" class="form-control"
-              value="{{ evento.horario_evento|time:'H:i'|default:'' }}">
-          </div>
-
-          <div class="col-md-3">
-            <label class="form-label">Hub</label>
-            <select name="hub" class="form-select">
-              <option value="">— Nenhum —</option>
-              {% for h in hubs %}
-              <option value="{{ h.id }}" {% if evento.hub_id == h.id %}selected{% endif %}>
-                {{ h.nome_hub }}
-              </option>
-              {% endfor %}
-            </select>
-          </div>
-        </div>
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label class="form-label">Local do Evento</label>
+        <input type="text" name="local_evento" class="form-control custom-input"
+               value="{{ evento.local_evento|default:'' }}">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Público-Alvo</label>
+        <input type="text" name="publico_evento" class="form-control custom-input"
+               value="{{ evento.publico_evento|default:'' }}">
       </div>
 
-      <!-- Detalhes -->
-      <div class="detalhe-section">
-        <h4 class="detalhe-section-title">
-          Detalhes do Evento
-        </h4>
-
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <label class="form-label">Local do Evento</label>
-            <input type="text" name="local_evento" class="form-control" value="{{ evento.local_evento|default:'' }}">
-          </div>
-
-          <div class="col-md-6">
-            <label class="form-label">Público-Alvo</label>
-            <input type="text" name="publico_evento" class="form-control"
-              value="{{ evento.publico_evento|default:'' }}">
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label">Descrição</label>
-
-          <textarea name="descricao_evento" class="form-control" rows="5"
-            maxlength="500">{{ evento.descricao_evento|default:'' }}</textarea>
-        </div>
-      </div>
-
-      <div class="d-flex gap-2 justify-content-end mt-4">
-        <a href="{% url 'eventos:listar_eventos' %}" class="admin-btn-secondary">
-          ← Voltar
-        </a>
+    <div class="mb-3">
+      <label class="form-label">Descrição</label>
+      <textarea name="descricao_evento" class="form-control custom-input" rows="4"
+                maxlength="500">{{ evento.descricao_evento|default:'' }}</textarea>
+    </div>
 
         <button type="submit" class="admin-btn-success">
           {% if evento %}

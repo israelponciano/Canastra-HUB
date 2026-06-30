@@ -2,27 +2,36 @@
 {% load static %}
 {% block conteudo %}
 
+
+<link rel="stylesheet" href="{% static 'css\listar_usuarios.css' %}">
+
 <main class="efeito" id="efeito">
    <section id="gerenciar-usuarios">
       <h2 class="section-title">Gerenciar <span>Usuários</span></h2>
 
       <!-- Filtros -->
-      <form method="GET" action="{% url 'administrador:listar_usuarios' %}" class="admin-filter-form">
+      <form method="GET" class="admin-filter-form">
          <div class="filter-row">
-            <input type="text" name="busca" placeholder="Buscar por nome ou e-mail..." value="{{ busca }}"
-               class="filter-input" />
+
+            <div class="search-wrapper">
+               <input type="text" name="busca" placeholder="Buscar por nome ou e-mail..." value="{{ busca }}"
+                  class="filter-input">
+            </div>
 
             <select name="tipo" class="filter-select">
-               <option value="" {% if tipo_selecionado == '' %}selected{% endif %}>Todos os tipos</option>
-               <option value="candidato" {% if tipo_selecionado == 'candidato' %}selected{% endif %}>Candidato</option>
-               <option value="empresa" {% if tipo_selecionado == 'empresa' %}selected{% endif %}>Empresa</option>
+               <option value="">Todos os tipos</option>
+               <option value="usuario">Usuário</option>
+               <option value="empresa">Empresa</option>
             </select>
 
-            <button type="submit" class="admin-btn admin-btn-primary">Filtrar</button>
+            <button type="submit" class="admin-btn admin-btn-primary">
+               Filtrar
+            </button>
 
             {% if busca or tipo_selecionado %}
             <a href="{% url 'administrador:listar_usuarios' %}" class="admin-btn admin-btn-secondary">Limpar</a>
             {% endif %}
+
          </div>
       </form>
 
@@ -39,7 +48,7 @@
 
          {% for usuario in usuarios %}
          <div class="admin-row admin-row-usuarios {% if not usuario.is_active %}row-inativo{% endif %}">
-            <div class="admin-cell id">{{ usuario.id }}</div>
+            <div class="admin-cell id">#{{ usuario.id }}</div>
 
             <div class="admin-cell nome">
                {% if usuario.foto %}
@@ -50,7 +59,7 @@
                {{ usuario.nome }}
             </div>
 
-            <div class="admin-cell email">{{ usuario.email }}</div>
+            <div class="admin-cell email">#{{ usuario.email }}</div>
 
             <div class="admin-cell tipo">
                <span class="badge-tipo badge-tipo-{{ usuario.tipo }}">{{ usuario.tipo|capfirst }}</span>
@@ -58,44 +67,36 @@
 
             <div class="admin-cell status text-center">
                {% if usuario.is_active %}
-               <img src="{% static 'img/status_green.png' %}" width="18px" alt="Ativo" title="Ativo">
+               <span class="status-badge ativo">Ativo</span>
                {% else %}
-               <img src="{% static 'img/status_red.png' %}" width="18px" alt="Desativado" title="Desativado">
+               <span class="status-badge inativo">Inativo</span>
                {% endif %}
             </div>
 
-            <div class="admin-actions">
+            <div class="admin-cell acoes">
+               <div class="admin-actions">
+                  <a href="{% url 'administrador:detalhe_usuario' usuario.id %}" class="admin-btn" title="Ver detalhes">
+                     <img src="{% static 'img/update.png' %}" alt="Detalhes" />
+                  </a>
 
-               <a href="{% url 'administrador:detalhe_usuario' usuario.id %}" class="admin-btn" title="Ver detalhes">
-                  <img src="{% static 'img/update.png' %}" alt="Detalhes">
-               </a>
-
-               {% if not usuario.is_admin %}
-
-               {% if usuario.is_active %}
-
-               <a href="{% url 'administrador:alterar_status_usuario' usuario.id %}" class="admin-btn admin-btn-danger"
-                  onclick="return confirm('Deseja desativar este usuário?')">
-
-                  <img src="{% static 'img/delete.png' %}" alt="Desativar">
-               </a>
-
-               {% else %}
-
-               <a href="{% url 'administrador:alterar_status_usuario' usuario.id %}" class="admin-btn admin-btn-success"
-                  onclick="return confirm('Deseja reativar este usuário?')">
-
-                  <img src="{% static 'img/active.png' %}" alt="Reativar">
-               </a>
-
-               {% endif %}
-
-               {% else %}
-
-               <span class="badge-admin">Admin</span>
-
-               {% endif %}
-
+                  {% if not usuario.is_admin %}
+                  {% if usuario.is_active %}
+                  <button class="admin-btn admin-btn-danger openModalConfirm"
+                     data-url="{% url 'administrador:desativar_usuario' usuario.id %}"
+                     data-msg="Desativar o usuário {{ usuario.nome }}?" title="Desativar usuário">
+                     <img src="{% static 'img/delete.png' %}" alt="Desativar" />
+                  </button>
+                  {% else %}
+                  <button class="admin-btn admin-btn-success openModalConfirm"
+                     data-url="{% url 'administrador:desativar_usuario' usuario.id %}"
+                     data-msg="Reativar o usuário {{ usuario.nome }}?" title="Reativar usuário">
+                     <img src="{% static 'img/active.png' %}" alt="Reativar" />
+                  </button>
+                  {% endif %}
+                  {% else %}
+                  <span class="badge-admin">Admin</span>
+                  {% endif %}
+               </div>
             </div>
          </div>
       </div>
@@ -139,25 +140,23 @@
 
    .filter-row {
       display: flex;
+      gap: .75rem;
+      flex-wrap: wrap;
       align-items: center;
-      gap: 10px;
-      flex-wrap: nowrap;
    }
 
    .filter-input {
       flex: 1;
-      height: 42px;
-      padding: 0 12px;
-      border: 1px solid #d1d5db;
+      min-width: 200px;
+      padding: .5rem .75rem;
       border-radius: 8px;
+      border: 1px solid #ccc;
    }
 
    .filter-select {
-      width: 140px;
-      height: 42px;
-      border: 1px solid #d1d5db;
+      padding: .5rem .75rem;
       border-radius: 8px;
-      padding: 0 10px;
+      border: 1px solid #ccc;
       background: #fff;
    }
 
@@ -207,39 +206,22 @@
       color: #6b7280;
    }
 
-   .admin-btn-primary,
-   .admin-btn-secondary {
-      min-width: 90px;
-      height: 42px;
-      padding: 0 18px;
-      border: none;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      box-sizing: border-box;
-   }
-
    .admin-btn-primary {
       background: #16a34a;
       color: #fff;
-   }
-
-   .admin-btn-primary:hover {
-      background: #15803d;
+      border: none;
    }
 
    .admin-btn-secondary {
       background: #6b7280;
       color: #fff;
+      border: none;
    }
 
-   .admin-btn-secondary:hover {
-      background: #4b5563;
+   .admin-btn-success {
+      background: #16a34a;
+      color: #fff;
+      border: none;
    }
 </style>
 
