@@ -1,178 +1,250 @@
 {% extends 'master.html' %}
 {% load static %}
 {% block conteudo %}
-  <style>
-    .form-container {
-      max-width: 900px;
-      margin: 2rem auto;
-      padding: 2rem;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    .form-label{
-      color: #000000ff;
-    }
-    .form-container h2 {
-      margin-bottom: 1.5rem;
-      color: #22c55e;
-      font-weight: bold;
-    }
-    .submit-btn {
-      text-align: right;
-    }
-    .submit-btn button {
-      background-color: #22c55e;
-      color: #fff;
-      font-size: 18px;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-    }
-    .submit-btn button:hover {
-      background-color: #1a9e4b;
-    }
-  </style>
+<style>
+  .form-container {
+    max-width: 900px;
+    margin: 2rem auto;
+  }
 
-<div class="container mt-4" style="max-width: 860px;">
-  <h2 class="mb-4" style="color: #22c55e; font-weight: bold;">
-    {% if treinamento %}Editar Treinamento{% else %}Cadastrar Treinamento{% endif %}
-  </h2>
+  .detalhe-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
+  }
 
-  <form method="POST">
-    {% csrf_token %}
+  .section-title {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+  }
 
-    <div class="row mb-3">
-      <div class="col-md-8">
-        <label class="form-label">Nome do Treinamento</label>
-        <input type="text" name="nome" class="form-control" required
-               value="{{ treinamento.nome|default:'' }}">
-      </div>
-      <div class="col-md-4">
-        <label class="form-label">Vagas Disponíveis</label>
-        <input type="number" name="vagas_disponiveis" class="form-control" min="0"
-               value="{{ treinamento.vagas_disponiveis|default:0 }}">
-      </div>
-    </div>
+  .section-title span {
+    color: #16a34a;
+  }
 
-    <div class="row mb-3">
-      <div class="col-md-4">
-        <label class="form-label">Data Início</label>
-        <input type="date" name="data_inicio" class="form-control"
-               value="{{ treinamento.data_inicio|date:'Y-m-d'|default:'' }}">
-      </div>
-      <div class="col-md-4">
-        <label class="form-label">Data Fim</label>
-        <input type="date" name="data_fim" class="form-control"
-               value="{{ treinamento.data_fim|date:'Y-m-d'|default:'' }}">
-      </div>
-      <div class="col-md-4">
-        <label class="form-label">Local</label>
-        <input type="text" name="local" class="form-control"
-               value="{{ treinamento.local|default:'' }}">
-      </div>
-    </div>
+  .detalhe-section {
+    margin-bottom: 1.75rem;
+  }
 
-    <div class="row mb-3">
-      <div class="col-md-6">
-        <label class="form-label">Público Alvo</label>
-        <input type="text" name="publico_alvo" class="form-control"
-               value="{{ treinamento.publico_alvo|default:'' }}">
-      </div>
-      <div class="col-md-3">
-        <label class="form-label">Hub</label>
-        <select name="hub" class="form-select">
-          <option value="">— Nenhum —</option>
-          {% for hub in hubs %}
-            <option value="{{ hub.id }}"
-              {% if treinamento.hub_id == hub.id %}selected{% endif %}>
-              {{ hub.nome_hub }}
-            </option>
-          {% endfor %}
-        </select>
-      </div>
-    </div>
+  .detalhe-section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #16a34a;
+    margin-bottom: .75rem;
+    border-left: 3px solid #16a34a;
+    padding-left: .5rem;
+  }
 
-    <div class="mb-3">
-      <label class="form-label">Descrição</label>
-      <textarea name="descricao" class="form-control" rows="4">{{ treinamento.descricao|default:'' }}</textarea>
-    </div>
+  .form-control,
+  .form-select {
+    border-radius: 8px;
+  }
 
-    <!-- Sessões dinâmicas -->
-    <div class="mb-3">
-      <label class="form-label fw-bold">Sessões (datas e horários)</label>
-      <div id="sessoes-container">
-        {% if sessoes %}
+  .admin-btn-success {
+    background: #16a34a;
+    color: #fff;
+    border: none;
+    padding: .6rem 1rem;
+    border-radius: 8px;
+  }
+
+  .admin-btn-secondary {
+    background: #6b7280;
+    color: #fff;
+    border: none;
+    padding: .6rem 1rem;
+    border-radius: 8px;
+  }
+</style>
+<div class="form-container">
+  <div class="detalhe-card">
+
+    <h2 class="section-title">
+      {% if treinamento %}
+      Editar <span>Treinamento</span>
+      {% else %}
+      Cadastrar <span>Treinamento</span>
+      {% endif %}
+    </h2>
+
+
+    <form method="POST">
+      {% csrf_token %}
+
+      <!-- Informações do Treinamento -->
+      <div class="detalhe-section">
+        <h4 class="detalhe-section-title">
+          Informações do Treinamento
+        </h4>
+
+        <div class="row mb-3">
+          <div class="col-md-8">
+            <label class="form-label">Nome do Treinamento</label>
+            <input type="text" name="nome" class="form-control" required value="{{ treinamento.nome|default:'' }}">
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Vagas Disponíveis</label>
+            <input type="number" name="vagas_disponiveis" class="form-control" min="0"
+              value="{{ treinamento.vagas_disponiveis|default:0 }}">
+          </div>
+        </div>
+      </div>
+
+      <!-- Datas e Local -->
+      <div class="detalhe-section">
+        <h4 class="detalhe-section-title">
+          Datas e Local
+        </h4>
+
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <label class="form-label">Data Início</label>
+            <input type="date" name="data_inicio" class="form-control"
+              value="{{ treinamento.data_inicio|date:'Y-m-d'|default:'' }}">
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Data Fim</label>
+            <input type="date" name="data_fim" class="form-control"
+              value="{{ treinamento.data_fim|date:'Y-m-d'|default:'' }}">
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Local</label>
+            <input type="text" name="local" class="form-control" value="{{ treinamento.local|default:'' }}">
+          </div>
+        </div>
+      </div>
+
+      <!-- Público e Organização -->
+      <div class="detalhe-section">
+        <h4 class="detalhe-section-title">
+          Público e Organização
+        </h4>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Público Alvo</label>
+            <input type="text" name="publico_alvo" class="form-control"
+              value="{{ treinamento.publico_alvo|default:'' }}">
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Hub</label>
+            <select name="hub" class="form-select">
+              <option value="">— Nenhum —</option>
+              {% for hub in hubs %}
+              <option value="{{ hub.id }}" {% if treinamento.hub_id == hub.id %}selected{% endif %}>
+                {{ hub.nome_hub }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Descrição</label>
+          <textarea name="descricao" class="form-control" rows="5">{{ treinamento.descricao|default:'' }}</textarea>
+        </div>
+      </div>
+
+      <!-- Sessões -->
+      <div class="detalhe-section">
+        <h4 class="detalhe-section-title">
+          Sessões do Treinamento
+        </h4>
+
+        <div id="sessoes-container">
+          {% if sessoes %}
           {% for s in sessoes %}
           <div class="row mb-2 sessao-row">
             <div class="col-md-5">
               <input type="date" name="sessao_data" class="form-control" value="{{ s.data|date:'Y-m-d' }}">
             </div>
+
             <div class="col-md-5">
               <input type="time" name="sessao_horario" class="form-control" value="{{ s.horario|time:'H:i' }}">
             </div>
+
             <div class="col-md-2">
-              <button type="button" class="btn btn-outline-danger btn-sm w-100 remover-sessao">−</button>
+              <button type="button" class="btn btn-outline-danger btn-sm w-100 remover-sessao">
+                −
+              </button>
             </div>
           </div>
           {% endfor %}
-        {% else %}
+          {% else %}
           <div class="row mb-2 sessao-row">
             <div class="col-md-5">
               <input type="date" name="sessao_data" class="form-control">
             </div>
+
             <div class="col-md-5">
               <input type="time" name="sessao_horario" class="form-control">
             </div>
+
             <div class="col-md-2">
-              <button type="button" class="btn btn-outline-danger btn-sm w-100 remover-sessao">−</button>
+              <button type="button" class="btn btn-outline-danger btn-sm w-100 remover-sessao">
+                −
+              </button>
             </div>
           </div>
-        {% endif %}
+          {% endif %}
+        </div>
+
+        <button type="button" id="adicionar-sessao" class="btn btn-outline-success btn-sm mt-2">
+          + Adicionar Sessão
+        </button>
       </div>
-      <button type="button" id="adicionar-sessao" class="btn btn-outline-success btn-sm mt-2">
-        + Adicionar Sessão
-      </button>
-    </div>
 
-    {% if treinamento %}
-    <div class="d-flex gap-2 justify-content-end">
-      <a href="{% url 'treinamento:detalhe_treinamento' treinamento.id %}" class="btn btn-secondary">Cancelar</a>
-      <button type="submit" class="btn btn-success">
-        Salvar Alterações
-      </button>
-    </div>
-    {% else %}
-    <div class="d-flex gap-2 justify-content-end">
-      <a href="{% url 'treinamento:listar_treinamentos' %}" class="btn btn-secondary">Cancelar</a>
-      <button type="submit" class="btn btn-success">
-        Cadastrar
-      </button>
-    </div>
-    {% endif %}
-  </form>
-</div>
+      <!-- Botões -->
+      <div class="d-flex gap-2 justify-content-end mt-4">
 
-<script>
-  document.getElementById('adicionar-sessao').addEventListener('click', function () {
-    const container = document.getElementById('sessoes-container');
-    const nova = document.createElement('div');
-    nova.className = 'row mb-2 sessao-row';
-    nova.innerHTML = `
+        {% if treinamento %}
+        <a href="{% url 'treinamento:detalhe_treinamento' treinamento.id %}" class="admin-btn-secondary">
+          ← Voltar
+        </a>
+        {% else %}
+        <a href="{% url 'treinamento:listar_treinamentos' %}" class="admin-btn-secondary">
+          ← Voltar
+        </a>
+        {% endif %}
+
+        <button type="submit" class="admin-btn-success">
+          {% if treinamento %}
+          Salvar Alterações
+          {% else %}
+          Cadastrar Treinamento
+          {% endif %}
+        </button>
+
+      </div>
+
+    </form>
+
+    <script>
+      document.getElementById('adicionar-sessao').addEventListener('click', function () {
+        const container = document.getElementById('sessoes-container');
+        const nova = document.createElement('div');
+        nova.className = 'row mb-2 sessao-row';
+        nova.innerHTML = `
       <div class="col-md-5"><input type="date" name="sessao_data" class="form-control"></div>
       <div class="col-md-5"><input type="time" name="sessao_horario" class="form-control"></div>
       <div class="col-md-2"><button type="button" class="btn btn-outline-danger btn-sm w-100 remover-sessao">−</button></div>
     `;
-    container.appendChild(nova);
-  });
+        container.appendChild(nova);
+      });
 
-  document.getElementById('sessoes-container').addEventListener('click', function (e) {
-    if (e.target.classList.contains('remover-sessao')) {
-      const rows = document.querySelectorAll('.sessao-row');
-      if (rows.length > 1) {
-        e.target.closest('.sessao-row').remove();
-      }
-    }
-  });
-</script>
-{% endblock %}
+      document.getElementById('sessoes-container').addEventListener('click', function (e) {
+        if (e.target.classList.contains('remover-sessao')) {
+          const rows = document.querySelectorAll('.sessao-row');
+          if (rows.length > 1) {
+            e.target.closest('.sessao-row').remove();
+          }
+        }
+      });
+    </script>
+    {% endblock %}

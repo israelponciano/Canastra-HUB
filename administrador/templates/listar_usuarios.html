@@ -29,9 +29,7 @@
             </button>
 
             {% if busca or tipo_selecionado %}
-            <a href="{% url 'administrador:listar_usuarios' %}" class="admin-btn admin-btn-secondary">
-               Limpar
-            </a>
+            <a href="{% url 'administrador:listar_usuarios' %}" class="admin-btn admin-btn-secondary">Limpar</a>
             {% endif %}
 
          </div>
@@ -101,11 +99,12 @@
                </div>
             </div>
          </div>
-         {% empty %}
-         <div class="admin-row admin-row-empty">
-            <div class="admin-cell">Nenhum usuário encontrado.</div>
-         </div>
-         {% endfor %}
+      </div>
+      {% empty %}
+      <div class="admin-row admin-row-empty">
+         <div class="admin-cell">Nenhum usuário encontrado.</div>
+      </div>
+      {% endfor %}
       </div>
 
       <p class="result-count">{{ usuarios|length }} usuário(s) encontrado(s)</p>
