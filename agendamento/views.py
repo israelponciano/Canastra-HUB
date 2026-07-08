@@ -15,6 +15,13 @@ def realizar_reserva(request):
         data_str = request.POST.get('data_reserva')
         bloco_str = request.POST.get('bloco_horario')
 
+        # Captura os novos campos vindos do formulário HTML
+        empresa_projeto = request.POST.get('empresa_projeto', 'Não informado')
+        quantidade_pessoas = request.POST.get('quantidade_pessoas', 0)
+        finalidade = request.POST.get('finalidade', 'Não informado')
+        equipamentos = request.POST.get('equipamentos', 'Não informado')
+        observacoes = request.POST.get('observacoes', 'Não informado')
+
         if not data_str or not bloco_str:
             messages.error(
                 request, "Por favor, preencha todos os campos do formulário.")
@@ -24,7 +31,6 @@ def realizar_reserva(request):
             hora_inicio_str, hora_fim_str = bloco_str.split('-')
             inicio_comb = f"{data_str} {hora_inicio_str}:00"
             fim_comb = f"{data_str} {hora_fim_str}:00"
-
             inicio = parse_datetime(inicio_comb)
             fim = parse_datetime(fim_comb)
         except Exception:
@@ -32,39 +38,40 @@ def realizar_reserva(request):
                 request, "Erro ao processar o bloco de horário selecionado.")
             return redirect('realizar_reserva')
 
-        if fim <= inicio:
-            messages.error(
-                request, "A hora de término deve ser posterior à hora de início.")
-            return redirect('realizar_reserva')
-
-        # 1. MOTOR DE SEGURANÇA LOCAL: Evita sobreposição de horários antes de chamar a API externa
         conflito = Reserva.objects.filter(
-            sala=sala,
-            status='confirmada',
-            inicio__lt=fim,
-            fim__gt=inicio
-        ).exists()
-
+            sala=sala, status='confirmada', inicio__lt=fim, fim__gt=inicio).exists()
         if conflito:
             messages.error(
                 request, "Esta sala já se encontra reservada para o período selecionado.")
             return redirect('realizar_reserva')
 
-        # --- AQUI COMEÇA A MANOBRA DO "TUDO OU NADA" ---
-
-        # 2. Criamos o objeto na memória do Python (Instanciamos, mas AINDA NÃO USAMOS o .save())
+        # Criação na memória com os novos dados locais salvos
         nova_reserva = Reserva(
             usuario=request.user,
             sala=sala,
             inicio=inicio,
             fim=fim,
+            empresa_projeto=empresa_projeto,
+            quantidade_pessoas=int(
+                quantidade_pessoas) if quantidade_pessoas else 0,
+            finalidade=finalidade,
+            equipamentos=equipamentos,
+            observacoes=observacoes,
             status='confirmada'
         )
 
         nome_amigavel_sala = nova_reserva.get_sala_display()
         titulo_evento = f"{nome_amigavel_sala} - {request.user.nome}"
 
-        # 3. Disparamos PRIMEIRO para o Google Agenda
+        # Dicionário auxiliar para carregar os dados extras ao Service
+        dados_extras = {
+            "empresa_projeto": empresa_projeto,
+            "quantidade_pessoas": quantidade_pessoas,
+            "finalidade": finalidade,
+            "equipamentos": equipamentos,
+            "observacoes": observacoes
+        }
+
         google_id = None
         try:
             google_id = GoogleAgendaService.enviar_para_google(
@@ -72,24 +79,18 @@ def realizar_reserva(request):
                 titulo=titulo_evento,
                 data_inicio=inicio.isoformat(),
                 data_fim=fim.isoformat(),
-                email_cliente=request.user.email
+                email_cliente=request.user.email,
+                dados_extras=dados_extras  # Envia os dados extras empacotados
             )
         except Exception as e:
             print(f"Erro de comunicação capturado na View: {e}")
             google_id = None
 
-        # 4. VALIDAÇÃO CRUCIAL: Se o Google falhou em retornar o ID, barramos o processo!
         if not google_id:
-            # Não chamamos o .save(), portanto nada vai pro banco local.
             messages.error(
-                request,
-                "Não foi possível concluir o agendamento devido a uma falha temporária na integração com o Google Calendar. "
-                "Por favor, verifique sua conexão ou tente novamente em alguns instantes."
-            )
-            # Retorna para o formulário mantendo o horário livre para novas tentativas
+                request, "Não foi possível concluir o agendamento devido a uma falha na integração com o Google Calendar.")
             return redirect('realizar_reserva')
 
-        # 5. SUCESSO TOTAL: O Google criou a agenda, agora consolidamos no banco de dados local
         nova_reserva.google_event_id = google_id
         nova_reserva.save()
 
@@ -98,12 +99,6 @@ def realizar_reserva(request):
         return redirect('minhas_reservas')
 
     return render(request, 'agendamento/agendar.html')
-# reservas gerais - todas vizualizadas
-# @login_required
-# def minhas_reservas(request):
-#     # Coleta todas as reservas confirmadas para exibir no painel de controle
-#     reservas = Reserva.objects.filter(status='confirmada').order_by('inicio')
-#     return render(request, 'agendamento/minhas_reservas.html', {'reservas': reservas})
 
 
 @login_required
