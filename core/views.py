@@ -493,7 +493,9 @@ def cadastro_completo(request):
         
         usuario.save()
 
-        exp, _ = ExperienciaProfissional.objects.get_or_create(usuario=usuario)
+        exp = ExperienciaProfissional.objects.filter(usuario=usuario).first()
+        if exp is None:
+            exp = ExperienciaProfissional(usuario=usuario)
         exp.nome_empresa1 = nome_empresa1 or None
         exp.cargo1 = cargo1 or None
         exp.data_inicio1 = _parse_date(data_inicio1)
