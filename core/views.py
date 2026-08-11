@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.http import JsonResponse
-from django.views.decorators.http import require_http_methods 
+from django.views.decorators.http import require_http_methods
 from core.models import *
 from empresa.models import *
 from django.contrib.auth.decorators import login_required
@@ -12,6 +12,15 @@ from datetime import datetime
 from treinamento.models import Treinamento
 from vagas.models import Vagas
 from eventos.models import Evento
+
+
+def _parse_date(date_str):
+    if not date_str:
+        return None
+    try:
+        return datetime.strptime(date_str, '%Y-%m-%d').date()
+    except ValueError:
+        return None
 
 def home(request):
     # Buscar notícias ativas que devem aparecer na home
@@ -393,23 +402,6 @@ def cadastro_completo(request):
         # end formacao
         # ------------
 
-        # Experiencia profissional  
-        usuario.nome_empresa1 = nome_empresa1
-        usuario.cargo1 = cargo1
-        usuario.data_inicio1 = data_inicio1
-        usuario.data_fim1 = data_fim1
-        # 2 
-        usuario.nome_empresa2 = nome_empresa2
-        usuario.cargo2 = cargo2
-        usuario.data_inicio2 = data_inicio2
-        usuario.data_fim2 = data_fim2
-        # 3  
-        usuario.nome_empresa3 = nome_empresa3
-        usuario.cargo3 = cargo3
-        usuario.data_inicio3 = data_inicio3
-        usuario.data_fim3 = data_fim3
-        # end Experiencia
-        #  ------------------
 
         # Links e sites 
         usuario.linkedin = linkedin
@@ -488,12 +480,7 @@ def cadastro_completo(request):
             'data_acad_inicio1', 'data_acad_fim1',
             'data_acad_inicio2', 'data_acad_fim2',
             'data_acad_inicio3', 'data_acad_fim3',
-            
-            # Experiência Profissional
-            'data_inicio1', 'data_fim1',
-            'data_inicio2', 'data_fim2',
-            'data_inicio3', 'data_fim3',
-            
+
             # Cursos Extracurriculares
             'data_conclusao1', 'data_conclusao2', 'data_conclusao3'
         ]
@@ -505,6 +492,21 @@ def cadastro_completo(request):
                 setattr(usuario, campo, None)
         
         usuario.save()
+
+        exp, _ = ExperienciaProfissional.objects.get_or_create(usuario=usuario)
+        exp.nome_empresa1 = nome_empresa1 or None
+        exp.cargo1 = cargo1 or None
+        exp.data_inicio1 = _parse_date(data_inicio1)
+        exp.data_fim1 = _parse_date(data_fim1)
+        exp.nome_empresa2 = nome_empresa2 or None
+        exp.cargo2 = cargo2 or None
+        exp.data_inicio2 = _parse_date(data_inicio2)
+        exp.data_fim2 = _parse_date(data_fim2)
+        exp.nome_empresa3 = nome_empresa3 or None
+        exp.cargo3 = cargo3 or None
+        exp.data_inicio3 = _parse_date(data_inicio3)
+        exp.data_fim3 = _parse_date(data_fim3)
+        exp.save()
 
         # del request.session['usuario_email']
         messages.success(request, 'Cadastro realizado com sucesso!')
