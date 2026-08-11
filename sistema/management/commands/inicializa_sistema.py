@@ -95,6 +95,10 @@ class Command(BaseCommand):
             complemento='complemtento blablabla',
             pretensao_salarial=15.00
         )
+        Idioma.objects.bulk_create([
+            Idioma(usuario=usuario, language='Inglês', fluency='Avançado'),
+            Idioma(usuario=usuario, language='Espanhol', fluency='Básico'),
+        ])
 
         user1 = UsuarioBase.objects.create_user(
             email='usuario1@teste',
@@ -120,6 +124,9 @@ class Command(BaseCommand):
             complemento='complemtento blablabla',
             pretensao_salarial=15.00
         )
+        Idioma.objects.bulk_create([
+            Idioma(usuario=usuario1, language='Inglês', fluency='Intermediário'),
+        ])
 
         user2 = UsuarioBase.objects.create_user(
             email='empresa@teste',

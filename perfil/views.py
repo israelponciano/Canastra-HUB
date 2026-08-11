@@ -22,6 +22,8 @@ from core.models import (
     CursoExtraCurricular,
     Idioma,
     Hub,
+    LANGUAGE_CHOICES,
+    LANGUAGE_FLUENCY,
 )
 from empresa.models import Empresa, EmpresaHub
 
@@ -74,7 +76,8 @@ def perfil(request):
             usuario = Usuario.objects.select_related('cidade', 'estado').get(user=user)
             experiencias = ExperienciaProfissional.objects.filter(usuario=usuario)
             cursos_extras = CursoExtraCurricular.objects.filter(usuario=usuario)
-            idiomas = Idioma.objects.filter(usuario=usuario)
+            idiomas = list(Idioma.objects.filter(usuario=usuario))
+            idiomas_slots = idiomas + [None] * (3 - len(idiomas))
 
             if usuario.estado:
                 contexto['cidades'] = Cidade.objects.filter(
@@ -86,6 +89,9 @@ def perfil(request):
                 'experiencias': experiencias,
                 'cursos_extras': cursos_extras,
                 'idiomas': idiomas,
+                'idiomas_slots': idiomas_slots,
+                'language_choices': LANGUAGE_CHOICES,
+                'fluency_choices': LANGUAGE_FLUENCY,
             })
         except Usuario.DoesNotExist:
             messages.error(request, 'Perfil de usuário não encontrado.')
@@ -310,11 +316,15 @@ def _atualizar_cursos(request, usuario):
 
 
 def _atualizar_idiomas(request, usuario):
-    idioma, _ = Idioma.objects.get_or_create(usuario=usuario)
+    idiomas_vistos = set()
+    usuario.idiomas.all().delete()
     for n in ('1', '2', '3'):
-        setattr(idioma, f'idioma{n}', request.POST.get(f'idioma{n}') or None)
-        setattr(idioma, f'nivel_fluencia{n}', request.POST.get(f'nivel_fluencia{n}') or None)
-    idioma.save()
+        language = request.POST.get(f'idioma{n}')
+        fluency = request.POST.get(f'nivel_fluencia{n}')
+        if not language or language in idiomas_vistos:
+            continue
+        idiomas_vistos.add(language)
+        Idioma.objects.create(usuario=usuario, language=language, fluency=fluency)
 
 
 # ══════════════════════════════════════════

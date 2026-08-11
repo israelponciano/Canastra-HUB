@@ -5,7 +5,29 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db.models.deletion import ProtectedError
 from django.core.validators import FileExtensionValidator
+from django.core.exceptions import ValidationError
 
+LANGUAGE_FLUENCY = [
+    ('Básico', 'Básico'),
+    ('Intermediário', 'Intermediário'),
+    ('Avançado', 'Avançado'),
+    ('Fluente', 'Fluente'),
+    ('Nativo', 'Nativo')
+]
+
+LANGUAGE_CHOICES = [
+    ('Inglês', 'Inglês'),
+    ('Espanhol', 'Espanhol'),
+    ('Francês', 'Francês'),
+    ('Alemão', 'Alemão'),
+    ('Mandarim', 'Mandarim'),
+    ('Japonês', 'Japonês'),
+    ('Italiano', 'Italiano'),
+    ('Russo', 'Russo'),
+    ('Árabe', 'Árabe'),
+    ('Português', 'Português'),
+    ('Outro', 'Outro')
+]
 
 class UsuarioManager(BaseUserManager):
     def create_user(self, email, nome, tipo, password=None):
@@ -223,25 +245,24 @@ class CursoExtraCurricular(models.Model):
             self.nome_curso3
         ])
 
-
 class Idioma(models.Model):
-    usuario = models.ForeignKey(
-        Usuario, on_delete=models.CASCADE, related_name='idiomas')
-    idioma1 = models.CharField(max_length=100, blank=True, null=True)
-    nivel_fluencia1 = models.CharField(max_length=100, blank=True, null=True)
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='idiomas')
+    language = models.CharField(max_length=100, choices=LANGUAGE_CHOICES)
+    fluency = models.CharField(max_length=100, choices=LANGUAGE_FLUENCY, blank=True, null=True)
 
-    idioma2 = models.CharField(max_length=100, blank=True, null=True)
-    nivel_fluencia2 = models.CharField(max_length=100, blank=True, null=True)
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['usuario', 'language'], name='unique_idioma_por_usuario')
+        ]
 
-    idioma3 = models.CharField(max_length=100, blank=True, null=True)
-    nivel_fluencia3 = models.CharField(max_length=100, blank=True, null=True)
+    def clean(self):
+        if self.usuario_id:
+            qtd = Idioma.objects.filter(usuario=self.usuario).exclude(pk=self.pk).count()
+            if qtd >= 3:
+                raise ValidationError('Usuário pode ter no máximo 3 idiomas.')
 
     def __str__(self):
-        return "\n".join([
-            self.idioma1,
-            self.idioma2,
-            self.idioma3
-        ])
+        return f"{self.language} ({self.fluency})"
 
 
 class Hub(models.Model):
@@ -276,5 +297,4 @@ class Noticia(models.Model):
 class NoticiaHub(models.Model):
     noticia = models.ForeignKey(Noticia, on_delete=models.CASCADE)
     hub = models.ForeignKey(Hub, on_delete=models.CASCADE)
-
 

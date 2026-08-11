@@ -441,16 +441,20 @@ def cadastro_completo(request):
         # end curso
         # -----------
 
-        # Idioma 
-        usuario.idioma1 = idioma1
-        usuario.nivel_fluencia1 = nivel_fluencia1
-        # 2 
-        usuario.idioma2 = idioma2
-        usuario.nivel_fluencia2 = nivel_fluencia2
-        # 3 
-        usuario.idioma3 = idioma3
-        usuario.nivel_fluencia3 = nivel_fluencia3
-        # end idioma 
+        # Idioma
+        idiomas_form = [
+            (idioma1, nivel_fluencia1),
+            (idioma2, nivel_fluencia2),
+            (idioma3, nivel_fluencia3),
+        ]
+        idiomas_vistos = set()
+        usuario.idiomas.all().delete()
+        for language, fluency in idiomas_form:
+            if not language or language in idiomas_vistos:
+                continue
+            idiomas_vistos.add(language)
+            Idioma.objects.create(usuario=usuario, language=language, fluency=fluency)
+        # end idioma
         # ----------
 
         # Competencias
