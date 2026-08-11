@@ -137,7 +137,7 @@ def cadastro_usuario(request):
         cidade_id = request.POST.get('cidade')
         if not cidade_id:
             messages.error(request, 'Selecione uma cidade.')
-        return redirect('core:cadastro_usuario')
+            return redirect('core:cadastro_usuario')
         estado_id = request.POST.get('estado')
 
         if not Estado.objects.filter(id=estado_id).exists():
