@@ -1,3 +1,5 @@
+import os
+
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.core.validators import FileExtensionValidator
@@ -287,26 +289,38 @@ class Usuario(models.Model):
         verbose_name = 'Usuário'
         verbose_name_plural = 'Usuários'
 
+class LimitedModel(models.Model):
 
-class ExperienciaProfissional(models.Model):
+    def __init__(self, *args, max_instances=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.max_instances = max_instances if max_instances is not None else int(os.getenv("DEFAULT_INSTANCES", 3))
+
+    class Meta:
+        abstract = True
+
+    def clean(self):
+        if self.usuario_id:
+            model_class = self.__class__
+            qtd = model_class.objects.filter(usuario=self.usuario).exclude(pk=self.pk).count()
+            if qtd >= self.max_instances:
+                raise ValidationError(f'Usuário pode ter no máximo {self.max_instances} {model_class.__name__.lower()}s.')
+
+class ExperienciaProfissional(LimitedModel):
+
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='experiencias')
     nome_empresa = models.CharField(max_length=255, blank=True, null=True)
     cargo = models.CharField(max_length=255, blank=True, null=True)
     data_inicio = models.DateField(blank=True, null=True)
     data_fim = models.DateField(blank=True, null=True)  
     
+    def __init__(self, *args, **kwargs):
+        super().__init__(max_instances=int(os.getenv("EXPERIENCIA_PROFISSIONAL_INSTANCES",3)), *args, **kwargs)
+
     def __str__(self):
         return f"{self.cargo} - {self.nome_empresa}"
-    
 
-    def clean(self):
-        if self.usuario_id:
-            qtd = ExperienciaProfissional.objects.filter(usuario=self.usuario).exclude(pk=self.pk).count()
-            if qtd >= 3:
-                raise ValidationError('Usuário pode ter no máximo 3 experiências profissionais.')
-            
 
-class CursoExtraCurricular(models.Model):
+class CursoExtraCurricular(LimitedModel):
     usuario = models.ForeignKey(
         Usuario, on_delete=models.CASCADE, related_name='cursos_extras')
     nome_curso = models.CharField(max_length=255, blank=True, null=True)
@@ -315,26 +329,27 @@ class CursoExtraCurricular(models.Model):
     data_conclusao = models.DateField(blank=True, null=True)
     link_certificado = models.URLField(blank=True, null=True)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(max_instances=int(os.getenv("CURSO_EXTRA_CURRICULAR_INSTANCES",3)), *args, **kwargs)
+
     def __str__(self):
         return "\n".join([
             self.nome_curso
         ])
 
-class Idioma(models.Model):
+
+class Idioma(LimitedModel):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='idiomas')
     language = models.CharField(max_length=100, choices=LANGUAGE_CHOICES)
     fluency = models.CharField(max_length=100, choices=LANGUAGE_FLUENCY, blank=True, null=True)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(max_instances=int(os.getenv("IDIOMA_INSTANCES",3)), *args, **kwargs)
 
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['usuario', 'language'], name='unique_idioma_por_usuario')
         ]
-
-    def clean(self):
-        if self.usuario_id:
-            qtd = Idioma.objects.filter(usuario=self.usuario).exclude(pk=self.pk).count()
-            if qtd >= 3:
-                raise ValidationError('Usuário pode ter no máximo 3 idiomas.')
 
     def __str__(self):
         return f"{self.language} ({self.fluency})"
