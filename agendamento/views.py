@@ -61,7 +61,11 @@ def realizar_reserva(request):
         )
 
         nome_amigavel_sala = nova_reserva.get_sala_display()
-        titulo_evento = f"{nome_amigavel_sala} - {request.user.nome}"
+
+        # Correção segura para chamar o nome do usuário (trata caso 'nome' não exista no User)
+        nome_usuario = getattr(request.user, 'nome',
+                               request.user.first_name or request.user.email)
+        titulo_evento = f"{nome_amigavel_sala} - {nome_usuario}"
 
         # Dicionário auxiliar para carregar os dados extras ao Service
         dados_extras = {
@@ -69,29 +73,34 @@ def realizar_reserva(request):
             "quantidade_pessoas": quantidade_pessoas,
             "finalidade": finalidade,
             "equipamentos": equipamentos,
-            "observacoes": observacoes
+            "observacoes": observacoes,
+            "status_checkin": "Pendente"
         }
 
         google_id = None
+        linha_planilha = None
         try:
-            google_id = GoogleAgendaService.enviar_para_google(
+            # Descompacta a tupla retornada (event_id, linha_planilha)
+            google_id, linha_planilha = GoogleAgendaService.enviar_para_google(
                 nome_sala=sala,
                 titulo=titulo_evento,
-                data_inicio=inicio.isoformat(),
-                data_fim=fim.isoformat(),
+                data_inicio=inicio,
+                data_fim=fim,
                 email_cliente=request.user.email,
-                dados_extras=dados_extras  # Envia os dados extras empacotados
+                dados_extras=dados_extras
             )
         except Exception as e:
             print(f"Erro de comunicação capturado na View: {e}")
-            google_id = None
+            google_id, linha_planilha = None, None
 
         if not google_id:
             messages.error(
                 request, "Não foi possível concluir o agendamento devido a uma falha na integração com o Google Calendar.")
             return redirect('realizar_reserva')
 
+        # Salva as chaves de integração
         nova_reserva.google_event_id = google_id
+        nova_reserva.linha_planilha = linha_planilha
         nova_reserva.save()
 
         messages.success(
@@ -124,6 +133,8 @@ def api_reservas_calendario(request):
     eventos_json = []
 
     for r in reservas:
+        nome_usuario = getattr(
+            r.usuario, 'nome', r.usuario.first_name or r.usuario.email)
         eventos_json.append({
             'id': r.id,
             'title': f"{r.get_sala_display()}",
@@ -134,7 +145,7 @@ def api_reservas_calendario(request):
             # PASSAMOS OS DADOS EXTRA AQUI DENTRO:
             'extendedProps': {
                 'sala': r.get_sala_display(),
-                'usuario_nome': r.usuario.nome,
+                'usuario_nome': nome_usuario,
                 'usuario_email': r.usuario.email,
                 'horario_str': f"{r.inicio.strftime('%H:%M')} às {r.fim.strftime('%H:%M')}"
             }
@@ -190,17 +201,33 @@ def editar_reserva(request, reserva_id):
             return redirect('editar_reserva', reserva_id=reserva.id)
 
         # ATUALIZAÇÃO GOOGLE AGENDA
-        titulo_evento = f"Sala {sala} - {reserva.usuario.nome} (Atualizado)"
+        nome_usuario = getattr(
+            reserva.usuario, 'nome', reserva.usuario.first_name or reserva.usuario.email)
+        titulo_evento = f"Sala {sala} - {nome_usuario} (Atualizado)"
+
+        # Mantém os dados extras atuais durante a edição
+        dados_extras = {
+            "empresa_projeto": reserva.empresa_projeto,
+            "quantidade_pessoas": reserva.quantidade_pessoas,
+            "finalidade": reserva.finalidade,
+            "equipamentos": reserva.equipamentos,
+            "observacoes": reserva.observacoes,
+            "status_checkin": reserva.status_checkin
+        }
+
         try:
-            novo_google_id = GoogleAgendaService.enviar_para_google(
-                sala=sala,
+            # Descompacta a tupla retornada e corrige o parâmetro 'nome_sala'
+            novo_google_id, nova_linha = GoogleAgendaService.enviar_para_google(
+                nome_sala=sala,
                 titulo=titulo_evento,
-                data_inicio=inicio.isoformat(),
-                data_fim=fim.isoformat(),
-                email_cliente=reserva.usuario.email
+                data_inicio=inicio,
+                data_fim=fim,
+                email_cliente=reserva.usuario.email,
+                dados_extras=dados_extras
             )
             if novo_google_id:
                 reserva.google_event_id = novo_google_id
+                reserva.linha_planilha = nova_linha
         except Exception:
             messages.warning(
                 request, "Alterações salvas localmente, mas falhou a atualização no Google Calendar.")
@@ -213,7 +240,7 @@ def editar_reserva(request, reserva_id):
 
         # REDIRECIONAMENTO INTELIGENTE: Devolve o admin à central de gerenciamento
         messages.success(
-            request, f"Agendamento de {reserva.usuario.nome} modificado com sucesso!")
+            request, f"Agendamento modificado com sucesso!")
         return redirect('minhas_reservas')
 
     # Método GET
@@ -239,6 +266,14 @@ def excluir_reserva(request, reserva_id):
     # Executa a exclusão lógica alterando o status para cancelada
     reserva.status = 'cancelada'
     reserva.save()
+
+    # Se a reserva já estiver na planilha, atualiza a cor/status lá também
+    if reserva.linha_planilha:
+        GoogleAgendaService.atualizar_checkin_google(
+            linha_planilha=reserva.linha_planilha,
+            status_checkin="CANCELADA",
+            hora_checkin=""
+        )
 
     # REDIRECIONAMENTO INTELIGENTE: Atualiza a lista removendo o item imediatamente
     messages.success(request, "Agendamento cancelado com sucesso!")

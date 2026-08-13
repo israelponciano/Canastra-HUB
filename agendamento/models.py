@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.core.exceptions import ValidationError
 
 
 class Reserva(models.Model):
@@ -22,7 +23,7 @@ class Reserva(models.Model):
     inicio = models.DateTimeField(verbose_name="Data/Hora de Início")
     fim = models.DateTimeField(verbose_name="Data/Hora de Término")
 
-    # --- NOVOS CAMPOS EXIGIDOS PELA PLANILHA ---
+    # Campos exigidos pela planilha
     empresa_projeto = models.CharField(
         max_length=150, blank=True, null=True, default="Não informado", verbose_name="Empresa/Projeto")
     quantidade_pessoas = models.PositiveIntegerField(
@@ -34,14 +35,18 @@ class Reserva(models.Model):
     observacoes = models.TextField(
         blank=True, null=True, default="Não informado", verbose_name="Observações")
 
-    # Status de Check-in para controle futuro na planilha
+    # Status e horário de Check-in
     status_checkin = models.CharField(
         max_length=30, default="Pendente", verbose_name="Status Check-in")
     hora_checkin = models.DateTimeField(
         blank=True, null=True, verbose_name="Hora Check-in")
 
+    # Integração Google Sheets / Calendar
     google_event_id = models.CharField(
         max_length=255, blank=True, null=True, verbose_name="ID do Evento no Google")
+    linha_planilha = models.IntegerField(
+        blank=True, null=True, verbose_name="Linha na Planilha Google")
+
     status = models.CharField(
         max_length=15, choices=STATUS_CHOICES, default='confirmada')
     criado_em = models.DateTimeField(auto_now_add=True)
@@ -51,5 +56,11 @@ class Reserva(models.Model):
         verbose_name_plural = "Reservas"
         ordering = ['-inicio']
 
+    def clean(self):
+        """Validação no modelo para garantir coerência nas datas."""
+        if self.inicio and self.fim and self.inicio >= self.fim:
+            raise ValidationError(
+                "A data/hora de término deve ser posterior à data/hora de início.")
+
     def __str__(self):
-        return f"{self.usuario.email} - {self.get_sala_display()} ({self.inicio.strftime('%d/%m/%Y %H:%M')})"
+        return f"{self.usuario.get_full_name() or self.usuario.email} - {self.get_sala_display()} ({self.inicio.strftime('%d/%m/%Y %H:%M')})"

@@ -15,8 +15,8 @@ class GoogleAgendaService:
         Interpreta o nome ou identificador da sala vindo do Django,
         mapeia para o ID esperado pelo Google Apps Script e repassa os
         dados adicionais necessários para preenchimento dos logs na planilha.
+        Retorna uma tupla (event_id, linha_planilha) ou (None, None) em caso de erro.
         """
-        # Limpa e formata o texto para bater com as chaves do dicionário do Google
         sala_higienizada = str(nome_sala).strip().lower()
 
         sala_id_mapeado = None
@@ -32,57 +32,107 @@ class GoogleAgendaService:
         if not sala_id_mapeado:
             print(
                 f"⚠️ Alerta: A sala '{nome_sala}' não possui um mapeamento correspondente no Service.")
-            return None
+            return None, None
 
-        # Garante que dados_extras seja um dicionário mesmo se vier vazio
         if dados_extras is None:
             dados_extras = {}
 
-        # Payload completo: Dados estruturais do Calendar + Metadados do Sheets
+        # Converte datas/datetimes em string ISO se necessário
+        inicio_str = data_inicio.isoformat() if hasattr(
+            data_inicio, 'isoformat') else str(data_inicio)
+        fim_str = data_fim.isoformat() if hasattr(
+            data_fim, 'isoformat') else str(data_fim)
+
         payload = {
             "token": cls.TOKEN,
             "sala_id": sala_id_mapeado,
             "titulo": titulo,
-            "inicio": data_inicio,
-            "fim": data_fim,
+            "inicio": inicio_str,
+            "fim": fim_str,
             "email_cliente": email_cliente,
             "empresa_projeto": dados_extras.get("empresa_projeto", "Não informado"),
             "quantidade_pessoas": dados_extras.get("quantidade_pessoas", 0),
             "finalidade": dados_extras.get("finalidade", "Não informado"),
             "equipamentos": dados_extras.get("equipamentos", "Não informado"),
-            "observacoes": dados_extras.get("observacoes", "Não informado")
+            "observacoes": dados_extras.get("observacoes", "Não informado"),
+            "status_checkin": dados_extras.get("status_checkin", "Pendente"),
+            "hora_checkin": dados_extras.get("hora_checkin", "")
         }
 
-        headers = {
-            'Content-Type': 'application/json'
-        }
+        headers = {'Content-Type': 'application/json'}
 
         try:
             resposta = requests.post(
                 cls.URL_WEB_APP,
                 data=json.dumps(payload),
                 headers=headers,
-                allow_redirects=True,  # Garante que o Python siga o redirect 302 do Google
+                allow_redirects=True,
                 timeout=15
             )
 
-            # Voltam aqui todos os tratamentos minuciosos originais:
             if resposta.status_code == 200:
                 dados_retorno = resposta.json()
 
                 if dados_retorno.get("status") == "sucesso":
+                    event_id = dados_retorno.get('event_id')
+                    linha_planilha = dados_retorno.get('linha_planilha')
                     print(
-                        f"✅ Sincronizado no Google Calendar e Planilha com sucesso! Event ID: {dados_retorno.get('event_id')}")
-                    return dados_retorno.get("event_id")
+                        f"✅ Sincronizado no Google! Event ID: {event_id} | Linha na Planilha: {linha_planilha}")
+                    return event_id, linha_planilha
                 else:
                     print(
                         f"❌ Erro retornado pelo script do Google: {dados_retorno.get('message')}")
-                    return None
+                    return None, None
             else:
                 print(
                     f"❌ Falha de comunicação HTTP com o Google. Status: {resposta.status_code}")
-                return None
+                return None, None
 
         except Exception as erro:
             print(f"💥 Erro crítico ao chamar o service do Google: {erro}")
-            return None
+            return None, None
+
+    @classmethod
+    def atualizar_checkin_google(cls, linha_planilha, status_checkin, hora_checkin=""):
+        """
+        Envia comando para o Apps Script atualizar o Check-in e pintar a célula na planilha.
+        """
+        if not linha_planilha:
+            print(
+                "⚠️ Impossível atualizar check-in na planilha: linha_planilha não informada.")
+            return False
+
+        hora_str = hora_checkin.strftime(
+            "%d/%m/%Y %H:%M") if hasattr(hora_checkin, 'strftime') else str(hora_checkin)
+
+        payload = {
+            "token": cls.TOKEN,
+            "acao": "atualizar_checkin",
+            "linha_planilha": linha_planilha,
+            "status_checkin": status_checkin,
+            "hora_checkin": hora_str
+        }
+
+        headers = {'Content-Type': 'application/json'}
+
+        try:
+            resposta = requests.post(
+                cls.URL_WEB_APP,
+                data=json.dumps(payload),
+                headers=headers,
+                allow_redirects=True,
+                timeout=10
+            )
+
+            if resposta.status_code == 200 and resposta.json().get("status") == "sucesso":
+                print(
+                    f"🎨 Check-in atualizado na linha {linha_planilha} com status '{status_checkin}'")
+                return True
+            else:
+                print(
+                    f"❌ Falha ao atualizar check-in na planilha: {resposta.text}")
+                return False
+
+        except Exception as erro:
+            print(f"💥 Erro ao atualizar check-in no Google: {erro}")
+            return False
