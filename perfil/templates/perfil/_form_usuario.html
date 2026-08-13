@@ -224,6 +224,13 @@
 
         </div>
 
+        <div class="col-12 d-flex justify-content-end">
+          <button type="button" class="btn btn-outline-danger" onclick="removeItem(this)">
+            <i class="bi bi-trash"></i>
+            Remover
+          </button>
+        </div>
+
       </div>
 
     </div>
@@ -259,7 +266,7 @@
 
       </div>
 
-      <button type="button" class="btn-add">
+      <button type="button" class="btn-add" onclick="addItem('exp')">
 
         <i class="bi bi-plus-lg"></i>
 
@@ -312,6 +319,13 @@
 
           </div>
 
+        </div>
+
+        <div class="col-12 d-flex justify-content-end">
+          <button type="button" class="btn btn-outline-danger" onclick="removeItem(this)">
+            <i class="bi bi-trash"></i>
+            Remover
+          </button>
         </div>
 
       </div>
@@ -380,6 +394,13 @@
         <div class="col-md-6">
           <label class="custom-label">Data Conclusão</label>
           <input type="date" name="data_conclusao{{ i }}" class="form-control custom-input ">
+        </div>
+
+        <div class="col-12 d-flex justify-content-end">
+          <button type="button" class="btn btn-outline-danger" onclick="removeItem(this)">
+            <i class="bi bi-trash"></i>
+            Remover
+          </button>
         </div>
 
       </div>
@@ -451,9 +472,10 @@
           </select>
         </div>
 
-        <div class="col-md-2 d-flex align-items-end">
-          <button type="button" class="btn btn-outline-danger w-100" onclick="removeItem(this)">
+        <div class="col-12 d-flex justify-content-end">
+          <button type="button" class="btn btn-outline-danger" onclick="removeItem(this)">
             <i class="bi bi-trash"></i>
+            Remover
           </button>
         </div>
 
@@ -462,6 +484,63 @@
     </div>
     {% endwith %}
     {% endfor %}
+
+  </div>
+
+</div>
+
+<!-- ═══════════ ACESSIBILIDADE ═══════════ -->
+
+<div class="card form-card mb-4">
+  <div class="card-body p-4 p-lg-5">
+
+    <div class="section-header">
+
+      <div>
+
+        <span class="section-badge">
+          Diferenciais
+        </span>
+
+        <h5 class="section-title">
+          <i class="bi bi-universal-access"></i>
+          Acessibilidade
+        </h5>
+
+        <p class="section-subtitle">
+          Informe se você é pessoa com deficiência e necessidades de adaptação.
+        </p>
+
+      </div>
+
+    </div>
+
+    <div class="row g-4">
+
+      <div class="col-12">
+        <div class="form-check">
+          <input type="checkbox" class="form-check-input" id="id-pessoa-deficiencia"
+                 name="pessoa_com_deficiencia"
+                 {% if usuario.acessibilidade.pessoa_com_deficiencia %}checked{% endif %}>
+          <label class="form-check-label custom-label" for="id-pessoa-deficiencia">
+            Sou pessoa com deficiência
+          </label>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <label class="custom-label">Tipo de deficiência</label>
+        <input type="text" name="tipo_deficiencia" class="form-control custom-input"
+               value="{{ usuario.acessibilidade.tipo_deficiencia|default:'' }}">
+      </div>
+
+      <div class="col-md-6">
+        <label class="custom-label">Necessidade de adaptação</label>
+        <input type="text" name="necessidade_adaptacao" class="form-control custom-input"
+               value="{{ usuario.acessibilidade.necessidade_adaptacao|default:'' }}">
+      </div>
+
+    </div>
 
   </div>
 

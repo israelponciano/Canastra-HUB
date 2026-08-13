@@ -18,30 +18,31 @@ class Command(BaseCommand):
 
         for estado_data in dados['estados']:
             try:
-                estado = Estado.objects.create(
+                estado, created = Estado.objects.get_or_create(
                     nome_estado=estado_data['nome'],
                     sigla_estado=estado_data['sigla']
                 )
                 cidades_objs = []
                 for nome_cidade in estado_data['cidades']:
-                    cidade = Cidade(
+                    cidade, cidade_created = Cidade.objects.get_or_create(
                         nome_cidade=nome_cidade,
                         estado_cidade=estado
                     )
-                    cidades_objs.append(cidade)
-                Cidade.objects.bulk_create(cidades_objs)
+                    if cidade_created:
+                        cidades_objs.append(cidade)
                 print(
-                    f"Inserido estado {estado.nome_estado} com {len(cidades_objs)} cidades.")
+                    f"Inserido estado {estado.nome_estado} com {len(cidades_objs)} cidades novas.")
             except Exception as e:
                 print(f"Erro ao inserir {estado_data['nome']}: {e}")
 
         caminho_hub1_imagem = settings.BASE_DIR/'media'/'fotos_hub'/'agro_hub.jpg'
-        with open(caminho_hub1_imagem, 'rb') as f:
-            hub1 = Hub.objects.create(
-                nome_hub='Agro',
-                descricao_hub='Agro é melhor com o pessoal da canastra',
-                foto_hub = File(f, name=caminho_hub1_imagem.name) # Use o wrapper File
-            )        
+        hub1, created_hub1 = Hub.objects.get_or_create(
+            nome_hub='Agro',
+            defaults={'descricao_hub': 'Agro é melhor com o pessoal da canastra'}
+        )
+        if created_hub1 and caminho_hub1_imagem.exists():
+            with open(caminho_hub1_imagem, 'rb') as f:
+                hub1.foto_hub.save(caminho_hub1_imagem.name, File(f), save=True)
         # hub2 = Hub.objects.create(
         #     nome_hub='Apicultura',
         #     descricao_hub='Apicultura é melhor com o pessoal da canastra'
@@ -52,103 +53,138 @@ class Command(BaseCommand):
         # )
 
         caminho_hub4_imagem = settings.BASE_DIR/'media'/'fotos_hub'/'milho_hub.jpg'
-        with open(caminho_hub4_imagem, 'rb') as f:
-            hub4 = Hub.objects.create(
-                nome_hub='Milho',
-                descricao_hub='Milho é melhor com o pessoal da canastra',
-                foto_hub = File(f, name=caminho_hub4_imagem.name)
-            )
+        hub4, created_hub4 = Hub.objects.get_or_create(
+            nome_hub='Milho',
+            defaults={'descricao_hub': 'Milho é melhor com o pessoal da canastra'}
+        )
+        if created_hub4 and caminho_hub4_imagem.exists():
+            with open(caminho_hub4_imagem, 'rb') as f:
+                hub4.foto_hub.save(caminho_hub4_imagem.name, File(f), save=True)
         
         # hub5 = Hub.objects.create(
         #     nome_hub='Queijo',
         #     descricao_hub='Queijo é melhor com o pessoal da canastra'
         # )
         caminho_hub6_imagem = settings.BASE_DIR/'media'/'fotos_hub'/'graos_hub.jpg'
-        with open(caminho_hub6_imagem, 'rb') as f:
-            hub6 = Hub.objects.create(
-                nome_hub='Grãos',
-                descricao_hub='Grãos é melhor com o pessoal da canastra',
-                foto_hub = File(f, name=caminho_hub6_imagem.name) 
-            )
-        
-        user = UsuarioBase.objects.create_user(
-            email='usuario@teste',
-            password='123',
-            nome='Cleiton Romario Santos',
-            tipo='usuario'
+        hub6, created_hub6 = Hub.objects.get_or_create(
+            nome_hub='Grãos',
+            defaults={'descricao_hub': 'Grãos é melhor com o pessoal da canastra'}
         )
-        cidade = Cidade.objects.get(nome_cidade="Arcos")
-        usuario = Usuario.objects.create(
+        if created_hub6 and caminho_hub6_imagem.exists():
+            with open(caminho_hub6_imagem, 'rb') as f:
+                hub6.foto_hub.save(caminho_hub6_imagem.name, File(f), save=True)
+        
+        user = UsuarioBase.objects.filter(email='usuario@teste').first()
+        if not user:
+            user = UsuarioBase.objects.create_user(
+                email='usuario@teste',
+                password='123',
+                nome='Cleiton Romario Santos',
+                tipo='usuario'
+            )
+        cidade = Cidade.objects.get(nome_cidade='Arcos')
+        estado = cidade.estado_cidade
+        usuario, created_usuario = Usuario.objects.get_or_create(
             user=user,
-            nome_social='Cleiton',
-            data_nascimento='2002-07-11',
-            genero='masculino',
-            estado_civil='solteiro',
-            nacionalidade='brasileiro',
-            telefone='(37) 99838-1976',
+            defaults={
+                'nome_social': 'Cleiton',
+                'data_nascimento': '2002-07-11',
+                'genero': 'masculino',
+                'estado_civil': 'solteiro',
+                'nacionalidade': 'brasileiro',
+                'telefone': '(37) 99838-1976',
+            }
+        )
+        endereco, created_endereco = Endereco.objects.get_or_create(
             cep='398000000',
             rua='rua teste',
-            numero='981',
             bairro='teste',
-            cidade_id=cidade.id,
-            estado_id=cidade.estado_cidade.id,
-            complemento='complemtento blablabla',
-            pretensao_salarial=15.00
+            numero='981',
+            complemento='complemento blablabla',
+            cidade=cidade,
+            estado=estado,
         )
+        usuario.endereco = endereco
+        usuario.save()
+        objetivo, created_objetivo = ProfessionalTarget.objects.get_or_create(
+            defaults={'pretensao_salarial': 15.00}
+        )
+        if created_objetivo:
+            objetivo.cargo_pretendido = 'Analista'
+            objetivo.area_interesse = 'Agro'
+            objetivo.save()
+        usuario.objetivo_profissional = objetivo
+        usuario.save()
+        social, created_social = SocialMedia.objects.get_or_create(defaults={})
+        usuario.social_media = social
+        usuario.save()
+        Idioma.objects.filter(usuario=usuario).delete()
         Idioma.objects.bulk_create([
             Idioma(usuario=usuario, language='Inglês', fluency='Avançado'),
             Idioma(usuario=usuario, language='Espanhol', fluency='Básico'),
         ])
 
-        user1 = UsuarioBase.objects.create_user(
-            email='usuario1@teste',
-            password='123',
-            nome='Romario Santos',
-            tipo='usuario'
-        )
-        cidade1 = Cidade.objects.get(nome_cidade="Arcos")
-        usuario1 = Usuario.objects.create(
+        user1 = UsuarioBase.objects.filter(email='usuario1@teste').first()
+        if not user1:
+            user1 = UsuarioBase.objects.create_user(
+                email='usuario1@teste',
+                password='123',
+                nome='Romario Santos',
+                tipo='usuario'
+            )
+        usuario1, created_usuario1 = Usuario.objects.get_or_create(
             user=user1,
-            nome_social='Cleiton',
-            data_nascimento='2002-07-11',
-            genero='masculino',
-            estado_civil='solteiro',
-            nacionalidade='brasileiro',
-            telefone='(37) 99838-1976',
-            cep='398000000',
-            rua='rua teste',
-            numero='981',
-            bairro='teste',
-            cidade_id=cidade.id,
-            estado_id=cidade.estado_cidade.id,
-            complemento='complemtento blablabla',
-            pretensao_salarial=15.00
+            defaults={
+                'nome_social': 'Romario',
+                'data_nascimento': '2002-07-11',
+                'genero': 'masculino',
+                'estado_civil': 'solteiro',
+                'nacionalidade': 'brasileiro',
+                'telefone': '(37) 99838-1976',
+            }
         )
+        endereco1, created_endereco1 = Endereco.objects.get_or_create(
+            cep='398000000',
+            rua='rua teste 2',
+            bairro='teste',
+            numero='982',
+            complemento='complemento blablabla',
+            cidade=cidade,
+            estado=estado,
+        )
+        usuario1.endereco = endereco1
+        usuario1.save()
+        Idioma.objects.filter(usuario=usuario1).delete()
         Idioma.objects.bulk_create([
             Idioma(usuario=usuario1, language='Inglês', fluency='Intermediário'),
         ])
 
-        user2 = UsuarioBase.objects.create_user(
-            email='empresa@teste',
-            password='123',
-            nome='Roberta Cafes',
-            tipo='empresa'
-        )
+        user2 = UsuarioBase.objects.filter(email='empresa@teste').first()
+        if not user2:
+            user2 = UsuarioBase.objects.create_user(
+                email='empresa@teste',
+                password='123',
+                nome='Roberta Cafes',
+                tipo='empresa'
+            )
 
-        empresa = Empresa.objects.create(user=user2,
-                                         nomefantasia='Roberta Cafés',
-                                         tipo_empresa='Cafecultura',
-                                         razao_social='naoseioqeisso',
-                                         cnpj='11111111111111',
-                                         telefone='44324334243',
-                                         rua='Rua jose da silva',
-                                         cep='3232132132',
-                                         numero='443442',
-                                         complemento='embaixo da casa 11',
-                                         cidade_id=cidade.id,
-                                         estado_id=cidade.estado_cidade.id,
-                                         segmento="cafe"
-                                         )
+        empresa, created_empresa = Empresa.objects.get_or_create(
+            user=user2,
+            defaults={
+                'nomefantasia': 'Roberta Cafés',
+                'tipo_empresa': 'Cafecultura',
+                'razao_social': 'naoseioqeisso',
+                'cnpj': '11111111111111',
+                'telefone': '44324334243',
+                'rua': 'Rua jose da silva',
+                'cep': '3232132132',
+                'numero': '443442',
+                'complemento': 'embaixo da casa 11',
+                'cidade': cidade,
+                'estado': estado,
+                'segmento': 'cafe',
+            }
+        )
         user3 = UsuarioBase.objects.create_superuser(
             email='admin@teste',
             password='123',
