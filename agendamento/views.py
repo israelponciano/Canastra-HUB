@@ -27,7 +27,7 @@ def realizar_reserva(request):
         if not data_str or not bloco_str:
             messages.error(
                 request, "Por favor, preencha todos os campos do formulário.")
-            return redirect('realizar_reserva')
+            return redirect('agendamento:realizar_reserva')
 
         try:
             hora_inicio_str, hora_fim_str = bloco_str.split('-')
@@ -38,14 +38,14 @@ def realizar_reserva(request):
         except Exception:
             messages.error(
                 request, "Erro ao processar o bloco de horário selecionado.")
-            return redirect('realizar_reserva')
+            return redirect('agendamento:realizar_reserva')
 
         conflito = Reserva.objects.filter(
             sala=sala, status='confirmada', inicio__lt=fim, fim__gt=inicio).exists()
         if conflito:
             messages.error(
                 request, "Esta sala já se encontra reservada para o período selecionado.")
-            return redirect('realizar_reserva')
+            return redirect('agendamento:realizar_reserva')
 
         # Criação na memória com os novos dados locais salvos
         nova_reserva = Reserva(
@@ -97,7 +97,7 @@ def realizar_reserva(request):
         if not google_id:
             messages.error(
                 request, "Não foi possível concluir o agendamento devido a uma falha na integração com o Google Calendar.")
-            return redirect('realizar_reserva')
+            return redirect('agendamento:realizar_reserva')
 
         # Salva as chaves de integração
         nova_reserva.google_event_id = google_id
@@ -106,7 +106,7 @@ def realizar_reserva(request):
 
         messages.success(
             request, "Agendamento realizado e sincronizado com o Google com sucesso!")
-        return redirect('minhas_reservas')
+        return redirect('agendamento:minhas_reservas')
 
     return render(request, 'agendamento/agendar.html')
 
@@ -157,7 +157,7 @@ def editar_reserva(request, reserva_id):
     if tipo_perfil != 'admin':
         messages.error(
             request, "Acesso negado. Apenas administradores podem editar agendamentos.")
-        return redirect('minhas_reservas')
+        return redirect('agendamento:minhas_reservas')
 
     reserva = get_object_or_404(Reserva, id=reserva_id)
 
@@ -169,7 +169,7 @@ def editar_reserva(request, reserva_id):
         if not data_str or not bloco_str:
             messages.error(
                 request, "Por favor, preencha todos os campos obrigatórios.")
-            return redirect('editar_reserva', reserva_id=reserva.id)
+            return redirect('agendamento:editar_reserva', reserva_id=reserva.id)
 
         try:
             hora_inicio_str, hora_fim_str = bloco_str.split('-')
@@ -181,7 +181,7 @@ def editar_reserva(request, reserva_id):
         except Exception:
             messages.error(
                 request, "Erro na leitura dos horários selecionados.")
-            return redirect('editar_reserva', reserva_id=reserva.id)
+            return redirect('agendamento:editar_reserva', reserva_id=reserva.id)
 
         conflito = Reserva.objects.filter(
             sala=sala,
@@ -193,7 +193,7 @@ def editar_reserva(request, reserva_id):
         if conflito:
             messages.error(
                 request, "Esta sala já está preenchida para este horário por outro utilizador.")
-            return redirect('editar_reserva', reserva_id=reserva.id)
+            return redirect('agendamento:editar_reserva', reserva_id=reserva.id)
 
         nome_usuario = getattr(
             reserva.usuario, 'nome', reserva.usuario.nome or reserva.usuario.email)
@@ -231,7 +231,7 @@ def editar_reserva(request, reserva_id):
 
         messages.success(
             request, "Agendamento modificado com sucesso!")
-        return redirect('minhas_reservas')
+        return redirect('agendamento:minhas_reservas')
 
     context = {
         'reserva': reserva,
@@ -247,7 +247,7 @@ def excluir_reserva(request, reserva_id):
     if tipo_perfil != 'admin':
         messages.error(
             request, "Acesso negado. Apenas administradores podem cancelar agendamentos.")
-        return redirect('minhas_reservas')
+        return redirect('agendamento:minhas_reservas')
 
     reserva = get_object_or_404(Reserva, id=reserva_id)
 
@@ -262,7 +262,7 @@ def excluir_reserva(request, reserva_id):
         )
 
     messages.success(request, "Agendamento cancelado com sucesso!")
-    return redirect('minhas_reservas')
+    return redirect('agendamento:minhas_reservas')
 
 
 @login_required
@@ -283,7 +283,7 @@ def gerador_qrcodes(request):
     ]
 
     for sala in salas:
-        url_checkin = f"{protocolo}://{host_atual}/checkin/{sala['chave']}/"
+        url_checkin = f"{protocolo}://{host_atual}/agendamento/checkin/{sala['chave']}/"
         sala['qrcode_url'] = f"https://quickchart.io/qr?text={url_checkin}&size=300"
         sala['full_url'] = url_checkin
 
@@ -292,12 +292,6 @@ def gerador_qrcodes(request):
 
 @login_required
 def checkin_qrcode(request, sala_chave):
-    """
-    Processa a leitura do QR Code da sala:
-    1. Se houver reserva confirmada do usuário no horário atual -> Faz o Check-in.
-    2. Se a sala estiver ocupada por outra pessoa -> Bloqueia.
-    3. Se a sala estiver totalmente vaga -> Cria reserva automática de Uso Direto (1 hora).
-    """
     agora = timezone.now()
 
     # Busca agendamento ativo para a sala no horário corrente
@@ -309,29 +303,41 @@ def checkin_qrcode(request, sala_chave):
     ).first()
 
     if reserva_atual:
-        # CENÁRIO 1: O usuário logado é o titular do agendamento
+        # CENÁRIO 1: Usuário logado é o titular do agendamento
         if reserva_atual.usuario == request.user:
-            reserva_atual.status_checkin = 'CONFIRMADO'
-            reserva_atual.hora_checkin = agora
-            reserva_atual.save()
+            # Se for o POST (clique no botão 'Confirmar Check-in')
+            if request.method == 'POST':
+                reserva_atual.status_checkin = 'CONFIRMADO'
+                reserva_atual.hora_checkin = agora
+                reserva_atual.save()
 
-            if reserva_atual.linha_planilha:
-                GoogleAgendaService.atualizar_checkin_google(
-                    linha_planilha=reserva_atual.linha_planilha,
-                    status_checkin='CONFIRMADO',
-                    hora_checkin=agora.strftime('%H:%M:%S')
-                )
+                if reserva_atual.linha_planilha:
+                    GoogleAgendaService.atualizar_checkin_google(
+                        linha_planilha=reserva_atual.linha_planilha,
+                        status_checkin='CONFIRMADO',
+                        hora_checkin=agora.strftime('%H:%M:%S')
+                    )
 
+                contexto = {
+                    'status': 'sucesso',
+                    'titulo': 'Check-in Confirmado! 🟢',
+                    'mensagem': f'Seu check-in na sala {reserva_atual.get_sala_display()} foi registrado com sucesso.',
+                    'cor': 'success',
+                    'reserva': reserva_atual
+                }
+                return render(request, 'agendamento/checkin_resultado.html', contexto)
+
+            # Se for GET: Exibe a tela pedindo confirmação do Check-in
             contexto = {
-                'status': 'sucesso',
-                'titulo': 'Check-in Confirmado! 🟢',
-                'mensagem': f'Seu check-in na sala {reserva_atual.get_sala_display()} foi registrado com sucesso.',
-                'cor': 'success',
+                'status': 'confirmar_checkin',
+                'titulo': 'Confirmar Presença 📍',
+                'mensagem': f'Você possui um agendamento ativo para a sala {reserva_atual.get_sala_display()}. Clique abaixo para efetuar seu check-in.',
+                'cor': 'primary',
                 'reserva': reserva_atual
             }
             return render(request, 'agendamento/checkin_resultado.html', contexto)
 
-        # CENÁRIO 2: A sala está ocupada por outro usuário
+        # CENÁRIO 2: Sala ocupada por outro usuário
         else:
             nome_ocupante = getattr(
                 reserva_atual.usuario, 'nome',
@@ -348,67 +354,81 @@ def checkin_qrcode(request, sala_chave):
 
     # CENÁRIO 3: Sala VAGA -> Uso Direto (1 Hora)
     else:
-        inicio = agora
-        fim = agora + timedelta(hours=1)
+        # Se for o POST (clique no botão 'Reservar Horário')
+        if request.method == 'POST':
+            inicio = agora
+            fim = agora + timedelta(hours=1)
 
-        nova_reserva = Reserva(
-            usuario=request.user,
-            sala=sala_chave,
-            inicio=inicio,
-            fim=fim,
-            empresa_projeto="Uso Presencial Espontâneo",
-            quantidade_pessoas=1,
-            finalidade="Uso Direto via QR Code",
-            equipamentos="Uso geral do espaço",
-            observacoes="Iniciado via leitura presencial de QR Code.",
-            status='confirmada',
-            status_checkin='USO DIRETO',
-            hora_checkin=agora
-        )
-
-        nome_usuario = getattr(
-            request.user, 'nome', request.user.nome or request.user.email
-        )
-        nome_amigavel = nova_reserva.get_sala_display()
-        titulo_evento = f"{nome_amigavel} - {nome_usuario} (Uso Direto)"
-
-        dados_extras = {
-            "empresa_projeto": nova_reserva.empresa_projeto,
-            "quantidade_pessoas": 1,
-            "finalidade": nova_reserva.finalidade,
-            "equipamentos": nova_reserva.equipamentos,
-            "observacoes": nova_reserva.observacoes,
-            "status_checkin": "USO DIRETO"
-        }
-
-        try:
-            google_id, linha_planilha = GoogleAgendaService.enviar_para_google(
-                nome_sala=sala_chave,
-                titulo=titulo_evento,
-                data_inicio=inicio,
-                data_fim=fim,
-                email_cliente=request.user.email,
-                dados_extras=dados_extras
-            )
-            nova_reserva.google_event_id = google_id
-            nova_reserva.linha_planilha = linha_planilha
-        except Exception as e:
-            print(f"Erro ao registrar uso direto no Google: {e}")
-
-        nova_reserva.save()
-
-        if nova_reserva.linha_planilha:
-            GoogleAgendaService.atualizar_checkin_google(
-                linha_planilha=nova_reserva.linha_planilha,
+            nova_reserva = Reserva(
+                usuario=request.user,
+                sala=sala_chave,
+                inicio=inicio,
+                fim=fim,
+                empresa_projeto="Uso Presencial Espontâneo",
+                quantidade_pessoas=1,
+                finalidade="Uso Direto via QR Code",
+                equipamentos="Uso geral do espaço",
+                observacoes="Iniciado via leitura presencial de QR Code.",
+                status='confirmada',
                 status_checkin='USO DIRETO',
-                hora_checkin=agora.strftime('%H:%M:%S')
+                hora_checkin=agora
             )
 
+            nome_usuario = getattr(
+                request.user, 'nome', request.user.nome or request.user.email
+            )
+            nome_amigavel = nova_reserva.get_sala_display()
+            titulo_evento = f"{nome_amigavel} - {nome_usuario} (Uso Direto)"
+
+            dados_extras = {
+                "empresa_projeto": nova_reserva.empresa_projeto,
+                "quantidade_pessoas": 1,
+                "finalidade": nova_reserva.finalidade,
+                "equipamentos": nova_reserva.equipamentos,
+                "observacoes": nova_reserva.observacoes,
+                "status_checkin": "USO DIRETO"
+            }
+
+            try:
+                google_id, linha_planilha = GoogleAgendaService.enviar_para_google(
+                    nome_sala=sala_chave,
+                    titulo=titulo_evento,
+                    data_inicio=inicio,
+                    data_fim=fim,
+                    email_cliente=request.user.email,
+                    dados_extras=dados_extras
+                )
+                nova_reserva.google_event_id = google_id
+                nova_reserva.linha_planilha = linha_planilha
+            except Exception as e:
+                print(f"Erro ao registrar uso direto no Google: {e}")
+
+            nova_reserva.save()
+
+            if nova_reserva.linha_planilha:
+                GoogleAgendaService.atualizar_checkin_google(
+                    linha_planilha=nova_reserva.linha_planilha,
+                    status_checkin='USO DIRETO',
+                    hora_checkin=agora.strftime('%H:%M:%S')
+                )
+
+            contexto = {
+                'status': 'uso_direto',
+                'titulo': 'Uso Direto Iniciado 🟡',
+                'mensagem': f'Espaço livre! Você iniciou uma alocação de 1 hora no espaço {nome_amigavel} (válido até {fim.strftime("%H:%M")}).',
+                'cor': 'warning',
+                'reserva': nova_reserva
+            }
+            return render(request, 'agendamento/checkin_resultado.html', contexto)
+
+        # Se for GET: Exibe a tela pedindo para confirmar a reserva de 1h
+        nome_sala = dict(Reserva.SALAS_CHOICES).get(sala_chave, sala_chave) if hasattr(
+            Reserva, 'SALAS_CHOICES') else sala_chave
         contexto = {
-            'status': 'uso_direto',
-            'titulo': 'Uso Direto Iniciado 🟡',
-            'mensagem': f'Espaço livre! Você iniciou uma alocação de 1 hora no espaço {nome_amigavel} (válido até {fim.strftime("%H:%M")}).',
-            'cor': 'warning',
-            'reserva': nova_reserva
+            'status': 'confirmar_uso_direto',
+            'titulo': 'Espaço Disponível 🟢',
+            'mensagem': f'A sala está livre no momento. Deseja iniciar uma reserva imediata de 1 hora?',
+            'cor': 'success',
+            'nome_sala': nome_sala
         }
         return render(request, 'agendamento/checkin_resultado.html', contexto)
