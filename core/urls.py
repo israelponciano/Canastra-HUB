@@ -9,14 +9,15 @@ urlpatterns = [
     path("", views.home, name="home"),
     path("login/", views.login, name="login"),
     path("logout/", views.logout, name="logout"),
-    
-    # cadastros de usuario    
+
+    # cadastros de usuario
     path("cadastro/", views.cadastro, name="cadastro"),
     path("cadastro_usuario/", views.cadastro_usuario, name="cadastro_usuario"),
-    path("cadastro_usuario_completo/", views.cadastro_completo, name="cadastro_completo"),
+    path("cadastro_usuario_completo/",
+         views.cadastro_completo, name="cadastro_completo"),
     path("get_cidades/", views.get_cidades, name="get_cidades"),
 
-    # tela de hubs 
+    # tela de hubs
     path("hubs/", views.hubs, name="hubs"),
     path('hub/<str:nome_hub>/', views.hub_detalhe, name='hub_detalhe'),
     # path("agro/", views.agro, name="agro"),
@@ -28,4 +29,5 @@ urlpatterns = [
     path("sobre/", views.sobre, name="sobre"),
     path("espacos_hub/", views.espacos_hub, name="espacos_hub"),
     path("parceiros/", views.parceiros, name="parceiros"),
+
 ]

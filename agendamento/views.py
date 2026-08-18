@@ -271,8 +271,8 @@ def gerador_qrcodes(request):
     Gera uma página pronta para impressão contendo os QR Codes das 4 salas
     apontando dinamicamente para o IP/Host atual da máquina.
     """
-    # host_atual = request.get_host()
-    host_atual = "10.41.35.121"
+    host_atual = request.get_host()
+    # host_atual = "10.41.35.121"
     protocolo = 'https' if request.is_secure() else 'http'
 
     salas = [

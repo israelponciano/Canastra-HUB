@@ -3,7 +3,7 @@
 
 {% block title %}{{ titulo }} - Sistema de Agendamentos{% endblock %}
 
-{% block content %}
+{% block conteudo %}
 <div class="container py-4 my-2 my-md-5">
     <div class="row justify-content-center">
         <div class="col-12 col-md-8 col-lg-6">
@@ -12,17 +12,17 @@
             <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
                 
                 <!-- Barra Status Superior -->
-                <div class="bg-{{ cor }} py-3 text-center text-white">
+                <div class="bg-{{ cor }} py-3 text-center {% if cor == 'warning' %}text-dark{% else %}text-white{% endif %}">
                     {% if status == 'sucesso' %}
-                        <div class="display-1 text-white my-2">
+                        <div class="display-1 my-2">
                             <i class="bi bi-check-circle-fill"></i>
                         </div>
                     {% elif status == 'ocupada' %}
-                        <div class="display-1 text-white my-2">
+                        <div class="display-1 my-2">
                             <i class="bi bi-slash-circle-fill"></i>
                         </div>
                     {% elif status == 'uso_direto' %}
-                        <div class="display-1 text-white my-2">
+                        <div class="display-1 my-2">
                             <i class="bi bi-clock-history"></i>
                         </div>
                     {% endif %}
@@ -67,7 +67,7 @@
                         <div class="d-flex align-items-center">
                             <i class="bi bi-info-circle fs-5 text-secondary me-2"></i>
                             <span class="text-muted small me-1">Status Check-in:</span>
-                            <span class="badge bg-{{ cor }} ms-1">
+                            <span class="badge bg-{{ cor }} {% if cor == 'warning' %}text-dark{% endif %} ms-1">
                                 {{ reserva.status_checkin|default:"PENDENTE" }}
                             </span>
                         </div>
@@ -77,16 +77,16 @@
                     <!-- Botões de Ação -->
                     <div class="d-grid gap-2">
                         {% if status == 'sucesso' or status == 'uso_direto' %}
-                            <a href="{% url 'meus_agendamentos' %}" class="btn btn-{{ cor }} btn-lg fw-bold rounded-3">
+                            <a href="{% url 'agendamento:minhas_reservas' %}" class="btn btn-{{ cor }} {% if cor == 'warning' %}text-dark{% endif %} btn-lg fw-bold rounded-3">
                                 <i class="bi bi-calendar-check me-2"></i>Ver Meus Agendamentos
                             </a>
                         {% else %}
-                            <a href="{% url 'listar_salas' %}" class="btn btn-outline-secondary btn-lg rounded-3">
+                            <a href="{% url 'agendamento:realizar_reserva' %}" class="btn btn-outline-secondary btn-lg rounded-3">
                                 <i class="bi bi-search me-2"></i>Procurar Outra Sala
                             </a>
                         {% endif %}
                         
-                        <a href="{% url 'home' %}" class="btn btn-link text-decoration-none text-muted">
+                        <a href="{% url 'core:home' %}" class="btn btn-link text-decoration-none text-muted">
                             Voltar ao Início
                         </a>
                     </div>

@@ -1,19 +1,25 @@
 from django.urls import path
 from . import views
 
+app_name = 'agendamento'
+
 urlpatterns = [
-    # Agora a rota principal (/agendamento/) abre diretamente o painel com calendário + lista
+    # Painel principal do agendamento (Calendário + Lista)
     path('', views.minhas_reservas, name='minhas_reservas'),
 
-    # O formulário de criação passa a ter o subcaminho /agendamento/novo/
+    # Formulário de criação de nova reserva
     path('novo/', views.realizar_reserva, name='realizar_reserva'),
 
-    # Rota que alimenta os blocos do FullCalendar
+    # API para popular o FullCalendar
     path('api/reservas/', views.api_reservas_calendario,
          name='api_reservas_calendario'),
 
-    # Rotas de gerenciamento administrativo
+    # Gerenciamento de reservas
     path('editar/<int:reserva_id>/', views.editar_reserva, name='editar_reserva'),
     path('excluir/<int:reserva_id>/',
          views.excluir_reserva, name='excluir_reserva'),
+
+    # 🎯 QR CODE & CHECK-IN PRESENCIAL
+    path('qrcodes/', views.gerador_qrcodes, name='gerador_qrcodes'),
+    path('checkin/<str:sala_chave>/', views.checkin_qrcode, name='checkin_qrcode'),
 ]
