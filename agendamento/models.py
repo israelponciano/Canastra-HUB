@@ -12,6 +12,7 @@ class Reserva(models.Model):
     ]
 
     STATUS_CHOICES = [
+        ('pendente_aprovacao', 'Aguardando Aprovação Noturna'),
         ('confirmada', 'Confirmada'),
         ('cancelada', 'Cancelada'),
     ]

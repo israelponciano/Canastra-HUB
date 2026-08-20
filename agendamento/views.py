@@ -303,9 +303,21 @@ def checkin_qrcode(request, sala_chave):
     ).first()
 
     if reserva_atual:
-        # CENÁRIO 1: Usuário logado é o titular do agendamento
+        # CENÁRIO 1: O usuário logado é o titular da reserva
         if reserva_atual.usuario == request.user:
-            # Se for o POST (clique no botão 'Confirmar Check-in')
+
+            # 1.1 - SE JÁ FEZ CHECK-IN OU FOI USO DIRETO VIA QR CODE
+            if reserva_atual.status_checkin in ['CONFIRMADO', 'USO DIRETO']:
+                contexto = {
+                    'status': 'sucesso',
+                    'titulo': 'Sessão Ativa 🟢',
+                    'mensagem': f'Você já realizou o check-in nesta sala ({reserva_atual.get_sala_display()}). Seu horário vai até {reserva_atual.fim.strftime("%H:%M")}.',
+                    'cor': 'success',
+                    'reserva': reserva_atual
+                }
+                return render(request, 'agendamento/checkin_resultado.html', contexto)
+
+            # 1.2 - RESERVA PRÉVIA (Ainda não fez check-in) -> Exige Confirmação
             if request.method == 'POST':
                 reserva_atual.status_checkin = 'CONFIRMADO'
                 reserva_atual.hora_checkin = agora
@@ -327,11 +339,11 @@ def checkin_qrcode(request, sala_chave):
                 }
                 return render(request, 'agendamento/checkin_resultado.html', contexto)
 
-            # Se for GET: Exibe a tela pedindo confirmação do Check-in
+            # GET para reserva prévia: mostra tela de confirmação
             contexto = {
                 'status': 'confirmar_checkin',
                 'titulo': 'Confirmar Presença 📍',
-                'mensagem': f'Você possui um agendamento ativo para a sala {reserva_atual.get_sala_display()}. Clique abaixo para efetuar seu check-in.',
+                'mensagem': f'Você possui uma reserva prévia para a sala {reserva_atual.get_sala_display()}. Clique abaixo para confirmar seu check-in.',
                 'cor': 'primary',
                 'reserva': reserva_atual
             }
@@ -352,9 +364,8 @@ def checkin_qrcode(request, sala_chave):
             }
             return render(request, 'agendamento/checkin_resultado.html', contexto)
 
-    # CENÁRIO 3: Sala VAGA -> Uso Direto (1 Hora)
+    # CENÁRIO 3: Sala VAGA -> Uso Direto / Reserva na hora
     else:
-        # Se for o POST (clique no botão 'Reservar Horário')
         if request.method == 'POST':
             inicio = agora
             fim = agora + timedelta(hours=1)
@@ -386,7 +397,8 @@ def checkin_qrcode(request, sala_chave):
                 "finalidade": nova_reserva.finalidade,
                 "equipamentos": nova_reserva.equipamentos,
                 "observacoes": nova_reserva.observacoes,
-                "status_checkin": "USO DIRETO"
+                "status_checkin": "USO DIRETO",
+                "hora_checkin": agora.strftime("%d/%m/%Y %H:%M")
             }
 
             try:
@@ -405,29 +417,22 @@ def checkin_qrcode(request, sala_chave):
 
             nova_reserva.save()
 
-            if nova_reserva.linha_planilha:
-                GoogleAgendaService.atualizar_checkin_google(
-                    linha_planilha=nova_reserva.linha_planilha,
-                    status_checkin='USO DIRETO',
-                    hora_checkin=agora.strftime('%H:%M:%S')
-                )
-
             contexto = {
-                'status': 'uso_direto',
+                'status': 'sucesso',
                 'titulo': 'Uso Direto Iniciado 🟡',
-                'mensagem': f'Espaço livre! Você iniciou uma alocação de 1 hora no espaço {nome_amigavel} (válido até {fim.strftime("%H:%M")}).',
-                'cor': 'warning',
+                'mensagem': f'Espaço reservado com sucesso! Alocação de 1 hora no espaço {nome_amigavel} (válido até {fim.strftime("%H:%M")}).',
+                'cor': 'success',
                 'reserva': nova_reserva
             }
             return render(request, 'agendamento/checkin_resultado.html', contexto)
 
-        # Se for GET: Exibe a tela pedindo para confirmar a reserva de 1h
+        # GET para sala vaga: confirmação de reserva imediata
         nome_sala = dict(Reserva.SALAS_CHOICES).get(sala_chave, sala_chave) if hasattr(
             Reserva, 'SALAS_CHOICES') else sala_chave
         contexto = {
             'status': 'confirmar_uso_direto',
             'titulo': 'Espaço Disponível 🟢',
-            'mensagem': f'A sala está livre no momento. Deseja iniciar uma reserva imediata de 1 hora?',
+            'mensagem': 'A sala está livre no momento. Deseja iniciar uma reserva imediata de 1 hora?',
             'cor': 'success',
             'nome_sala': nome_sala
         }
