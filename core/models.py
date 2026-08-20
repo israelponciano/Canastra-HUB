@@ -277,4 +277,48 @@ class NoticiaHub(models.Model):
     noticia = models.ForeignKey(Noticia, on_delete=models.CASCADE)
     hub = models.ForeignKey(Hub, on_delete=models.CASCADE)
 
+    
 
+
+class LogAcao(models.Model):
+    """Registro de auditoria de ações críticas do sistema.
+
+    Nunca deve ser editado ou deletado por código de usuário — apenas
+    criado. A proteção contra edição/exclusão é feita no admin
+    (core/admin.py) e pelo fato de nenhuma view expor update/delete
+    para este model.
+    """
+
+    class TipoAcao(models.TextChoices):
+        VAGA_CRIADA = 'vaga_criada', 'Vaga criada'
+        CANDIDATURA_CRIADA = 'candidatura_criada', 'Candidatura registrada'
+        CANDIDATURA_CANCELADA = 'candidatura_cancelada', 'Candidatura cancelada'
+        CONTRATACAO_SINALIZADA = 'contratacao_sinalizada', 'Contratação sinalizada'
+        EVENTO_CRIADO = 'evento_criado', 'Evento criado'
+        TREINAMENTO_CRIADO = 'treinamento_criado', 'Treinamento criado'
+        RESERVA_ESPACO = 'reserva_espaco', 'Reserva de espaço do Hub'
+        HUB_CRIADO = 'hub_criado', 'Hub criado'
+        HUB_ALTERADO = 'hub_alterado', 'Hub alterado'
+        HUB_TOGGLE = 'hub_toggle', 'Hub ativado/desativado'
+        NOTICIA_CRIADA = 'noticia_criada', 'Notícia criada'
+        NOTICIA_ALTERADA = 'noticia_alterada', 'Notícia alterada'
+        NOTICIA_TOGGLE = 'noticia_toggle', 'Notícia ativada/desativada'
+        USUARIO_DESATIVADO = 'usuario_desativado', 'Usuário desativado/reativado'
+
+    usuario = models.ForeignKey(
+        UsuarioBase, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='logs_acao'
+    )
+    tipo_acao = models.CharField(max_length=50, choices=TipoAcao.choices)
+    descricao = models.TextField(blank=True, default='')
+    data_hora = models.DateTimeField(auto_now_add=True)
+    ip = models.GenericIPAddressField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Log de Ação'
+        verbose_name_plural = 'Logs de Ação'
+        ordering = ['-data_hora']
+
+    def __str__(self):
+        quem = self.usuario.email if self.usuario else 'Sistema'
+        return f'[{self.data_hora:%d/%m/%Y %H:%M}] {quem} - {self.get_tipo_acao_display()}'
