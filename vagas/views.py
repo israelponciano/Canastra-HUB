@@ -19,12 +19,20 @@ def cadastro_vagas(request):
     estados = Estado.objects.all().order_by('nome_estado')
     return render(request, 'cadastro_vagas.html', {'estados': estados})
 
-@login_required 
+@login_required
 def criar_vagas(request):
     usuario_email = request.session.get('email_atual')
 
     if request.method == 'POST':
         titulo = request.POST.get('txtTitulo')
+
+        if not titulo or not titulo.strip():
+            messages.error(request, 'O título da vaga é obrigatório.')
+            estados = Estado.objects.all().order_by('nome_estado')
+            return render(request, 'cadastro_vagas.html', {
+                'estados': estados,
+            })
+
         descricao_vaga = request.POST.get('txtDescricao')
         local = request.POST.get('txtLocal')
         requisito_vaga = request.POST.get('txtRequisito')
@@ -33,14 +41,12 @@ def criar_vagas(request):
         usuario = UsuarioBase.objects.get(email=usuario_email)
         empresa = usuario.empresa
 
-        # Criar Vaga
         vaga = Vagas.objects.create(
-            cargo_vaga=titulo,
+            cargo_vaga=titulo.strip(),
             local=local,
             descricao_vaga=descricao_vaga,
             requisito_vaga=requisito_vaga,
-
-           empresa=empresa,
+            empresa=empresa,
         )
 
         for curso in cursos:
