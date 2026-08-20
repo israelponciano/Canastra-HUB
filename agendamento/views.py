@@ -6,8 +6,9 @@ from django.contrib.auth.decorators import login_required
 from django.utils.dateparse import parse_datetime
 from django.utils import timezone
 from django.http import JsonResponse
-from .models import Reserva
+from .models import Reserva, ConfiguracaoAgendamento
 from .services import GoogleAgendaService
+from .utils import processar_noshow_banco
 
 
 @login_required
@@ -437,3 +438,51 @@ def checkin_qrcode(request, sala_chave):
             'nome_sala': nome_sala
         }
         return render(request, 'agendamento/checkin_resultado.html', contexto)
+
+
+@login_required
+def gerenciar_configuracoes_hub(request):
+    # Trava de acesso usando o campo is_admin do seu UsuarioBase
+    if not request.user.is_admin:
+        messages.error(
+            request, "Acesso negado. Apenas administradores podem acessar esta página.")
+        return redirect('agendamento:minhas_reservas')
+
+    config = ConfiguracaoAgendamento.get_config()
+
+    if request.method == 'POST':
+        email_hub = request.POST.get('email_hub', '').strip()
+        email_prof1 = request.POST.get('email_professor_1', '').strip()
+        email_prof2 = request.POST.get('email_professor_2', '').strip()
+        horario_inicio = request.POST.get('horario_noturno_inicio')
+        horario_fim = request.POST.get('horario_noturno_fim')
+
+        if email_hub and email_prof1 and email_prof2:
+            try:
+                config.email_hub = email_hub
+                config.email_professor_1 = email_prof1
+                config.email_professor_2 = email_prof2
+                config.horario_noturno_inicio = int(horario_inicio)
+                config.horario_noturno_fim = int(horario_fim)
+                config.save()
+
+                messages.success(
+                    request, "Parâmetros do HUB e e-mails de aprovação atualizados!")
+                return redirect('agendamento:configuracoes_hub')
+            except (ValueError, TypeError):
+                messages.error(
+                    request, "Forneça números inteiros válidos entre 0 e 23 para os horários.")
+        else:
+            messages.error(
+                request, "Preencha todos os campos de e-mail obrigatoriamente.")
+
+    return render(request, 'agendamento/configuracoes_hub.html', {'config': config})
+
+
+def listar_agendamentos(request):
+    # Processa pendências no banco antes de carregar os dados
+    processar_noshow_banco()
+
+    # Busca as reservas com os status já devidamente atualizados
+    reservas = Reserva.objects.all().order_by('-inicio')
+    return render(request, 'agendamento/listar.html', {'reservas': reservas})

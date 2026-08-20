@@ -22,4 +22,8 @@ urlpatterns = [
     # 🎯 QR CODE & CHECK-IN PRESENCIAL
     path('qrcodes/', views.gerador_qrcodes, name='gerador_qrcodes'),
     path('checkin/<str:sala_chave>/', views.checkin_qrcode, name='checkin_qrcode'),
+
+    # configurações de emails HUB(para disparo de confirmações)
+    path('configuracoes/',
+         views.gerenciar_configuracoes_hub, name='configuracoes_hub'),
 ]

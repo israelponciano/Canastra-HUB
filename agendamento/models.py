@@ -1,6 +1,42 @@
 from django.db import models
+from django.utils import timezone
 from django.conf import settings
 from django.core.exceptions import ValidationError
+
+
+class ConfiguracaoAgendamento(models.Model):
+    email_hub = models.EmailField(
+        "E-mail do HUB (Aprovações)", default="hub@canastra.com")
+    email_professor_1 = models.EmailField(
+        "E-mail Professor 1 (FAST)", default="prof1@canastra.com")
+    email_professor_2 = models.EmailField(
+        "E-mail Professor 2 (FAST)", default="prof2@canastra.com")
+    horario_noturno_inicio = models.IntegerField(
+        "Início Horário Noturno (0-23h)", default=18)
+    horario_noturno_fim = models.IntegerField(
+        "Fim Horário Noturno (0-23h)", default=6)
+
+    class Meta:
+        verbose_name = "Configuração de Agendamento"
+        verbose_name_plural = "Configurações de Agendamento"
+
+    @classmethod
+    def get_config(cls):
+        config, _ = cls.objects.get_or_create(id=1)
+        return config
+
+
+class ReservaManager(models.Manager):
+    def get_queryset(self):
+        # Atualiza reservas no-show antes de executar qualquer busca
+        agora = timezone.now()
+        super().get_queryset().filter(
+            fim__lte=agora,
+            status='confirmada',
+            status_checkin='Pendente'
+        ).update(status='nao_compareceu')
+
+        return super().get_queryset()
 
 
 class Reserva(models.Model):
@@ -17,10 +53,14 @@ class Reserva(models.Model):
         ('cancelada', 'Cancelada'),
     ]
 
+    aprovado_hub = models.BooleanField("Aprovado pelo HUB", default=False)
+    aprovado_professor = models.BooleanField(
+        "Aprovado por um Professor", default=False)
+
     usuario = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Usuário")
     sala = models.CharField(
-        max_length=30, choices=SALA_CHOICES, verbose_name="Sala")
+        max_length=50, choices=SALA_CHOICES, verbose_name="Sala")
     inicio = models.DateTimeField(verbose_name="Data/Hora de Início")
     fim = models.DateTimeField(verbose_name="Data/Hora de Término")
 
@@ -38,7 +78,7 @@ class Reserva(models.Model):
 
     # Status e horário de Check-in
     status_checkin = models.CharField(
-        max_length=30, default="Pendente", verbose_name="Status Check-in")
+        max_length=50, default="Pendente", verbose_name="Status Check-in")
     hora_checkin = models.DateTimeField(
         blank=True, null=True, verbose_name="Hora Check-in")
 
@@ -49,8 +89,10 @@ class Reserva(models.Model):
         blank=True, null=True, verbose_name="Linha na Planilha Google")
 
     status = models.CharField(
-        max_length=15, choices=STATUS_CHOICES, default='confirmada')
+        max_length=50, choices=STATUS_CHOICES, default='confirmada')
     criado_em = models.DateTimeField(auto_now_add=True)
+
+    objects = ReservaManager()
 
     class Meta:
         verbose_name = "Reserva"
