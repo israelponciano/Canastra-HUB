@@ -5,6 +5,7 @@ from django.db import models
 from core.models import Usuario, Estado, Cidade, UsuarioBase
 from django.contrib import messages
 from django.http import JsonResponse
+from django.utils import timezone
 from vagas.models import Vagas, UsuarioVaga, CursoVaga
 
 import re
@@ -104,6 +105,7 @@ def buscar_vagas(request):
 
     # checagem de vagas ativas feita -> adiciona vagas candidatadas pelo usuario
     # pegamos os dados do usuário
+    is_empresa = False
     if request.user.is_authenticated:
         try:
             usuario_perfil = Usuario.objects.get(user=request.user)
@@ -114,6 +116,12 @@ def buscar_vagas(request):
                 vaga.ja_candidatada = vaga.id in candidaturas_do_usuario
         except Usuario.DoesNotExist:
             pass
+
+        usuario_email = request.session.get('email_atual')
+        if usuario_email:
+            usuario_base = UsuarioBase.objects.filter(email=usuario_email).first()
+            if usuario_base and hasattr(usuario_base, 'empresa'):
+                is_empresa = True
 
     # 3. Se houver um termo de busca, aplica o filtro
     if termo_busca:
@@ -131,6 +139,7 @@ def buscar_vagas(request):
     contexto = {
         'vagas': vagas,
         'termo_busca': termo_busca,  # Passa o termo de volta para o input na tela
+        'is_empresa': is_empresa,
     }
 
     # 5. Renderiza o template de busca
@@ -148,21 +157,33 @@ def detalhe_vaga(request, vaga_id):
     cursos = CursoVaga.objects.filter(vaga=vaga)
 
     ja_candidatado = False
+    candidatura = None
+    is_owner = False
 
     if request.user.is_authenticated:
         # Assumindo que o perfil do usuário se chama 'Usuario'
         try:
             usuario = Usuario.objects.get(user=request.user)
             # Verifica se já existe um registro em UsuarioVaga
-            ja_candidatado = UsuarioVaga.objects.filter(
-                vaga=vaga, usuario=usuario).exists()
+            candidatura = UsuarioVaga.objects.filter(
+                vaga=vaga, usuario=usuario).first()
+            ja_candidatado = candidatura is not None
         except Usuario.DoesNotExist:
             pass
+
+        usuario_email = request.session.get('email_atual')
+        if usuario_email:
+            usuario_base = UsuarioBase.objects.filter(email=usuario_email).first()
+            # Empresa.user é OneToOne(primary_key=True) -> Empresa.pk == UsuarioBase.pk
+            if usuario_base and vaga.empresa_id == usuario_base.pk:
+                is_owner = True
 
     contexto = {
         'vaga': vaga,
         'cursos': cursos,  # Passando os cursos para o template
         'ja_candidatado': ja_candidatado,
+        'candidatura': candidatura,
+        'is_owner': is_owner,
     }
 
     return render(request, 'detalhe_vaga.html', contexto)
@@ -228,3 +249,41 @@ def cancelar_candidatura(request, vaga_id):
 
     # Redireciona para a página de detalhes da vaga
     return redirect('vagas:detalhe_vaga', vaga_id=vaga.id)
+
+
+@login_required
+def listar_candidatos(request, vaga_id):
+    usuario_email = request.session.get('email_atual')
+    usuario_base = get_object_or_404(UsuarioBase, email=usuario_email)
+    vaga = get_object_or_404(Vagas, id=vaga_id, empresa=usuario_base.empresa)
+
+    candidaturas = UsuarioVaga.objects.filter(
+        vaga=vaga).select_related('usuario').order_by('-data_candidatura')
+
+    return render(request, 'listar_candidatos.html', {
+        'vaga': vaga,
+        'candidaturas': candidaturas,
+    })
+
+
+@login_required
+@require_http_methods(["POST"])
+def atualizar_status_candidatura(request, usuariovaga_id):
+    usuario_email = request.session.get('email_atual')
+    usuario_base = get_object_or_404(UsuarioBase, email=usuario_email)
+    candidatura = get_object_or_404(
+        UsuarioVaga, id=usuariovaga_id, vaga__empresa=usuario_base.empresa)
+
+    novo_status = request.POST.get('status')
+    if novo_status not in (UsuarioVaga.STATUS_CONTRATADO, UsuarioVaga.STATUS_REJEITADO):
+        messages.error(request, "Status inválido.")
+        return redirect('vagas:listar_candidatos', vaga_id=candidatura.vaga.id)
+
+    candidatura.status = novo_status
+    candidatura.data_status = timezone.now()
+    if novo_status == UsuarioVaga.STATUS_CONTRATADO:
+        candidatura.ifmg_no_momento_contratacao = candidatura.usuario.ifmg
+    candidatura.save()
+
+    messages.success(request, "Status da candidatura atualizado com sucesso!")
+    return redirect('vagas:listar_candidatos', vaga_id=candidatura.vaga.id)

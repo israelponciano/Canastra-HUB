@@ -143,7 +143,13 @@
 
           <p class="card-text">{{ vaga.descricao_vaga|truncatechars:150 }}</p>
 
-          {% if user.is_authenticated and not request.session.incompleto %}
+          {% if is_empresa %}
+
+          <a href="{% url 'vagas:listar_candidatos' vaga.id %}" class="btn btn-primary btn-sm mt-2">
+            Ver Candidatos
+          </a>
+
+          {% elif user.is_authenticated and not request.session.incompleto %}
 
           {% if vaga.ja_candidatada %}
 

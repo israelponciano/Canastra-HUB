@@ -245,6 +245,7 @@ def _atualizar_usuario(request, user):
     usuario.pretensao_salarial = _parse_decimal(request.POST.get('pretensao_salarial'))
     usuario.disponibilidade = request.POST.get('disponibilidade') or None
     usuario.remoto = request.POST.get('remoto') == 'on'
+    usuario.ifmg = request.POST.get('ifmg') == 'on'
 
     # Redes sociais
     usuario.linkedin = request.POST.get('linkedin') or None

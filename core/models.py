@@ -144,6 +144,9 @@ class Usuario(models.Model):
     competencias_tecnicas3 = models.TextField(blank=True, null=True)
     competencias_comportamentais3 = models.TextField(blank=True, null=True)
 
+    # vínculo com IFMG
+    ifmg = models.BooleanField(default=False)
+
     # inclusao e acessibilidade
     pessoa_com_deficiencia = models.BooleanField(default=False)
     tipo_deficiencia = models.CharField(max_length=255, blank=True, null=True)

@@ -15,4 +15,8 @@ urlpatterns = [
          views.candidatar_vaga, name='candidatar_vaga'),
     path('vaga/<int:vaga_id>/cancelar/',
          views.cancelar_candidatura, name='cancelar_candidatura'),
+    path('vaga/<int:vaga_id>/candidatos/',
+         views.listar_candidatos, name='listar_candidatos'),
+    path('candidatura/<int:usuariovaga_id>/status/',
+         views.atualizar_status_candidatura, name='atualizar_status_candidatura'),
 ]

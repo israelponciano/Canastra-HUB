@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.core.files import File
+from django.utils import timezone
 import json
 from pathlib import Path
 from empresa.models import *
@@ -93,7 +94,8 @@ class Command(BaseCommand):
             cidade_id=cidade.id,
             estado_id=cidade.estado_cidade.id,
             complemento='complemtento blablabla',
-            pretensao_salarial=15.00
+            pretensao_salarial=15.00,
+            ifmg=True
         )
 
         user1 = UsuarioBase.objects.create_user(
@@ -328,6 +330,25 @@ class Command(BaseCommand):
             empresa=empresa
         )
         
+        candidatura1 = UsuarioVaga.objects.create(
+            vaga=vaga1,
+            usuario=usuario,
+        )
+        candidatura2 = UsuarioVaga.objects.create(
+            vaga=vaga2,
+            usuario=usuario1,
+            status=UsuarioVaga.STATUS_CONTRATADO,
+            data_status=timezone.now(),
+            ifmg_no_momento_contratacao=usuario1.ifmg,
+        )
+        candidatura3 = UsuarioVaga.objects.create(
+            vaga=vaga3,
+            usuario=usuario,
+            status=UsuarioVaga.STATUS_REJEITADO,
+            data_status=timezone.now(),
+            ifmg_no_momento_contratacao=usuario.ifmg,
+        )
+
         print("User-1", user.email, usuario)
         print("User-2", user2.email, empresa.segmento)
         print("User-3", user3.email, user3.is_admin)

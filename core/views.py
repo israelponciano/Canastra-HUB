@@ -349,7 +349,10 @@ def cadastro_completo(request):
         competencias_tecnicas3 = request.POST.get('txtHardSkil3')
         competencias_comportamentais3 = request.POST.get('txtSoftSkil3')
 
-        #Acessibilidade 
+        #IFMG
+        ifmg = request.POST.get('ifmg') == 'sim'
+
+        #Acessibilidade
         pessoa_com_deficiencia = request.POST.get('pcd') == 'sim'
         tipo_deficiencia = request.POST.get('tipoDeficiencia')
         necessidade_adaptacao = request.POST.get('necessidadeAdaptacao')
@@ -464,6 +467,8 @@ def cadastro_completo(request):
         usuario.competencias_comportamentais3 = competencias_comportamentais3 
         # end Competencias
         # ---------------
+
+        usuario.ifmg = ifmg
 
         usuario.pessoa_com_deficiencia = pessoa_com_deficiencia
         usuario.tipo_deficiencia = tipo_deficiencia
