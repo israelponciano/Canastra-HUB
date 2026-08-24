@@ -1,13 +1,23 @@
+import logging
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.http import JsonResponse
-from django.views.decorators.http import require_http_methods 
+from django.views.decorators.http import require_http_methods
 from core.models import *
 from empresa.models import *
 from django.contrib.auth.decorators import login_required
 from decimal import Decimal, InvalidOperation
 from datetime import datetime
+import re
+import requests
+from django.conf import settings
+from django.urls import reverse
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.template.loader import render_to_string
 
 from treinamento.models import Treinamento
 from vagas.models import Vagas
@@ -151,7 +161,7 @@ def cadastro_usuario(request):
             return render(request, 'cadastro_usuario.html', {'estados': estados})
         # Buscar os objetos Estado e Cidade no Banco
         estado = Estado.objects.get(id=estado_id)
-        cidade = Cidade.objects.get(id=cidade_id).first()
+        cidade = Cidade.objects.get(id=cidade_id)
 
         # Criar usuário base
         user = UsuarioBase.objects.create_user(
@@ -184,53 +194,8 @@ def cadastro_usuario(request):
         messages.success(request, 'Cadastro inicial realizado! Complete seu perfil profissional!')
         return redirect('core:login')
 
-    if not cidade_id:
-        messages.error(request, 'Selecione uma cidade.')
-        return render_cadastro_usuario(request)
-
-    if not Estado.objects.filter(id=estado_id).exists():
-        messages.error(request, 'Estado inválido.')
-        return render_cadastro_usuario(request)
-
-    if not Cidade.objects.filter(id=cidade_id).exists():
-        messages.error(request, 'Cidade inválida.')
-        return render_cadastro_usuario(request)
-    
-    # Buscar os objetos Estado e Cidade no Banco
-    estado = Estado.objects.get(id=estado_id)
-    cidade = Cidade.objects.get(id=cidade_id).first()
-
-    # Criar usuário base
-    user = UsuarioBase.objects.create_user(
-        email=email,
-        password=senha,
-        nome=nomeUser,
-        tipo='usuario'
-    )
-    user.foto = foto_user
-    user.save()
-
-    # Cria usuario com os outros campos faltantes
-    usuario = Usuario.objects.create(
-        user=user,
-        nome_social=nomeSocial,
-        data_nascimento=dataNasc,
-        genero=genero,
-        estado_civil=estadoCivil,
-        nacionalidade=nacionalidade,
-        telefone=telefone,
-        cep=cep,
-        rua=rua,
-        numero=numero,
-        bairro=bairro,
-        estado=estado,
-        cidade=cidade,
-        complemento=complemento
-    )
-    request.session['usuario_email'] = usuario.user.email
-
-    messages.success(request, 'Cadastro inicial realizado! Complete seu perfil profissional!')
-    return redirect('core:login')
+    estados = Estado.objects.all().order_by('nome_estado')
+    return render(request, 'cadastro_usuario.html', {'estados': estados})
 
 def cadastro_completo(request):
     usuario_email = request.session.get('email_atual')
@@ -561,6 +526,80 @@ def logout(request):
 
     messages.success(request, 'Logout realizado com sucesso.')
     return redirect('core:home')
+
+
+def recuperar_senha(request):
+    if request.method == 'POST':
+        email = (request.POST.get('txtEmail') or '').strip().lower()
+        mensagem_padrao = 'Se o e-mail estiver cadastrado, você receberá as instruções.'
+
+        usuario = UsuarioBase.objects.filter(email=email).first()
+        if usuario:
+            uidb64 = urlsafe_base64_encode(force_bytes(usuario.pk))
+            token = default_token_generator.make_token(usuario)
+            link = request.build_absolute_uri(
+                reverse('core:redefinir_senha', kwargs={'uidb64': uidb64, 'token': token})
+            )
+
+            corpo_email = render_to_string('email/recuperar_senha_email.html', {
+                'nome': usuario.nome,
+                'link': link,
+                'expiracao_minutos': 30,
+            })
+
+            try:
+                requests.post(
+                    settings.RECUPERACAO_URL,
+                    json={
+                        'secret': settings.RECUPERACAO_API_KEY,
+                        'para': usuario.email,
+                        'assunto': 'Redefinição de senha — Canastra HUB',
+                        'mensagem': corpo_email,
+                        'html': True,
+                    },
+                    timeout=10,
+                )
+            except requests.RequestException:
+                logging.exception('Falha ao enviar e-mail de recuperação de senha')
+
+        messages.success(request, mensagem_padrao)
+        return redirect('core:login')
+
+    return render(request, 'recuperar_senha.html')
+
+
+def redefinir_senha(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        usuario = UsuarioBase.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, UsuarioBase.DoesNotExist):
+        usuario = None
+
+    token_valido = usuario is not None and default_token_generator.check_token(usuario, token)
+
+    if not token_valido:
+        messages.error(request, 'Este link é inválido ou expirou. Solicite a recuperação novamente.')
+        return redirect('core:recuperar_senha')
+
+    if request.method == 'POST':
+        senha = request.POST.get('txtSenha') or ''
+        confirmar_senha = request.POST.get('txtConfirmarSenha') or ''
+
+        if senha != confirmar_senha:
+            messages.error(request, 'As senhas não coincidem.')
+            return render(request, 'nova_senha.html')
+
+        if len(senha) < 8 or not re.search(r'[A-Z]', senha) or not re.search(r'[a-z]', senha) or not re.search(r'[0-9]', senha):
+            messages.error(request, 'A senha deve ter pelo menos 8 caracteres, com letras maiúsculas, minúsculas e números.')
+            return render(request, 'nova_senha.html')
+
+        usuario.set_password(senha)
+        usuario.save()
+
+        messages.success(request, 'Senha redefinida com sucesso! Faça login com sua nova senha.')
+        return redirect('core:login')
+
+    return render(request, 'nova_senha.html')
 
 
 @require_http_methods(["GET"])
