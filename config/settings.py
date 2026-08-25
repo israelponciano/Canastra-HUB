@@ -9,6 +9,15 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
+from pathlib import Path
+from dotenv import load_dotenv
+import os
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+dotenv_path = BASE_DIR / '.env'
+
+
 
 from pathlib import Path
 
@@ -117,6 +126,7 @@ DATABASES = {
     }
 }
 
+
 # Settings for messages
 MESSAGE_TAGS = {
     messages.DEBUG: 'debug',
@@ -189,3 +199,6 @@ APPS_SCRIPT_URL = os.getenv('APPS_SCRIPT_URL')
 APPS_SCRIPT_TOKEN = os.getenv('APPS_SCRIPT_TOKEN')
 ID_SALA_A = os.getenv('ID_SALA_A')
 ID_SALA_B = os.getenv('ID_SALA_B')
+
+RECUPERACAO_URL = os.getenv('RECUPERACAO_URL')
+RECUPERACAO_API_KEY = os.getenv('RECUPERACAO_API_KEY')

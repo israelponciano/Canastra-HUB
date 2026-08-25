@@ -158,7 +158,7 @@
 
           <form action="{% url 'vagas:candidatar_vaga' vaga.id %}" method="POST">
             {% csrf_token %}
-            <button type="submit" class="btn btn-success btn-sm">
+            <button type="submit" class="btn btn-success btn-sm mt-2">
               Candidatar-se
             </button>
           </form>
@@ -174,10 +174,14 @@
           {% else %}
 
           <a href="{% url 'core:login' %}" class="btn btn-primary btn-sm mt-2">
-            Login para Inscrever-se
+            Login para candidatar-se
           </a>
 
           {% endif %}
+
+          <a href="{% url 'vagas:detalhe_vaga' vaga.id %}" class="btn btn-outline-secondary btn-sm mt-2">
+            Ver Detalhes
+          </a>
 
 
           <span class="float-end text-muted small mt-3">Publicada em: {{ vaga.data_publicacao|date:'d/m/Y' }}</span>

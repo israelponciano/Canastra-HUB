@@ -4,7 +4,7 @@
   <style>
     .rei {
       display: grid;
-      place-items: center; /* centraliza em ambas direções */
+      place-items: center;
       height: 90vh;
       background-color: #f8fdf9;
       margin: 0;
@@ -20,12 +20,11 @@
     .btn-green {
       background-color: #28a745;
       border: none;
-      color: #fff; /* 🔥 texto branco */
+      color: #fff;
     }
-    
     .btn-green:hover {
       background-color: #218838;
-      color: #fff; /* garante que continua branco no hover */
+      color: #fff;
     }
     a {
       color: #28a745;
@@ -37,30 +36,22 @@
   </style>
   <div class="rei">
     <div class="login-card text-center">
-      <h1 class="h3 mb-3 fw-bold text-success">Login</h1>
+      <h1 class="h3 mb-3 fw-bold text-success">Recuperar Senha</h1>
+      <p class="mb-3">Informe seu e-mail para receber as instruções de redefinição de senha.</p>
 
-      <form action="{% url 'core:login' %}" method="POST">
+      <form action="{% url 'core:recuperar_senha' %}" method="POST">
         {% csrf_token %}
 
-        <div class="mb-2 text-start">
+        <div class="mb-3 text-start">
           <label for="txtEmail" class="form-label">Email</label>
           <input type="email" class="form-control" id="txtEmail" name="txtEmail" placeholder="Insira seu email" required />
         </div>
 
-        <div class="mb-3 text-start">
-          <label for="txtSenha" class="form-label">Senha</label>
-          <input type="password" class="form-control" id="txtSenha" name="txtSenha" placeholder="Insira sua senha" autocomplete="new-password" required />
-        </div>
-
-        <button type="submit" class="btn mt-2 btn-green w-100 shadow-sm">Entrar</button>
+        <button type="submit" class="btn mt-2 btn-green w-100 shadow-sm">Enviar</button>
       </form>
 
-      <div class="mt-3">
-        <a href="{% url 'core:recuperar_senha' %}">Esqueci a senha</a>
-      </div>
-
       <p class="mt-3 mb-0">
-        Ainda não tem uma conta? <a href="{% url 'core:cadastro' %}">Inscreva-se aqui</a>
+        <a href="{% url 'core:login' %}">Voltar para o login</a>
       </p>
     </div>
   </div>
