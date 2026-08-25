@@ -2,7 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
 from django.db import models
-from core.models import Usuario, Estado, Cidade, UsuarioBase
+#from core.models import Usuario, Estado, Cidade, UsuarioBase
+from core.models import Usuario , Estado , Cidade , UsuarioBase , LogAcao
+from core.utils import registrar_log
+
 from django.contrib import messages
 from django.http import JsonResponse
 from vagas.models import Vagas, UsuarioVaga, CursoVaga
