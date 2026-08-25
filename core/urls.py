@@ -9,6 +9,8 @@ urlpatterns = [
     path("", views.home, name="home"),
     path("login/", views.login, name="login"),
     path("logout/", views.logout, name="logout"),
+    path("recuperar-senha/", views.recuperar_senha, name="recuperar_senha"),
+    path("redefinir-senha/<uidb64>/<token>/", views.redefinir_senha, name="redefinir_senha"),
     
     # cadastros de usuario    
     path("cadastro/", views.cadastro, name="cadastro"),
