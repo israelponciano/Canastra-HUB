@@ -51,6 +51,7 @@ class Reserva(models.Model):
         ('pendente_aprovacao', 'Aguardando Aprovação Noturna'),
         ('confirmada', 'Confirmada'),
         ('cancelada', 'Cancelada'),
+        ('nao_compareceu', 'Não Compareceu'),
     ]
 
     aprovado_hub = models.BooleanField("Aprovado pelo HUB", default=False)

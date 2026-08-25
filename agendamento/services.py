@@ -37,18 +37,23 @@ class GoogleAgendaService:
         if dados_extras is None:
             dados_extras = {}
 
-        # Converte datas/datetimes em string ISO se necessário
-        inicio_str = data_inicio.isoformat() if hasattr(
-            data_inicio, 'isoformat') else str(data_inicio)
-        fim_str = data_fim.isoformat() if hasattr(
-            data_fim, 'isoformat') else str(data_fim)
+        # Formatação separada de Data, Hora Início e Hora Fim
+        data_str = data_inicio.strftime(
+            '%d/%m/%Y') if hasattr(data_inicio, 'strftime') else str(data_inicio)
+        hora_inicio_str = data_inicio.strftime('%H:%M') if hasattr(
+            data_inicio, 'strftime') else str(data_inicio)
+        hora_fim_str = data_fim.strftime('%H:%M') if hasattr(
+            data_fim, 'strftime') else str(data_fim)
 
         payload = {
             "token": cls.TOKEN,
             "sala_id": sala_id_mapeado,
             "titulo": titulo,
-            "inicio": inicio_str,
-            "fim": fim_str,
+            "data": data_str,                     # <--- Novo campo explicitando a data
+            "hora_inicio": hora_inicio_str,       # <--- Novo campo para Coluna D
+            "hora_fim": hora_fim_str,             # <--- Novo campo para Coluna E
+            "inicio": data_inicio.isoformat() if hasattr(data_inicio, 'isoformat') else str(data_inicio),
+            "fim": data_fim.isoformat() if hasattr(data_fim, 'isoformat') else str(data_fim),
             "email_cliente": email_cliente,
             "empresa_projeto": dados_extras.get("empresa_projeto", "Não informado"),
             "quantidade_pessoas": dados_extras.get("quantidade_pessoas", 0),

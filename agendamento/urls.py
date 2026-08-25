@@ -7,6 +7,9 @@ urlpatterns = [
     # Painel principal do agendamento (Calendário + Lista)
     path('', views.minhas_reservas, name='minhas_reservas'),
 
+    # api ajax horarios em constants.py
+    path('api/horarios-sala/', views.obter_horarios_sala,
+         name='obter_horarios_sala'),
     # Formulário de criação de nova reserva
     path('novo/', views.realizar_reserva, name='realizar_reserva'),
 

@@ -51,22 +51,8 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="bloco_horario" class="form-label fw-semibold" style="color: #333;">Períodos Disponíveis</label>
-                                <select class="form-select form-control-lg" id="bloco_horario" name="bloco_horario" style="border-radius: 8px;" required>
-                                    <option value="" disabled selected>Escolha um horário...</option>
-                                    <optgroup label="Manhã">
-                                        <option value="08:00-09:30">08:00 às 09:30</option>
-                                        <option value="09:30-11:00">09:30 às 11:00</option>
-                                        <option value="11:00-12:30">11:00 às 12:30</option>
-                                    </optgroup>
-                                    <optgroup label="Tarde">
-                                        <option value="13:30-15:00">13:30 às 15:00</option>
-                                        <option value="15:00-16:30">15:00 às 16:30</option>
-                                        <option value="16:30-18:00">16:30 às 18:00</option>
-                                    </optgroup>
-                                    <optgroup label="Noite">
-                                        <option value="18:30-20:00">18:30 às 20:00</option>
-                                        <option value="20:00-21:30">20:00 às 21:30</option>
-                                    </optgroup>
+                                <select class="form-select form-control-lg" id="bloco_horario" name="bloco_horario" style="border-radius: 8px;" required disabled>
+                                    <option value="" disabled selected>Selecione a sala primeiro...</option>
                                 </select>
                             </div>
                         </div>
@@ -118,12 +104,41 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const inputData = document.getElementById("data_reserva");
+        const selectSala = document.getElementById("sala");
+        const selectHorario = document.getElementById("bloco_horario");
+
+        // Trava data mínima para hoje
         const agora = new Date();
         const ano = agora.getFullYear();
         const mes = String(agora.getMonth() + 1).padStart(2, '0');
         const dia = String(agora.getDate()).padStart(2, '0');
-        
         inputData.min = `${ano}-${mes}-${dia}`;
+
+        // Atualização Dinâmica de Horários via AJAX
+        selectSala.addEventListener("change", function() {
+            const salaSelecionada = this.value;
+            if (!salaSelecionada) return;
+
+            selectHorario.disabled = true;
+            selectHorario.innerHTML = '<option value="" disabled selected>Carregando horários...</option>';
+
+            fetch("{% url 'agendamento:obter_horarios_sala' %}?sala=" + encodeURIComponent(salaSelecionada))
+                .then(response => response.json())
+                .then(data => {
+                    selectHorario.innerHTML = '<option value="" disabled selected>Escolha um horário...</option>';
+                    data.horarios.forEach(slot => {
+                        const opt = document.createElement('option');
+                        opt.value = slot.value;
+                        opt.textContent = slot.label;
+                        selectHorario.appendChild(opt);
+                    });
+                    selectHorario.disabled = false;
+                })
+                .catch(err => {
+                    console.error("Erro ao carregar horários:", err);
+                    selectHorario.innerHTML = '<option value="" disabled selected>Erro ao carregar horários</option>';
+                });
+        });
     });
 </script>
 {% endblock %}

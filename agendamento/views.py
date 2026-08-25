@@ -1,14 +1,26 @@
-import datetime
 from datetime import timedelta
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.utils.dateparse import parse_datetime
 from django.utils import timezone
-from django.http import JsonResponse
+from .constants import obter_slots_por_sala, calcular_horario_fim_uso_direto
 from .models import Reserva, ConfiguracaoAgendamento
 from .services import GoogleAgendaService
 from .utils import processar_noshow_banco
+
+
+@login_required
+def obter_horarios_sala(request):
+    sala = request.GET.get('sala', '')
+    slots = obter_slots_por_sala(sala)
+
+    opcoes = [
+        {'value': f"{s[0]}-{s[1]}", 'label': s[2]}
+        for s in slots
+    ]
+    return JsonResponse({'horarios': opcoes})
 
 
 @login_required
@@ -32,6 +44,17 @@ def realizar_reserva(request):
 
         try:
             hora_inicio_str, hora_fim_str = bloco_str.split('-')
+
+            # Trava de Segurança: Garante que o horário enviado existe nos constants da sala
+            slots_permitidos = obter_slots_por_sala(sala)
+            slot_valido = any(s[0] == hora_inicio_str and s[1]
+                              == hora_fim_str for s in slots_permitidos)
+
+            if not slot_valido:
+                messages.error(
+                    request, "Horário inválido para a sala selecionada.")
+                return redirect('agendamento:realizar_reserva')
+
             inicio_comb = f"{data_str} {hora_inicio_str}:00"
             fim_comb = f"{data_str} {hora_fim_str}:00"
             inicio = parse_datetime(inicio_comb)
@@ -293,7 +316,16 @@ def gerador_qrcodes(request):
 
 @login_required
 def checkin_qrcode(request, sala_chave):
-    agora = timezone.now()
+    agora = timezone.localtime()
+
+    # Mapeamento para exibição amigável do nome da sala
+    nomes_salas = {
+        'reunioes': 'Sala de Reuniões',
+        'treinamentos': 'Sala de Treinamentos',
+        'fast': 'Espaço Fast',
+    }
+    nome_amigavel = nomes_salas.get(
+        sala_chave.lower(), sala_chave.capitalize())
 
     # Busca agendamento ativo para a sala no horário corrente
     reserva_atual = Reserva.objects.filter(
@@ -354,7 +386,8 @@ def checkin_qrcode(request, sala_chave):
         else:
             nome_ocupante = getattr(
                 reserva_atual.usuario, 'nome',
-                reserva_atual.usuario.nome or reserva_atual.usuario.email
+                getattr(reserva_atual.usuario, 'first_name',
+                        reserva_atual.usuario.email)
             )
             contexto = {
                 'status': 'ocupada',
@@ -367,15 +400,18 @@ def checkin_qrcode(request, sala_chave):
 
     # CENÁRIO 3: Sala VAGA -> Uso Direto / Reserva na hora
     else:
+        fim_calculado, minutos_restantes = calcular_horario_fim_uso_direto(
+            sala_chave, agora)
+        inicio_str = agora.strftime('%H:%M')
+        fim_str = fim_calculado.strftime('%H:%M')
+
         if request.method == 'POST':
-            inicio = agora
-            fim = agora + timedelta(hours=1)
 
             nova_reserva = Reserva(
                 usuario=request.user,
                 sala=sala_chave,
-                inicio=inicio,
-                fim=fim,
+                inicio=agora,
+                fim=fim_calculado,
                 empresa_projeto="Uso Presencial Espontâneo",
                 quantidade_pessoas=1,
                 finalidade="Uso Direto via QR Code",
@@ -387,9 +423,9 @@ def checkin_qrcode(request, sala_chave):
             )
 
             nome_usuario = getattr(
-                request.user, 'nome', request.user.nome or request.user.email
+                request.user, 'nome',
+                getattr(request.user, 'first_name', request.user.email)
             )
-            nome_amigavel = nova_reserva.get_sala_display()
             titulo_evento = f"{nome_amigavel} - {nome_usuario} (Uso Direto)"
 
             dados_extras = {
@@ -406,8 +442,8 @@ def checkin_qrcode(request, sala_chave):
                 google_id, linha_planilha = GoogleAgendaService.enviar_para_google(
                     nome_sala=sala_chave,
                     titulo=titulo_evento,
-                    data_inicio=inicio,
-                    data_fim=fim,
+                    data_inicio=nova_reserva.inicio,
+                    data_fim=nova_reserva.fim,
                     email_cliente=request.user.email,
                     dados_extras=dados_extras
                 )
@@ -421,21 +457,23 @@ def checkin_qrcode(request, sala_chave):
             contexto = {
                 'status': 'sucesso',
                 'titulo': 'Uso Direto Iniciado 🟡',
-                'mensagem': f'Espaço reservado com sucesso! Alocação de 1 hora no espaço {nome_amigavel} (válido até {fim.strftime("%H:%M")}).',
+                'mensagem': f'Espaço {nome_amigavel} reservado com sucesso! Período das {inicio_str} às {fim_str} ({minutos_restantes} min).',
                 'cor': 'success',
                 'reserva': nova_reserva
             }
+
             return render(request, 'agendamento/checkin_resultado.html', contexto)
 
         # GET para sala vaga: confirmação de reserva imediata
-        nome_sala = dict(Reserva.SALAS_CHOICES).get(sala_chave, sala_chave) if hasattr(
-            Reserva, 'SALAS_CHOICES') else sala_chave
         contexto = {
             'status': 'confirmar_uso_direto',
             'titulo': 'Espaço Disponível 🟢',
-            'mensagem': 'A sala está livre no momento. Deseja iniciar uma reserva imediata de 1 hora?',
-            'cor': 'success',
-            'nome_sala': nome_sala
+            'nome_amigavel': nome_amigavel,
+            'horario_inicio': inicio_str,
+            'horario_fim': fim_str,
+            'minutos_restantes': minutos_restantes,
+            'sala_chave': sala_chave,
+            'cor': 'success'
         }
         return render(request, 'agendamento/checkin_resultado.html', contexto)
 
