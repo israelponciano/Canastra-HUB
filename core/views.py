@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.http import JsonResponse
+from django.db.models import Q
 from django.views.decorators.http import require_http_methods 
 from core.models import *
 from empresa.models import *
@@ -9,9 +10,9 @@ from django.contrib.auth.decorators import login_required
 from decimal import Decimal, InvalidOperation
 from datetime import datetime
 
-from treinamento.models import Treinamento
+from treinamento.models import Treinamento, InscricaoTreinamento
 from vagas.models import Vagas
-from eventos.models import Evento
+from eventos.models import Evento, InscricaoEvento
 
 def home(request):
     # Buscar notícias ativas que devem aparecer na home
@@ -27,6 +28,53 @@ def home(request):
 def parceiros(request):
 
     return render(request, 'parceiros.html')
+
+def eventos_treinamentos(request):
+    termo = request.GET.get('q', '').strip()
+
+    eventos = Evento.objects.select_related('hub').order_by('-data_evento_inicio')
+    treinamentos = Treinamento.objects.select_related('hub').prefetch_related('sessoes').order_by('-id')
+
+    if termo:
+        eventos = eventos.filter(
+            Q(nome_evento__icontains=termo)
+            | Q(descricao_evento__icontains=termo)
+            | Q(local_evento__icontains=termo)
+        ).distinct()
+        treinamentos = treinamentos.filter(
+            Q(nome__icontains=termo)
+            | Q(descricao__icontains=termo)
+            | Q(local__icontains=termo)
+        ).distinct()
+
+    inscritos_eventos = set()
+    inscritos_treinamentos = set()
+    if request.user.is_authenticated:
+        inscritos_eventos = set(
+            InscricaoEvento.objects.filter(usuario=request.user).values_list('evento_id', flat=True)
+        )
+        inscritos_treinamentos = set(
+            InscricaoTreinamento.objects.filter(usuario=request.user).values_list('treinamento_id', flat=True)
+        )
+
+    itens = []
+    for e in eventos:
+        e.tipo = 'evento'
+        e.data_ordenacao = e.data_evento_inicio
+        e.inscrito = e.id in inscritos_eventos
+        itens.append(e)
+    for t in treinamentos:
+        t.tipo = 'treinamento'
+        t.data_ordenacao = t.data_inicio
+        t.inscrito = t.id in inscritos_treinamentos
+        itens.append(t)
+
+    itens.sort(key=lambda i: i.data_ordenacao or datetime.min.date(), reverse=True)
+
+    return render(request, 'eventos_treinamentos.html', {
+        'itens': itens,
+        'termo': termo,
+    })
 
 def hubs(request):
     """View para a central de hubs"""

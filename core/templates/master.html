@@ -144,27 +144,19 @@
               </div>
 
               <div class="nav-dropdown">
-                <span class="nav-link nav-link-dropdown">Eventos <span class="dropdown-arrow">▼</span></span>
+                <span class="nav-link nav-link-dropdown">Eventos e Treinamentos <span class="dropdown-arrow">▼</span></span>
                 <div class="nav-dropdown-content">
-                  <a href="{% url 'eventos:listar_eventos' %}">Ver Eventos</a>
+                  <a href="{% url 'core:eventos_treinamentos' %}">Ver Eventos e Treinamentos</a>
                   <a href="{% url 'eventos:criar_evento' %}">Cadastrar Evento</a>
+                  <a href="{% url 'treinamento:cadastro_treinamentos' %}">Cadastrar Treinamento</a>
                 </div>
               </div>
 
               <a class="nav-link" href="{% url 'minhas_reservas' %}">Agendamentos</a>
-
-              <div class="nav-dropdown">
-                <span class="nav-link nav-link-dropdown">Treinamentos <span class="dropdown-arrow">▼</span></span>
-                <div class="nav-dropdown-content">
-                  <a href="{% url 'treinamento:listar_treinamentos' %}">Ver Treinamentos</a>
-                  <a href="{% url 'treinamento:cadastro_treinamentos' %}">Cadastrar Treinamento</a>
-                </div>
-              </div>
             {% else %}
               <a href="{% url 'vagas:buscar_vagas' %}" class="nav-link">Vagas</a>
-              <a href="{% url 'eventos:listar_eventos' %}" class="nav-link">Eventos</a>
+              <a href="{% url 'core:eventos_treinamentos' %}" class="nav-link">Eventos e Treinamentos</a>
               <a href="{% url 'minhas_reservas' %}" class="nav-link">Agendamento</a>
-              <a href="{% url 'treinamento:listar_treinamentos' %}" class="nav-link">Treinamentos</a>
             {% endif %}
 
             <a href="{% url 'core:espacos_hub' %}" class="nav-link">Espaços Hub</a>
@@ -211,27 +203,19 @@
               </div>
 
               <div class="mobile-dropdown">
-                <span class="nav-link mobile-dropdown-toggle">Eventos <span class="dropdown-arrow">▼</span></span>
+                <span class="nav-link mobile-dropdown-toggle">Eventos e Treinamentos <span class="dropdown-arrow">▼</span></span>
                 <div class="mobile-dropdown-content">
-                  <a href="{% url 'eventos:listar_eventos' %}">Ver Eventos</a>
+                  <a href="{% url 'core:eventos_treinamentos' %}">Ver Eventos e Treinamentos</a>
                   <a href="{% url 'eventos:criar_evento' %}">Cadastrar Evento</a>
-                </div>
-              </div>
-
-              <a href="{% url 'minhas_reservas' %}" class="nav-link">Agendamento</a>
-
-              <div class="mobile-dropdown">
-                <span class="nav-link mobile-dropdown-toggle">Treinamentos <span class="dropdown-arrow">▼</span></span>
-                <div class="mobile-dropdown-content">
-                  <a href="{% url 'treinamento:listar_treinamentos' %}">Ver Treinamentos</a>
                   <a href="{% url 'treinamento:cadastro_treinamentos' %}">Cadastrar Treinamento</a>
                 </div>
               </div>
+
+              <a href="{% url 'minhas_reservas' %}" class="nav-link">Agendamento</a>
             {% else %}
               <a href="{% url 'vagas:buscar_vagas' %}" class="nav-link">Vagas</a>
-              <a href="{% url 'eventos:listar_eventos' %}" class="nav-link">Eventos</a>
+              <a href="{% url 'core:eventos_treinamentos' %}" class="nav-link">Eventos e Treinamentos</a>
               <a href="{% url 'minhas_reservas' %}" class="nav-link">Agendamento</a>
-              <a href="{% url 'treinamento:listar_treinamentos' %}" class="nav-link">Treinamentos</a>
             {% endif %}
 
             <a href="{% url 'core:espacos_hub' %}" class="nav-link">Espaços Hub</a>

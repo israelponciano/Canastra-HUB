@@ -5,7 +5,9 @@ import json
 from pathlib import Path
 from empresa.models import *
 from vagas.models import *
-from core.models import * 
+from core.models import *
+from eventos.models import Evento, InscricaoEvento
+from treinamento.models import Treinamento, SessaoTreinamento, InscricaoTreinamento
 
 
 class Command(BaseCommand):
@@ -93,7 +95,59 @@ class Command(BaseCommand):
             cidade_id=cidade.id,
             estado_id=cidade.estado_cidade.id,
             complemento='complemtento blablabla',
-            pretensao_salarial=15.00
+            pretensao_salarial=15.00,
+
+            # Objetivo profissional
+            cargo_pretendido='Desenvolvedor de Software',
+            area_interesse='Tecnologia da Informação',
+            disponibilidade='imediata',
+
+            # Formação acadêmica
+            instituicao_nome1='IFMG - Campus Formiga',
+            grau_escolaridade1='superior',
+            curso_graduacao1='Análise e Desenvolvimento de Sistemas',
+            situacao_academica1='concluido',
+            data_acad_inicio1='2019-02-01',
+            data_acad_fim1='2022-12-15',
+
+            # Redes sociais e links
+            linkedin='https://linkedin.com/in/cleitonromario',
+            github='https://github.com/cleitonromario',
+            instagram='https://instagram.com/cleitonromario',
+            site_pessoal='https://cleitonromario.dev',
+
+            # Competências
+            competencias_tecnicas1='Python, Django, SQL',
+            competencias_comportamentais1='Trabalho em equipe, comunicação',
+
+            # Acessibilidade
+            pessoa_com_deficiencia=False,
+
+            # Informações adicionais
+            remoto=True,
+            interesses_hobbies='Agricultura, tecnologia, música'
+        )
+
+        ExperienciaProfissional.objects.create(
+            usuario=usuario,
+            nome_empresa1='Roberta Cafés',
+            cargo1='Auxiliar Administrativo',
+            data_inicio1='2023-01-10',
+            data_fim1='2024-06-30',
+        )
+
+        CursoExtraCurricular.objects.create(
+            usuario=usuario,
+            nome_curso1='Introdução ao Python',
+            instituicao1='Alura',
+            carga_horaria1=40,
+            data_conclusao1='2023-03-20',
+        )
+
+        Idioma.objects.create(
+            usuario=usuario,
+            idioma1='Inglês',
+            nivel_fluencia1='intermediario',
         )
 
         user1 = UsuarioBase.objects.create_user(
@@ -328,6 +382,62 @@ class Command(BaseCommand):
             empresa=empresa
         )
         
+        evento1 = Evento.objects.create(
+            nome_evento='Feira do Café da Canastra',
+            data_evento_inicio='2026-09-10',
+            data_evento_fim='2026-09-10',
+            horario_evento='09:00',
+            local_evento='Fazenda Primavera',
+            publico_evento='Produtores e público geral',
+            descricao_evento='Exposição e degustação dos melhores cafés da região da Canastra.',
+            vagas_disponiveis=100,
+            hub=hub1
+        )
+
+        evento2 = Evento.objects.create(
+            nome_evento='Encontro do Milho',
+            data_evento_inicio='2026-10-05',
+            data_evento_fim='2026-10-05',
+            horario_evento='14:00',
+            local_evento='Hub Milho',
+            publico_evento='Produtores de milho',
+            descricao_evento='Encontro anual sobre novas técnicas de cultivo de milho.',
+            vagas_disponiveis=50,
+            hub=hub4
+        )
+
+        InscricaoEvento.objects.create(evento=evento1, usuario=user)
+
+        treinamento1 = Treinamento.objects.create(
+            nome='Boas Práticas em Apicultura',
+            data_inicio='2026-09-20',
+            data_fim='2026-09-20',
+            local='Fazenda Mel da Canastra',
+            publico_alvo='Apicultores',
+            descricao='Treinamento sobre manejo de colmeias e extração de mel.',
+            vagas_disponiveis=30,
+            hub=hub6
+        )
+        SessaoTreinamento.objects.create(
+            treinamento=treinamento1, data='2026-09-20', horario='08:00'
+        )
+
+        treinamento2 = Treinamento.objects.create(
+            nome='Manutenção de Máquinas Agrícolas',
+            data_inicio='2026-11-02',
+            data_fim='2026-11-03',
+            local='Fazenda Primavera',
+            publico_alvo='Operadores de máquinas',
+            descricao='Curso prático de manutenção preventiva de tratores e colheitadeiras.',
+            vagas_disponiveis=20,
+            hub=hub1
+        )
+        SessaoTreinamento.objects.create(
+            treinamento=treinamento2, data='2026-11-02', horario='13:00'
+        )
+
+        InscricaoTreinamento.objects.create(treinamento=treinamento1, usuario=user)
+
         print("User-1", user.email, usuario)
         print("User-2", user2.email, empresa.segmento)
         print("User-3", user3.email, user3.is_admin)
