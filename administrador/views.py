@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from core.models import * 
+from core.utils import registrar_log
 
 # Create your views here.
 
@@ -47,6 +48,10 @@ def cadastrarHub(request):
       )
 
         hubs.save()
+        registrar_log(
+            request, LogAcao.TipoAcao.HUB_CRIADO,
+            f"Hub '{hubs.nome_hub}' criado"
+        )
         messages.success(request, ("Hub cadastrado com sucesso"))
         return redirect('administrador:cadastrarHub')
 
@@ -79,6 +84,10 @@ def alterarHub(request):
             hub.descricao_hub = descricao_hub
 
         hub.save()
+        registrar_log(
+            request, LogAcao.TipoAcao.HUB_ALTERADO,
+            f"Hub '{hub.nome_hub}' alterado"
+        )
         messages.success(request, "Hub Alterado com sucesso")
         return redirect('administrador:gerenciarHubs')
     
@@ -96,10 +105,19 @@ def deletaHub(request, hubs_id):
     if hub.isActive:
         hub.isActive = False
         hub.save()
+        registrar_log(
+            request, LogAcao.TipoAcao.HUB_TOGGLE,
+            f"Hub '{hub.nome_hub}' desativado"
+        )
         messages.success(request, "Hub Desativado com sucesso!")
     else:
         hub.isActive = True
         hub.save()
+        registrar_log(
+            request, LogAcao.TipoAcao.HUB_TOGGLE,
+            f"Hub '{hub.nome_hub}' ativado"
+        )
+        
         messages.success(request, "Hub Ativado com sucesso!")
     return redirect('administrador:gerenciarHubs')
 
@@ -141,6 +159,12 @@ def cadastrarNoticias(request):
         if hub_id:
             hub_obj = Hub.objects.get(id=hub_id)
             NoticiaHub.objects.create(noticia=noticia, hub=hub_obj)
+
+
+        registrar_log(
+            request, LogAcao.TipoAcao.NOTICIA_CRIADA,
+            f"Notícia '{noticia.titulo_noticia}' criada"
+        )    
 
         messages.success(request, "Notícia cadastrada com sucesso!")
         return redirect('administrador:gerenciarNoticias')
@@ -200,6 +224,12 @@ def alterarNoticias(request):
                 # Se selecionou "Nenhum", remove qualquer vínculo existente
                 NoticiaHub.objects.filter(noticia=noticia).delete()
 
+            registrar_log(
+                request, LogAcao.TipoAcao.NOTICIA_ALTERADA,
+                f"Notícia '{noticia.titulo_noticia}' alterada"
+            )    
+
+
             messages.success(
                 request, "Notícia e vínculo atualizados com sucesso!")
             return redirect('administrador:gerenciarNoticias')
@@ -223,10 +253,24 @@ def deletaNoticias(request, noticia_id):
         if noticia.isActive:
             noticia.isActive = False
             noticia.save()
+
+            registrar_log(
+                request, LogAcao.TipoAcao.NOTICIA_TOGGLE,
+                f"Notícia '{noticia.titulo_noticia}' desativada"
+            )
+
             messages.success(request, "Notícia desativada com sucesso!")
         else:
             noticia.isActive = True
             noticia.save()
+
+            registrar_log(
+                request, LogAcao.TipoAcao.NOTICIA_TOGGLE,
+                f"Notícia '{noticia.titulo_noticia}' ativada"
+            )
+
+
+
             messages.success(request, "Notícia ativada com sucesso!")
 
         return redirect('administrador:gerenciarNoticias')
@@ -403,10 +447,23 @@ def desativar_usuario(request, usuario_id):
     if usuario.is_active:
         usuario.is_active = False
         usuario.save()
+
+        registrar_log(
+            request, LogAcao.TipoAcao.USUARIO_DESATIVADO,
+            f"Usuário '{usuario.nome}' desativado"
+        )
+
         messages.success(request, f"Usuário '{usuario.nome}' desativado com sucesso!")
     else:
         usuario.is_active = True
         usuario.save()
+
+        registrar_log(
+            request, LogAcao.TipoAcao.USUARIO_DESATIVADO,
+            f"Usuário '{usuario.nome}' reativado"
+        )
+
+
         messages.success(request, f"Usuário '{usuario.nome}' reativado com sucesso!")
  
     return redirect('administrador:listar_usuarios')
