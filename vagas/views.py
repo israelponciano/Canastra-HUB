@@ -46,6 +46,12 @@ def criar_vagas(request):
            empresa=empresa,
         )
 
+        registrar_log(
+            request, LogAcao.TipoAcao.VAGA_CRIADA,
+            f"Vaga '{vaga.cargo_vaga}' criada pela empresa {empresa.nomefantasia}"
+        )
+
+
         for curso in cursos:
             CursoVaga.objects.create(
                 vaga=vaga,
