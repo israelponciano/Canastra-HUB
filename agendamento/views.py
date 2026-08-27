@@ -6,6 +6,8 @@ from django.utils.dateparse import parse_datetime
 from django.http import JsonResponse
 from .models import Reserva
 from .services import GoogleAgendaService
+from core.models import LogAcao
+from core .utils import registrar_log
 
 
 @login_required
@@ -92,6 +94,12 @@ def realizar_reserva(request):
         # 5. SUCESSO TOTAL: O Google criou a agenda, agora consolidamos no banco de dados local
         nova_reserva.google_event_id = google_id
         nova_reserva.save()
+
+        registrar_log(
+            request, LogAcao.TipoAcao.RESERVA_ESPACO,
+            f"Reserva de '{nova_reserva.get_sala_display()}' de "
+            f"{inicio.strftime('%d/%m/%Y %H:%M')} até {fim.strftime('%d/%m/%Y %H:%M')}"
+        )
 
         messages.success(
             request, "Agendamento realizado e sincronizado com o Google com sucesso!")
