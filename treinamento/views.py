@@ -5,7 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponse
 from django.db import models as db_models
-from core.models import Hub
+from core.models import Hub, LogAcao
+from core.utils import registrar_log
 from .models import Treinamento, SessaoTreinamento, InscricaoTreinamento, ListaEspera
 
 
