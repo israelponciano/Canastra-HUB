@@ -6,7 +6,8 @@ from django.db import models as db_models
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
-from core.models import Hub
+from core.models import Hub, LogAcao
+from core.utils import registrar_log
 
 from .models import Evento, InscricaoEvento
 
@@ -94,7 +95,7 @@ def criar_evento(request):
         hub_id = request.POST.get('hub') or None
         hub = Hub.objects.get(id=hub_id) if hub_id else None
 
-        Evento.objects.create(
+        evento = Evento.objects.create(
             nome_evento=nome,
             data_evento_inicio=request.POST.get('data_evento_inicio') or None,
             data_evento_fim=request.POST.get('data_evento_fim') or None,
@@ -105,9 +106,12 @@ def criar_evento(request):
             vagas_disponiveis=int(request.POST.get('vagas_disponiveis') or 0),
             hub=hub,
         )
+        registrar_log(
+            request, LogAcao.TipoAcao.EVENTO_CRIADO,
+            f"Evento '{evento.nome_evento}' criado"
+        )
         messages.success(request, 'Evento cadastrado com sucesso!')
         return redirect('eventos:listar_eventos')
-
     return render(request, 'form.html', {'hubs': hubs})
 
 
