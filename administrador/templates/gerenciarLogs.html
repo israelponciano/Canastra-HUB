@@ -1,0 +1,99 @@
+{% extends 'masterAdm.html' %}
+{% load static %}
+{% block conteudo %}
+
+<main class="efeito" id="efeito">
+   <section id="gerenciar-logs">
+      <h2 class="section-title">Logs de <span>Ações</span></h2>
+
+      <!-- Filtros -->
+      <form method="GET" class="admin-card" style="padding: 20px; margin-bottom: 20px;">
+         <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end;">
+            <div class="form-group" style="flex: 1; min-width: 180px;">
+               <label for="filtroTipo">Tipo de ação</label>
+               <select id="filtroTipo" name="tipo" class="form-control">
+                  <option value="">Todos</option>
+                  {% for valor, rotulo in tipos_acao %}
+                  <option value="{{ valor }}" {% if valor == tipo_selecionado %}selected{% endif %}>
+                     {{ rotulo }}
+                  </option>
+                  {% endfor %}
+               </select>
+            </div>
+
+            <div class="form-group" style="flex: 1; min-width: 180px;">
+               <label for="filtroUsuario">Usuário (nome ou e-mail)</label>
+               <input type="text" id="filtroUsuario" name="usuario" class="form-control"
+                      value="{{ usuario_busca }}" placeholder="Buscar usuário...">
+            </div>
+
+            <div class="form-group" style="min-width: 150px;">
+               <label for="filtroDataInicio">De</label>
+               <input type="date" id="filtroDataInicio" name="data_inicio" class="form-control"
+                      value="{{ data_inicio }}">
+            </div>
+
+            <div class="form-group" style="min-width: 150px;">
+               <label for="filtroDataFim">Até</label>
+               <input type="date" id="filtroDataFim" name="data_fim" class="form-control"
+                      value="{{ data_fim }}">
+            </div>
+
+            <div class="form-group">
+               <button type="submit" class="btn-salvar">Filtrar</button>
+               <a href="{% url 'administrador:listar_logs' %}" class="btn-cancelar" style="display: inline-block; text-decoration: none; text-align: center;">Limpar</a>
+            </div>
+         </div>
+      </form>
+
+      <div class="admin-card">
+         <!-- Header da tabela (desktop) - 5 colunas -->
+         <div class="admin-header admin-header-logs">
+            <div>Data/Hora</div>
+            <div>Usuário</div>
+            <div>Tipo de Ação</div>
+            <div>Descrição</div>
+            <div>IP</div>
+         </div>
+
+         {% for log in logs %}
+         <!-- Linha desktop - 5 colunas -->
+         <div class="admin-row admin-row-logs">
+            <div class="admin-cell data">{{ log.data_hora|date:"d/m/Y H:i" }}</div>
+            <div class="admin-cell usuario">
+               {% if log.usuario %}
+                  {{ log.usuario.nome }}<br>
+                  <small>{{ log.usuario.email }}</small>
+               {% else %}
+                  <span class="no-image">Sistema</span>
+               {% endif %}
+            </div>
+            <div class="admin-cell tipo">{{ log.get_tipo_acao_display }}</div>
+            <div class="admin-cell descricao">{{ log.descricao }}</div>
+            <div class="admin-cell ip">{{ log.ip|default:"—" }}</div>
+         </div>
+         {% empty %}
+         <div class="admin-row admin-row-empty">
+            <div class="admin-cell">Nenhum log encontrado para os filtros selecionados.</div>
+         </div>
+         {% endfor %}
+      </div>
+
+      <!-- Paginação -->
+      {% if logs.has_other_pages %}
+      <div class="admin-paginacao" style="margin-top: 20px; display: flex; gap: 10px; justify-content: center;">
+         {% if logs.has_previous %}
+         <a href="?pagina={{ logs.previous_page_number }}&tipo={{ tipo_selecionado }}&usuario={{ usuario_busca }}&data_inicio={{ data_inicio }}&data_fim={{ data_fim }}" class="admin-btn">Anterior</a>
+         {% endif %}
+
+         <span style="align-self: center;">Página {{ logs.number }} de {{ logs.paginator.num_pages }}</span>
+
+         {% if logs.has_next %}
+         <a href="?pagina={{ logs.next_page_number }}&tipo={{ tipo_selecionado }}&usuario={{ usuario_busca }}&data_inicio={{ data_inicio }}&data_fim={{ data_fim }}" class="admin-btn">Próxima</a>
+         {% endif %}
+      </div>
+      {% endif %}
+   </section>
+</main>
+
+{% endblock %}

@@ -23,5 +23,6 @@ urlpatterns = [
     path("listar_usuarios/", views.listar_usuarios, name="listar_usuarios"),
     path("detalhe_usuario/<int:usuario_id>/", views.detalhe_usuario, name="detalhe_usuario"),
     path("desativar_usuario/<int:usuario_id>/", views.desativar_usuario, name="desativar_usuario"),
+    path("logs/", views.listar_logs, name="listar_logs"),
 ]
 

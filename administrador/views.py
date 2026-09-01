@@ -467,3 +467,48 @@ def desativar_usuario(request, usuario_id):
         messages.success(request, f"Usuário '{usuario.nome}' reativado com sucesso!")
  
     return redirect('administrador:listar_usuarios')
+
+@login_required
+def listar_logs(request):
+    if not request.user.is_admin:
+        messages.error(request, "Acesso negado")
+        return redirect('core:home')
+
+    from django.core.paginator import Paginator
+    from django.db.models import Q
+
+    tipo = request.GET.get('tipo', '')
+    usuario_busca = request.GET.get('usuario', '').strip()
+    data_inicio = request.GET.get('data_inicio', '')
+    data_fim = request.GET.get('data_fim', '')
+
+    logs = LogAcao.objects.select_related('usuario').order_by('-data_hora')
+
+    if tipo:
+        logs = logs.filter(tipo_acao=tipo)
+
+    if usuario_busca:
+        logs = logs.filter(
+            Q(usuario__email__icontains=usuario_busca) |
+            Q(usuario__nome__icontains=usuario_busca)
+        )
+
+    if data_inicio:
+        logs = logs.filter(data_hora__date__gte=data_inicio)
+
+    if data_fim:
+        logs = logs.filter(data_hora__date__lte=data_fim)
+
+    paginator = Paginator(logs, 50)
+    pagina_numero = request.GET.get('pagina')
+    logs_pagina = paginator.get_page(pagina_numero)
+
+    context = {
+        'logs': logs_pagina,
+        'tipos_acao': LogAcao.TipoAcao.choices,
+        'tipo_selecionado': tipo,
+        'usuario_busca': usuario_busca,
+        'data_inicio': data_inicio,
+        'data_fim': data_fim,
+    }
+    return render(request, "gerenciarLogs.html", context)

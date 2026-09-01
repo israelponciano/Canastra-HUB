@@ -1618,3 +1618,136 @@ input[type="file"].form-control::file-selector-button:hover {
       padding: 0.75rem 1rem;
    }
 }
+
+
+
+/* =============================================
+   GERENCIAR LOGS - TABLE STYLES
+   (segue o mesmo padrão de #gerenciar-hubs)
+   ============================================= */
+#gerenciar-logs {
+   background: hsl(var(--card));
+   border-radius: 1rem;
+   padding: 2rem;
+   box-shadow: var(--shadow-md);
+}
+
+.admin-header-logs,
+.admin-row-logs {
+   grid-template-columns: 140px 1.5fr 160px 2fr 110px;
+   gap: 1rem;
+}
+
+.admin-cell.data {
+   font-weight: 600;
+   font-size: 0.9rem;
+   color: hsl(var(--muted-foreground));
+}
+
+.admin-cell.usuario {
+   text-align: left;
+   justify-content: flex-start;
+   line-height: 1.4;
+}
+
+.admin-cell.usuario small {
+   color: hsl(var(--muted-foreground));
+   font-size: 0.8rem;
+}
+
+.admin-cell.tipo {
+   font-weight: 600;
+   color: hsl(var(--primary));
+   background: hsl(var(--primary) / 0.1);
+   border-radius: 0.5rem;
+   padding: 0.25rem 0.5rem;
+   font-size: 0.85rem;
+}
+
+.admin-cell.ip {
+   font-family: 'Courier New', monospace;
+   font-size: 0.85rem;
+   color: hsl(var(--muted-foreground));
+}
+
+/* =============================================
+   GERENCIAR LOGS - RESPONSIVE
+   ============================================= */
+@media (max-width: 992px) {
+   .admin-header-logs,
+   .admin-row-logs {
+      grid-template-columns: 120px 1fr 130px 1.5fr 90px;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+   }
+
+   .admin-cell.descricao {
+      -webkit-line-clamp: 1;
+   }
+}
+
+@media (max-width: 768px) {
+   #gerenciar-logs {
+      padding: 1.5rem;
+   }
+
+   /* Esconder header em mobile */
+   .admin-header-logs {
+      display: none;
+   }
+
+   /* Layout de cards em mobile */
+   .admin-row-logs {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      border: 1px solid hsl(var(--border));
+      border-radius: 0.75rem;
+      background: hsl(var(--card));
+   }
+
+   .admin-row-logs:hover {
+      background: hsl(var(--card));
+      box-shadow: var(--shadow-md);
+   }
+
+   .admin-row-logs .admin-cell {
+      justify-content: flex-start;
+      text-align: left;
+   }
+
+   .admin-row-logs .admin-cell.data {
+      font-size: 1rem;
+      font-weight: 700;
+      color: hsl(var(--foreground));
+      order: -1;
+   }
+
+   .admin-row-logs .admin-cell.tipo {
+      align-self: flex-start;
+   }
+
+   .admin-row-logs .admin-cell.descricao {
+      -webkit-line-clamp: 3;
+      font-size: 0.9rem;
+   }
+
+   .admin-row-logs .admin-cell.ip::before {
+      content: "IP: ";
+      font-weight: 700;
+      color: hsl(var(--primary));
+   }
+}
+
+@media (max-width: 480px) {
+   #gerenciar-logs {
+      padding: 1rem;
+      border-radius: 0.75rem;
+   }
+
+   .admin-row-logs {
+      padding: 1rem;
+   }
+}
