@@ -1,3 +1,5 @@
+import logging
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
@@ -9,6 +11,14 @@ from empresa.models import *
 from django.contrib.auth.decorators import login_required
 from decimal import Decimal, InvalidOperation
 from datetime import datetime
+import re
+import requests
+from django.conf import settings
+from django.urls import reverse
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.template.loader import render_to_string
 
 from treinamento.models import Treinamento, InscricaoTreinamento
 from vagas.models import Vagas
@@ -145,36 +155,82 @@ def render_cadastro_usuario(request):
 def cadastro_usuario(request):
     if request.user.is_authenticated:
         messages.warning(
-            request, f'Você ja está logado, não é possivel realizar outro cadastro.')
+            request,
+            'Você já está logado, não é possível realizar outro cadastro.'
+        )
         return redirect('core:home')
+
     if request.method == 'POST':
-        nomeUser = request.POST.get('txtNome')
-    
-    #Validação do nome
-        if not nomeUser or not nomeUser.strip():
+        # =========================
+        # DADOS PRINCIPAIS
+        # =========================
+
+        nomeUser = request.POST.get('txtNome', '').strip()
+        email = request.POST.get('txtEmail', '').strip()
+        senha = request.POST.get('txtSenha', '')
+        confirmacaoSenha = request.POST.get('confirmar_Senha', '')
+
+        # =========================
+        # VALIDAÇÃO DO NOME
+        # =========================
+
+        if not nomeUser:
             messages.error(request, 'O nome é obrigatório.')
+            return render_cadastro_usuario(request)
 
-            estados = Estado.objects.all().order_by('nome_estado')
-            return render(request, 'cadastro_usuario.html', {'estados': estados})
-        
-        if len(nomeUser.strip()) < 3:
-            messages.error(request, 'O nome deve possuir no mínimo 3 caracteres.')
+        if len(nomeUser) < 3:
+            messages.error(
+                request,
+                'O nome deve possuir no mínimo 3 caracteres.'
+            )
+            return render_cadastro_usuario(request)
 
-            estados = Estado.objects.all().order_by('nome_estado')
-            return render(request, 'cadastro_usuario.html', {'estados': estados})
+        # =========================
+        # VALIDAÇÃO DO E-MAIL
+        # =========================
 
-        senha = request.POST.get('txtSenha')
-        confirmacaoSenha = request.POST.get('confirmar_Senha')
+        if not email:
+            messages.error(request, 'O e-mail é obrigatório.')
+            return render_cadastro_usuario(request)
+
+        # Verifica se o e-mail já está cadastrado
+        if UsuarioBase.objects.filter(email=email).exists():
+            messages.error(
+                request,
+                'Já existe uma conta cadastrada com este e-mail.'
+            )
+            return render_cadastro_usuario(request)
+
+        # =========================
+        # VALIDAÇÃO DA SENHA
+        # =========================
+
+        if not senha.strip():
+            messages.error(request, 'A senha é obrigatória.')
+            return render_cadastro_usuario(request)
+
+        if not confirmacaoSenha.strip():
+            messages.error(
+                request,
+                'A confirmação da senha é obrigatória.'
+            )
+            return render_cadastro_usuario(request)
+
         if senha != confirmacaoSenha:
-            messages.error(request, "As senhas devem ser iguais.")
-            return render(request, 'cadastro_usuario.html', {'estados': Estado.objects.all().order_by('nome_estado')})
+            messages.error(request, 'As senhas devem ser iguais.')
+            return render_cadastro_usuario(request)
+
+        # =========================
+        # DEMAIS DADOS
+        # =========================
+
         nomeSocial = request.POST.get('txtNomeSocial')
         dataNasc = request.POST.get('txtDataNasc')
         genero = request.POST.get('txtGenero')
         estadoCivil = request.POST.get('txtEstadoCivil')
         nacionalidade = request.POST.get('txtNacionalidade')
-        email = request.POST.get('txtEmail')
-        telefone = request.POST.get('txtTelefone')                        
+
+        telefone = request.POST.get('txtTelefone')
         foto_user = request.FILES.get('fileFoto')
         cep = request.POST.get('txtCep')
         rua = request.POST.get('txtRua')
@@ -183,34 +239,69 @@ def cadastro_usuario(request):
         complemento = request.POST.get('txtComplemento')
 
         cidade_id = request.POST.get('cidade')
-        if not cidade_id:
-            messages.error(request, 'Selecione uma cidade.')
-            return redirect('core:cadastro_usuario')
         estado_id = request.POST.get('estado')
 
-        if not Estado.objects.filter(id=estado_id).exists():
+        # =========================
+        # VALIDAÇÃO DO ESTADO
+        # =========================
+
+        if not estado_id:
+            messages.error(request, 'Selecione um estado.')
+            return render_cadastro_usuario(request)
+
+        if not str(estado_id).isdigit():
             messages.error(request, 'Estado inválido.')
-            estados = Estado.objects.all().order_by('nome_estado')
-            return render(request, 'cadastro_usuario.html', {'estados': estados})
+            return render_cadastro_usuario(request)
 
-        if not Cidade.objects.filter(id=cidade_id).exists():
+        try:
+            estado = Estado.objects.get(id=estado_id)
+        except Estado.DoesNotExist:
+            messages.error(request, 'Estado inválido.')
+            return render_cadastro_usuario(request)
+
+        # =========================
+        # VALIDAÇÃO DA CIDADE
+        # =========================
+
+        if not cidade_id:
+            messages.error(request, 'Selecione uma cidade.')
+            return render_cadastro_usuario(request)
+
+        if not str(cidade_id).isdigit():
             messages.error(request, 'Cidade inválida.')
-            estados = Estado.objects.all().order_by('nome_estado')
-            return render(request, 'cadastro_usuario.html', {'estados': estados})
-        # Buscar os objetos Estado e Cidade no Banco
-        estado = Estado.objects.get(id=estado_id)
-        cidade = Cidade.objects.get(id=cidade_id).first()
+            return render_cadastro_usuario(request)
 
-        # Criar usuário base
+        try:
+            cidade = Cidade.objects.get(
+                id=cidade_id,
+                estado_cidade_id=estado_id
+            )
+        except Cidade.DoesNotExist:
+            messages.error(
+                request,
+                'A cidade selecionada não pertence ao estado informado.'
+            )
+            return render_cadastro_usuario(request)
+
+        # =========================
+        # CRIAÇÃO DO USUÁRIO
+        # =========================
+
         user = UsuarioBase.objects.create_user(
             email=email,
             password=senha,
             nome=nomeUser,
             tipo='usuario'
         )
-        user.foto = foto_user
-        user.save()
-        # Cria usuario com os outros campos faltantes
+
+        if foto_user:
+            user.foto = foto_user
+            user.save()
+
+        # =========================
+        # CRIAÇÃO DO PERFIL
+        # =========================
+
         usuario = Usuario.objects.create(
             user=user,
             nome_social=nomeSocial,
@@ -227,58 +318,22 @@ def cadastro_usuario(request):
             cidade=cidade,
             complemento=complemento
         )
+
         request.session['usuario_email'] = usuario.user.email
 
-        messages.success(request, 'Cadastro inicial realizado! Complete seu perfil profissional!')
+        messages.success(
+            request,
+            'Cadastro inicial realizado! Complete seu perfil profissional!'
+        )
+
         return redirect('core:login')
 
-    if not cidade_id:
-        messages.error(request, 'Selecione uma cidade.')
-        return render_cadastro_usuario(request)
+    # =========================
+    # GET
+    # =========================
 
-    if not Estado.objects.filter(id=estado_id).exists():
-        messages.error(request, 'Estado inválido.')
-        return render_cadastro_usuario(request)
-
-    if not Cidade.objects.filter(id=cidade_id).exists():
-        messages.error(request, 'Cidade inválida.')
-        return render_cadastro_usuario(request)
-    
-    # Buscar os objetos Estado e Cidade no Banco
-    estado = Estado.objects.get(id=estado_id)
-    cidade = Cidade.objects.get(id=cidade_id).first()
-
-    # Criar usuário base
-    user = UsuarioBase.objects.create_user(
-        email=email,
-        password=senha,
-        nome=nomeUser,
-        tipo='usuario'
-    )
-    user.foto = foto_user
-    user.save()
-
-    # Cria usuario com os outros campos faltantes
-    usuario = Usuario.objects.create(
-        user=user,
-        nome_social=nomeSocial,
-        data_nascimento=dataNasc,
-        genero=genero,
-        estado_civil=estadoCivil,
-        nacionalidade=nacionalidade,
-        telefone=telefone,
-        cep=cep,
-        rua=rua,
-        numero=numero,
-        bairro=bairro,
-        estado=estado,
-        cidade=cidade,
-        complemento=complemento
-    )
-    request.session['usuario_email'] = usuario.user.email
-
-    messages.success(request, 'Cadastro inicial realizado! Complete seu perfil profissional!')
-    return redirect('core:login')
+    estados = Estado.objects.all().order_by('nome_estado')
+    return render(request, 'cadastro_usuario.html', {'estados': estados})
 
 def cadastro_completo(request):
     usuario_email = request.session.get('email_atual')
@@ -609,6 +664,80 @@ def logout(request):
 
     messages.success(request, 'Logout realizado com sucesso.')
     return redirect('core:home')
+
+
+def recuperar_senha(request):
+    if request.method == 'POST':
+        email = (request.POST.get('txtEmail') or '').strip().lower()
+        mensagem_padrao = 'Se o e-mail estiver cadastrado, você receberá as instruções.'
+
+        usuario = UsuarioBase.objects.filter(email=email).first()
+        if usuario:
+            uidb64 = urlsafe_base64_encode(force_bytes(usuario.pk))
+            token = default_token_generator.make_token(usuario)
+            link = request.build_absolute_uri(
+                reverse('core:redefinir_senha', kwargs={'uidb64': uidb64, 'token': token})
+            )
+
+            corpo_email = render_to_string('email/recuperar_senha_email.html', {
+                'nome': usuario.nome,
+                'link': link,
+                'expiracao_minutos': 30,
+            })
+
+            try:
+                requests.post(
+                    settings.RECUPERACAO_URL,
+                    json={
+                        'secret': settings.RECUPERACAO_API_KEY,
+                        'para': usuario.email,
+                        'assunto': 'Redefinição de senha — Canastra HUB',
+                        'mensagem': corpo_email,
+                        'html': True,
+                    },
+                    timeout=10,
+                )
+            except requests.RequestException:
+                logging.exception('Falha ao enviar e-mail de recuperação de senha')
+
+        messages.success(request, mensagem_padrao)
+        return redirect('core:login')
+
+    return render(request, 'recuperar_senha.html')
+
+
+def redefinir_senha(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        usuario = UsuarioBase.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, UsuarioBase.DoesNotExist):
+        usuario = None
+
+    token_valido = usuario is not None and default_token_generator.check_token(usuario, token)
+
+    if not token_valido:
+        messages.error(request, 'Este link é inválido ou expirou. Solicite a recuperação novamente.')
+        return redirect('core:recuperar_senha')
+
+    if request.method == 'POST':
+        senha = request.POST.get('txtSenha') or ''
+        confirmar_senha = request.POST.get('txtConfirmarSenha') or ''
+
+        if senha != confirmar_senha:
+            messages.error(request, 'As senhas não coincidem.')
+            return render(request, 'nova_senha.html')
+
+        if len(senha) < 8 or not re.search(r'[A-Z]', senha) or not re.search(r'[a-z]', senha) or not re.search(r'[0-9]', senha):
+            messages.error(request, 'A senha deve ter pelo menos 8 caracteres, com letras maiúsculas, minúsculas e números.')
+            return render(request, 'nova_senha.html')
+
+        usuario.set_password(senha)
+        usuario.save()
+
+        messages.success(request, 'Senha redefinida com sucesso! Faça login com sua nova senha.')
+        return redirect('core:login')
+
+    return render(request, 'nova_senha.html')
 
 
 @require_http_methods(["GET"])

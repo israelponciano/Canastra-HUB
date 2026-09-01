@@ -175,6 +175,30 @@ class Command(BaseCommand):
             pretensao_salarial=15.00
         )
 
+        user_marco = UsuarioBase.objects.create_user(
+            email='m.tulio.m.carvalho@gmail.com',
+            password='123',
+            nome='Marco Tulio Carvalho',
+            tipo='usuario'
+        )
+        usuario_marco = Usuario.objects.create(
+            user=user_marco,
+            nome_social='Marco',
+            data_nascimento='2002-07-11',
+            genero='masculino',
+            estado_civil='solteiro',
+            nacionalidade='brasileiro',
+            telefone='(37) 99838-1976',
+            cep='398000000',
+            rua='rua teste',
+            numero='981',
+            bairro='teste',
+            cidade_id=cidade.id,
+            estado_id=cidade.estado_cidade.id,
+            complemento='complemtento blablabla',
+            pretensao_salarial=15.00
+        )
+
         user2 = UsuarioBase.objects.create_user(
             email='empresa@teste',
             password='123',
