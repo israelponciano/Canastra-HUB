@@ -179,6 +179,26 @@ class JobMatcher:
             ))
         return sorted(results, key=lambda r: r.score, reverse=True)[:top_k]
 
+    def match_structured_hubs_for_usuario(
+        self, usuario, top_k: int = 5, min_score: float = 0.0
+    ) -> list[MatchResult]:
+        """Ranqueia hubs ativos por afinidade de interesse com o usuário (score 0-100%)."""
+        from core.models import Hub
+        from .scoring import composite_score_hub
+
+        results = []
+        for hub in Hub.objects.filter(isActive=True):
+            sc = composite_score_hub(usuario, hub, self.model)
+            if sc["score"] < min_score:
+                continue
+            results.append(MatchResult(
+                entity_id=str(hub.pk),
+                name=hub.nome_hub,
+                score=sc["score"],
+                breakdown=sc["breakdown"],
+            ))
+        return sorted(results, key=lambda r: r.score, reverse=True)[:top_k]
+
     # ── internals ─────────────────────────────────────────────────────────────
 
     def _preprocess(self, text: str) -> str:

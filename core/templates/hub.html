@@ -43,24 +43,24 @@
     </section>
 
     <!-- ══════════════════════════════════════
-         DEMANDAS — ainda estático (model futuro)
+         PRODUTOS OFERTADOS PELAS EMPRESAS — dinâmico
     ══════════════════════════════════════ -->
-    <section id="demandas" class="hub-section">
+    <section id="produtos" class="hub-section">
       <div class="container">
-        <h2 class="section-title">Demandas</h2>
+        <h2 class="section-title">Produtos e Ofertas</h2>
         <div class="demands-grid">
-          <div class="demand-card">
-            <img src="{% static '/img/hubs/demanda_milho_1.png' %}" alt="AgroTech Solutions" class="company-logo" />
-            <h3>Monitoramento Inteligente por Imagens Aéreas</h3>
-            <span class="price">Urgente</span>
-            <p>Implementação de um sistema de monitoramento de lavouras utilizando drones com câmeras multiespectrais. Desenvolvimento de modelos de Inteligência Artificial para detecção precoce de estresse hídrico, deficiências nutricionais e infestação de pragas, permitindo a aplicação de insumos de forma precisa.</p>
-          </div>
-          <div class="demand-card">
-            <img src="{% static '/img/hubs/demanda_milho_2.png' %}" alt="irrigacao" class="company-logo" />
-            <h3>Modelo de Negócio Sustentável</h3>
-            <span class="price">Negociável</span>
-            <p>Lançar uma plataforma digital visando prever a safra (clima, produtividade por talhão) e otimizar a armazenagem inteligente (controle de umidade e pragas), conectando produtores, transportadores especializados e compradores regionais (indústrias de ração, agroindústrias).</p>
-          </div>
+          {% for produto in produtos %}
+            <div class="demand-card">
+              {% if produto.categoria_produto %}<span class="price">{{ produto.categoria_produto }}</span>{% endif %}
+              <h3>{{ produto.nome_produto }}</h3>
+              <p>{{ produto.descricao_produto|truncatechars:180 }}</p>
+              {% if produto.preco_produto %}<p class="fw-semibold mb-1">R$ {{ produto.preco_produto }}</p>{% endif %}
+              <p class="text-muted small mb-0">Empresa: {{ produto.empresa.nomefantasia }}</p>
+
+            </div>
+          {% empty %}
+            <p>Nenhum produto disponível neste Hub no momento.</p>
+          {% endfor %}
         </div>
       </div>
     </section>

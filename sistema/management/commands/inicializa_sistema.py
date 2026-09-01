@@ -35,12 +35,15 @@ class Command(BaseCommand):
                 print(f"Erro ao inserir {estado_data['nome']}: {e}")
 
         # --- Hubs ---
+        # area_foco_hub/tecnologias_hub alimentam o Match Usuario x Hub (matching/scoring.py)
         caminho_hub1_imagem = settings.BASE_DIR / 'media' / 'fotos_hub' / 'agro_hub.jpg'
         with open(caminho_hub1_imagem, 'rb') as f:
             hub1 = Hub.objects.create(
                 nome_hub='Agro',
                 descricao_hub='Agro é melhor com o pessoal da canastra',
-                foto_hub=File(f, name=caminho_hub1_imagem.name)
+                foto_hub=File(f, name=caminho_hub1_imagem.name),
+                area_foco_hub='Agronegócio, cafeicultura, produção rural e comercialização de alimentos',
+                tecnologias_hub='Agricultura de precisão, sensores IoT, gestão agrícola digital'
             )
 
         caminho_hub4_imagem = settings.BASE_DIR / 'media' / 'fotos_hub' / 'milho_hub.jpg'
@@ -48,7 +51,9 @@ class Command(BaseCommand):
             hub4 = Hub.objects.create(
                 nome_hub='Milho',
                 descricao_hub='Milho é melhor com o pessoal da canastra',
-                foto_hub=File(f, name=caminho_hub4_imagem.name)
+                foto_hub=File(f, name=caminho_hub4_imagem.name),
+                area_foco_hub='Produção de milho, grãos e insumos agrícolas',
+                tecnologias_hub='Sementes geneticamente melhoradas, maquinário agrícola'
             )
 
         caminho_hub6_imagem = settings.BASE_DIR / 'media' / 'fotos_hub' / 'graos_hub.jpg'
@@ -56,7 +61,9 @@ class Command(BaseCommand):
             hub6 = Hub.objects.create(
                 nome_hub='Grãos',
                 descricao_hub='Grãos é melhor com o pessoal da canastra',
-                foto_hub=File(f, name=caminho_hub6_imagem.name)
+                foto_hub=File(f, name=caminho_hub6_imagem.name),
+                area_foco_hub='Comercialização de grãos, logística agrícola e exportação',
+                tecnologias_hub='Armazenagem, transporte, rastreabilidade da produção'
             )
 
         # --- Empresa e Admin ---
@@ -89,6 +96,27 @@ class Command(BaseCommand):
             password='123',
             nome='admin',
             tipo='admin'
+        )
+
+        # --- Vínculo Empresa x Hub e Produtos ofertados (alimentam o Match nos Hubs) ---
+        EmpresaHub.objects.create(empresa=empresa, hub=hub1)
+        EmpresaHub.objects.create(empresa=empresa, hub=hub6)
+
+        produto1 = Produto.objects.create(
+            empresa=empresa,
+            nome_produto='Café Arábica Especial',
+            categoria_produto='Café',
+            descricao_produto='Café arábica torrado artesanalmente, produzido na região da Canastra',
+            preco_produto=45.90,
+            quantidade_disponivel=200,
+        )
+        produto2 = Produto.objects.create(
+            empresa=empresa,
+            nome_produto='Mel Silvestre da Canastra',
+            categoria_produto='Apicultura',
+            descricao_produto='Mel puro produzido por apicultores parceiros da região da Canastra',
+            preco_produto=25.00,
+            quantidade_disponivel=150,
         )
 
         # --- Notícias Agro ---
@@ -277,8 +305,22 @@ class Command(BaseCommand):
             grau_escolaridade1='Ensino Médio Completo',
             instituicao_nome1='Escola Estadual de Arcos',
             situacao_academica1='Concluído',
+            data_acad_inicio1='2018-02-01',
+            data_acad_fim1='2020-12-15',
+            grau_escolaridade2='Curso Técnico',
+            instituicao_nome2='SENAR Minas',
+            curso_graduacao2='Mecanização Agrícola',
+            situacao_academica2='Concluído',
+            data_acad_inicio2='2021-02-01',
+            data_acad_fim2='2021-12-10',
             competencias_tecnicas1='Operação de tratores, colheitadeiras e implementos agrícolas. Manutenção preventiva básica de equipamentos.',
             competencias_comportamentais1='Responsabilidade, pontualidade, trabalho em equipe e iniciativa.',
+            competencias_tecnicas2='Leitura de instrumentos, regulagem de máquinas e segurança no trabalho rural.',
+            competencias_comportamentais2='Organização, atenção aos detalhes e comprometimento.',
+            linkedin='https://www.linkedin.com/in/cleiton-romario',
+            instagram='cleiton.agro',
+            pessoa_com_deficiencia=False,
+            necessidade_adaptacao=None,
             interesses_hobbies='Agricultura, criação de animais, pesca'
         )
         ExperienciaProfissional.objects.create(
@@ -290,6 +332,31 @@ class Command(BaseCommand):
             cargo2='Operador de Trator',
             nome_empresa2='Cooperativa Agrícola do Oeste',
             data_inicio2='2024-01-15',
+        )
+        CursoExtraCurricular.objects.create(
+            usuario=usuario1,
+            nome_curso1='Operação e manutenção de tratores',
+            instituicao1='SENAR Minas',
+            carga_horaria1=40,
+            data_conclusao1='2022-02-18',
+            nome_curso2='Segurança do trabalho rural',
+            instituicao2='SENAR Minas',
+            carga_horaria2=20,
+            data_conclusao2='2022-06-24',
+        )
+        Idioma.objects.create(
+            usuario=usuario1,
+            idioma1='Português',
+            nivel_fluencia1='avancado',
+            idioma2='Inglês',
+            nivel_fluencia2='basico',
+        )
+        # Interesse de compra compatível com produto1 (café) -> deve gerar Match
+        interesse1 = InteresseCompra.objects.create(
+            usuario=usuario1,
+            categoria_interesse='Café',
+            descricao_interesse='Procuro café arábica de produtor local para revenda',
+            preco_maximo=60.00,
         )
 
         # --- Usuário 2: perfil desenvolvedor ---
@@ -322,8 +389,22 @@ class Command(BaseCommand):
             instituicao_nome1='IFMG - Instituto Federal de Minas Gerais',
             curso_graduacao1='Ciência da Computação',
             situacao_academica1='Cursando',
+            data_acad_inicio1='2022-02-01',
+            grau_escolaridade2='Curso Técnico',
+            instituicao_nome2='Escola Técnica de Patos de Minas',
+            curso_graduacao2='Informática para Internet',
+            situacao_academica2='Concluído',
+            data_acad_inicio2='2020-02-02',
+            data_acad_fim2='2021-12-10',
             competencias_tecnicas1='Python, JavaScript, Django, React, Git, SQL.',
             competencias_comportamentais1='Proatividade, aprendizado rápido, trabalho em equipe, resolução de problemas.',
+            competencias_tecnicas2='APIs REST, testes automatizados, Docker e modelagem de banco de dados.',
+            competencias_comportamentais2='Comunicação, criatividade e pensamento analítico.',
+            linkedin='https://www.linkedin.com/in/romario-santos',
+            github='https://github.com/romario-santos',
+            instagram='romario.dev',
+            pessoa_com_deficiencia=False,
+            necessidade_adaptacao=None,
             interesses_hobbies='Programação, tecnologia, jogos eletrônicos, leitura'
         )
         ExperienciaProfissional.objects.create(
@@ -332,6 +413,36 @@ class Command(BaseCommand):
             nome_empresa1='TechSul Soluções',
             data_inicio1='2023-06-01',
             data_fim1='2024-05-31',
+        )
+        CursoExtraCurricular.objects.create(
+            usuario=usuario2,
+            nome_curso1='Desenvolvimento Web com Django',
+            instituicao1='Alura',
+            carga_horaria1=60,
+            data_conclusao1='2023-08-20',
+            nome_curso2='Fundamentos de Git e GitHub',
+            instituicao2='DIO',
+            carga_horaria2=12,
+            data_conclusao2='2023-10-14',
+            nome_curso3='Introdução a Docker',
+            instituicao3='Escola da Nuvem',
+            carga_horaria3=20,
+            data_conclusao3='2024-02-12',
+        )
+        Idioma.objects.create(
+            usuario=usuario2,
+            idioma1='Português',
+            nivel_fluencia1='avancado',
+            idioma2='Inglês',
+            nivel_fluencia2='intermediario',
+            idioma3='Espanhol',
+            nivel_fluencia3='basico',
+        )
+        # Interesse sem produto compatível cadastrado -> não deve gerar Match (demonstra ausência de falso positivo)
+        interesse2 = InteresseCompra.objects.create(
+            usuario=usuario2,
+            categoria_interesse='Tecnologia',
+            descricao_interesse='Interessado em soluções de automação e sensores para agricultura',
         )
 
         print("user_empresa:", user_empresa.email, empresa.segmento)
@@ -344,3 +455,19 @@ class Command(BaseCommand):
         print("vaga3:", vaga3.cargo_vaga, f"(req: {vaga3.anos_experiencia_req}a, formação: {vaga3.nivel_formacao_req})")
         print("usuario1:", user1.email, usuario1.cargo_pretendido)
         print("usuario2:", user2.email, usuario2.cargo_pretendido)
+        print("produto1:", produto1.nome_produto, "| produto2:", produto2.nome_produto)
+        print("interesse1:", interesse1.categoria_interesse, "| interesse2:", interesse2.categoria_interesse)
+
+        # --- Visualiza os resultados do Match nos Hubs gerados dinamicamente pelos signals ---
+        from matching.models import HubMatchScore, ProdutoMatch
+
+        print("\n--- Match Usuário x Hub ---")
+        for score in HubMatchScore.objects.select_related('usuario__user', 'hub').order_by('usuario_id', '-score'):
+            print(f"  {score.usuario.user.email} <-> {score.hub.nome_hub}: {score.score}%")
+
+        print("\n--- Match Interesse de Compra x Produto ---")
+        for match in ProdutoMatch.objects.select_related('interesse__usuario__user', 'produto__empresa').order_by('-score'):
+            print(
+                f"  {match.interesse.usuario.user.email} ({match.interesse.categoria_interesse}) <-> "
+                f"{match.produto.nome_produto} ({match.produto.empresa.nomefantasia}): {match.score}%"
+            )

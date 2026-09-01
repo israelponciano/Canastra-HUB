@@ -254,10 +254,12 @@ class Hub(models.Model):
                              blank=True,
                              default=None)
     isActive = models.BooleanField(default=True)
+    area_foco_hub = models.TextField(blank=True, default="")
+    tecnologias_hub = models.TextField(blank=True, default="")
 
     def __str__(self):
         return f"{self.nome_hub}"
-    
+
 
 class Noticia(models.Model):
     titulo_noticia = models.CharField(max_length=250)
@@ -277,4 +279,21 @@ class NoticiaHub(models.Model):
     noticia = models.ForeignKey(Noticia, on_delete=models.CASCADE)
     hub = models.ForeignKey(Hub, on_delete=models.CASCADE)
 
+
+class InteresseCompra(models.Model):
+    """Interesse de compra declarado por um usuário (demanda).
+
+    Categoria/descrição usadas como critério de compatibilidade com Produto —
+    sujeitas à definição final do cliente para o processo de Match.
+    """
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='interesses_compra')
+    categoria_interesse = models.CharField(max_length=150, blank=True, default="")
+    descricao_interesse = models.TextField(blank=True, default="")
+    preco_maximo = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    isActive = models.BooleanField(default=True)
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.usuario_id}: {self.categoria_interesse or self.descricao_interesse}"
 

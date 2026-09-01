@@ -545,6 +545,20 @@ class SyncVagaSignalTest(TestCase):
 from django.test import RequestFactory
 
 
+def _mock_user(*, autenticado=True, staff=False):
+    user = MagicMock()
+    user.is_authenticated = autenticado
+    user.is_staff = staff
+    return user
+
+
+def _request(factory, url, params=None, *, user=None):
+    """RequestFactory não popula request.user; as views usam @login_required."""
+    request = factory.get(url, params or {})
+    request.user = user if user is not None else _mock_user(staff=True)
+    return request
+
+
 class CandidatosParaVagaViewTest(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
@@ -553,7 +567,7 @@ class CandidatosParaVagaViewTest(TestCase):
     @patch('matching.views.Vagas')
     def test_retorna_resultados_paginados_ordenados_por_score(self, mock_vagas_cls, mock_ms_cls):
         # Configura vaga existente
-        mock_vagas_cls.objects.filter.return_value.exists.return_value = True
+        mock_vagas_cls.objects.filter.return_value.only.return_value.first.return_value = MagicMock(empresa_id=7)
 
         # Configura queryset com 2 resultados
         score1 = MagicMock()
@@ -574,7 +588,7 @@ class CandidatosParaVagaViewTest(TestCase):
         mock_ms_cls.objects.filter.return_value.order_by.return_value.select_related.return_value = mock_qs
 
         from matching.views import candidatos_para_vaga
-        request = self.factory.get('/matching/candidatos/1/', {'page': '1', 'page_size': '20'})
+        request = _request(self.factory, '/matching/candidatos/1/', {'page': '1', 'page_size': '20'})
         response = candidatos_para_vaga(request, vaga_id=1)
 
         self.assertEqual(response.status_code, 200)
@@ -589,17 +603,35 @@ class CandidatosParaVagaViewTest(TestCase):
 
     @patch('matching.views.Vagas')
     def test_retorna_404_para_vaga_inexistente(self, mock_vagas_cls):
-        mock_vagas_cls.objects.filter.return_value.exists.return_value = False
+        mock_vagas_cls.objects.filter.return_value.only.return_value.first.return_value = None
         from matching.views import candidatos_para_vaga
-        request = self.factory.get('/matching/candidatos/999/')
+        request = _request(self.factory, '/matching/candidatos/999/')
         response = candidatos_para_vaga(request, vaga_id=999)
         self.assertEqual(response.status_code, 404)
 
     def test_retorna_400_para_page_invalida(self):
         from matching.views import candidatos_para_vaga
-        request = self.factory.get('/matching/candidatos/1/', {'page': 'abc'})
+        request = _request(self.factory, '/matching/candidatos/1/', {'page': 'abc'})
         response = candidatos_para_vaga(request, vaga_id=1)
         self.assertEqual(response.status_code, 400)
+
+    @patch('matching.views.Empresa')
+    @patch('matching.views.Vagas')
+    def test_retorna_403_para_empresa_que_nao_e_dona_da_vaga(self, mock_vagas_cls, mock_empresa_cls):
+        mock_vagas_cls.objects.filter.return_value.only.return_value.first.return_value = MagicMock(empresa_id=7)
+        mock_empresa_cls.objects.filter.return_value.exists.return_value = False
+
+        from matching.views import candidatos_para_vaga
+        request = _request(self.factory, '/matching/candidatos/1/', user=_mock_user(staff=False))
+        response = candidatos_para_vaga(request, vaga_id=1)
+        self.assertEqual(response.status_code, 403)
+
+    @patch('matching.views.Vagas')
+    def test_redireciona_anonimo_para_login(self, mock_vagas_cls):
+        from matching.views import candidatos_para_vaga
+        request = _request(self.factory, '/matching/candidatos/1/', user=_mock_user(autenticado=False))
+        response = candidatos_para_vaga(request, vaga_id=1)
+        self.assertEqual(response.status_code, 302)
 
 
 class VagasParaUsuarioViewTest(TestCase):
@@ -624,7 +656,7 @@ class VagasParaUsuarioViewTest(TestCase):
         mock_ms_cls.objects.filter.return_value.order_by.return_value.select_related.return_value = mock_qs
 
         from matching.views import vagas_para_usuario
-        request = self.factory.get('/matching/vagas-para/1/')
+        request = _request(self.factory, '/matching/vagas-para/1/')
         response = vagas_para_usuario(request, usuario_pk=1)
 
         self.assertEqual(response.status_code, 200)
@@ -638,15 +670,32 @@ class VagasParaUsuarioViewTest(TestCase):
     def test_retorna_404_para_usuario_inexistente(self, mock_usuario_cls):
         mock_usuario_cls.objects.filter.return_value.exists.return_value = False
         from matching.views import vagas_para_usuario
-        request = self.factory.get('/matching/vagas-para/999/')
+        request = _request(self.factory, '/matching/vagas-para/999/')
         response = vagas_para_usuario(request, usuario_pk=999)
         self.assertEqual(response.status_code, 404)
 
     def test_retorna_400_para_page_invalida(self):
         from matching.views import vagas_para_usuario
-        request = self.factory.get('/matching/vagas-para/1/', {'page': 'xyz'})
+        request = _request(self.factory, '/matching/vagas-para/1/', {'page': 'xyz'})
         response = vagas_para_usuario(request, usuario_pk=1)
         self.assertEqual(response.status_code, 400)
+
+    @patch('matching.views.Usuario')
+    def test_retorna_403_para_outro_candidato(self, mock_usuario_cls):
+        # Existe (exists=True na 1a chamada) mas não pertence ao request.user
+        mock_usuario_cls.objects.filter.return_value.exists.side_effect = [True, False]
+
+        from matching.views import vagas_para_usuario
+        request = _request(self.factory, '/matching/vagas-para/1/', user=_mock_user(staff=False))
+        response = vagas_para_usuario(request, usuario_pk=1)
+        self.assertEqual(response.status_code, 403)
+
+    @patch('matching.views.Usuario')
+    def test_redireciona_anonimo_para_login(self, mock_usuario_cls):
+        from matching.views import vagas_para_usuario
+        request = _request(self.factory, '/matching/vagas-para/1/', user=_mock_user(autenticado=False))
+        response = vagas_para_usuario(request, usuario_pk=1)
+        self.assertEqual(response.status_code, 302)
 
 
 # ── Testes de persistência de MatchScore ──────────────────────────────────────
@@ -725,3 +774,255 @@ class ScoreFormacaoTest(TestCase):
         s = score_formacao(usuario, vaga, self._make_model())
         self.assertLess(s, 1.0,
             msg="Técnico para vaga de mestrado deve ter score < 1.0")
+
+
+# ── Match usuário × hub e interesse × produto ─────────────────────────────────
+
+def _mock_model_ones(dim=16):
+    """Modelo fake: todo texto vira o mesmo vetor → cosseno sempre 1.0."""
+    model = MagicMock()
+    model.encode.side_effect = lambda texts, **_: np.ones((len(texts), dim), dtype=float)
+    return model
+
+
+def _mock_hub(**kw):
+    hub = MagicMock()
+    hub.nome_hub = kw.get('nome_hub', 'Hub do Milho')
+    hub.descricao_hub = kw.get('descricao_hub', 'Hub de agronegócio')
+    hub.area_foco_hub = kw.get('area_foco_hub', 'Agricultura de precisão')
+    hub.tecnologias_hub = kw.get('tecnologias_hub', 'Drones, IoT, Machine Learning')
+    hub.isActive = kw.get('isActive', True)
+    return hub
+
+
+def _mock_usuario_hub(**kw):
+    """_mock_usuario com competências preenchidas, para o match de hub."""
+    kw.setdefault('competencias_tecnicas1', 'Python, Django')
+    kw.setdefault('grau_escolaridade1', 'Superior Completo')
+    kw.setdefault('curso_graduacao1', 'Sistemas de Informação')
+    kw.setdefault('interesses_hobbies', 'Drones e fotografia aérea')
+    return _mock_usuario(**kw)
+
+
+class EncodeBatchTest(TestCase):
+    def test_omite_textos_vazios(self):
+        from matching.scoring import _encode_batch
+        embs = _encode_batch(_mock_model_ones(), {'a': 'texto', 'b': '', 'c': '   ', 'd': None})
+        self.assertEqual(set(embs), {'a'})
+
+    def test_dicionario_vazio_nao_chama_modelo(self):
+        from matching.scoring import _encode_batch
+        model = _mock_model_ones()
+        self.assertEqual(_encode_batch(model, {'a': '', 'b': None}), {})
+        model.encode.assert_not_called()
+
+    def test_uma_unica_chamada_ao_modelo(self):
+        from matching.scoring import _encode_batch
+        model = _mock_model_ones()
+        _encode_batch(model, {'a': 'um', 'b': 'dois', 'c': 'três'})
+        self.assertEqual(model.encode.call_count, 1)
+
+
+class ScoreHubComponentesTest(TestCase):
+    def setUp(self):
+        self.model = _mock_model_ones()
+        self.hub = _mock_hub()
+
+    def test_area_interesse_sem_dados_do_usuario_e_neutro(self):
+        from matching.scoring import score_area_interesse_hub
+        usuario = _mock_usuario_hub(area_interesse=None)
+        self.assertEqual(score_area_interesse_hub(usuario, self.hub, self.model), 0.5)
+
+    def test_area_interesse_sem_foco_do_hub_e_neutro(self):
+        from matching.scoring import score_area_interesse_hub
+        hub = _mock_hub(area_foco_hub='', tecnologias_hub='')
+        self.assertEqual(score_area_interesse_hub(_mock_usuario_hub(), hub, self.model), 0.5)
+
+    def test_tecnico_sem_tecnologias_do_hub_e_neutro(self):
+        from matching.scoring import score_tecnico_hub
+        hub = _mock_hub(tecnologias_hub='')
+        self.assertEqual(score_tecnico_hub(_mock_usuario_hub(), hub, self.model), 0.5)
+
+    def test_formacao_sem_registros_e_neutro(self):
+        from matching.scoring import score_formacao_hub
+        usuario = _mock_usuario_hub(grau_escolaridade1=None, curso_graduacao1=None)
+        self.assertEqual(score_formacao_hub(usuario, self.hub, self.model), 0.5)
+
+    def test_hobbies_sem_dados_usa_baseline(self):
+        from matching.scoring import score_hobbies_hub
+        usuario = _mock_usuario_hub(interesses_hobbies=None)
+        self.assertEqual(score_hobbies_hub(usuario, self.hub, self.model), 0.25)
+
+    def test_componentes_com_dados_completos_retornam_similaridade_maxima(self):
+        from matching.scoring import (
+            score_area_interesse_hub, score_formacao_hub, score_hobbies_hub, score_tecnico_hub,
+        )
+        usuario = _mock_usuario_hub()
+        for fn in (score_area_interesse_hub, score_tecnico_hub, score_formacao_hub, score_hobbies_hub):
+            self.assertAlmostEqual(fn(usuario, self.hub, self.model), 1.0, places=6, msg=fn.__name__)
+
+
+class ScoreProdutosInteresseHubTest(TestCase):
+    """Lê ProdutoMatch já persistido em vez de recalcular embeddings."""
+
+    def _patches(self, *, tem_produtos, tem_interesses, melhor_score):
+        empresa_hub = patch('empresa.models.EmpresaHub')
+        produto = patch('empresa.models.Produto')
+        interesse = patch('core.models.InteresseCompra')
+        produto_match = patch('matching.models.ProdutoMatch')
+
+        m_eh, m_prod, m_int, m_pm = (p.start() for p in (empresa_hub, produto, interesse, produto_match))
+        self.addCleanup(lambda: [p.stop() for p in (empresa_hub, produto, interesse, produto_match)])
+
+        m_eh.objects.filter.return_value.values_list.return_value = [1, 2]
+        m_prod.objects.filter.return_value.exists.return_value = tem_produtos
+        m_int.objects.filter.return_value.exists.return_value = tem_interesses
+        m_pm.objects.filter.return_value.aggregate.return_value = {'melhor': melhor_score}
+        return m_pm
+
+    def test_sem_produtos_no_hub_e_neutro(self):
+        from matching.scoring import score_produtos_interesse_hub
+        self._patches(tem_produtos=False, tem_interesses=True, melhor_score=90.0)
+        self.assertEqual(score_produtos_interesse_hub(_mock_usuario_hub(), _mock_hub()), 0.5)
+
+    def test_sem_interesses_do_usuario_e_neutro(self):
+        from matching.scoring import score_produtos_interesse_hub
+        self._patches(tem_produtos=True, tem_interesses=False, melhor_score=90.0)
+        self.assertEqual(score_produtos_interesse_hub(_mock_usuario_hub(), _mock_hub()), 0.5)
+
+    def test_usa_melhor_produto_match_persistido(self):
+        from matching.scoring import score_produtos_interesse_hub
+        self._patches(tem_produtos=True, tem_interesses=True, melhor_score=80.0)
+        self.assertAlmostEqual(
+            score_produtos_interesse_hub(_mock_usuario_hub(), _mock_hub()), 0.8, places=6
+        )
+
+    def test_sem_match_acima_do_limiar_usa_piso(self):
+        from matching.scoring import _SCORE_PRODUTO_ABAIXO_LIMIAR, score_produtos_interesse_hub
+        self._patches(tem_produtos=True, tem_interesses=True, melhor_score=None)
+        self.assertEqual(
+            score_produtos_interesse_hub(_mock_usuario_hub(), _mock_hub()),
+            _SCORE_PRODUTO_ABAIXO_LIMIAR,
+        )
+
+    def test_nao_chama_o_modelo_de_embeddings(self):
+        from matching.scoring import score_produtos_interesse_hub
+        self._patches(tem_produtos=True, tem_interesses=True, melhor_score=70.0)
+        model = _mock_model_ones()
+        score_produtos_interesse_hub(_mock_usuario_hub(), _mock_hub(), model)
+        model.encode.assert_not_called()
+
+
+class CompositeScoreHubTest(TestCase):
+    def setUp(self):
+        self.model = _mock_model_ones()
+        self.hub = _mock_hub()
+        self.usuario = _mock_usuario_hub()
+
+    def test_pesos_somam_um(self):
+        from matching.scoring import HUB_WEIGHTS
+        self.assertAlmostEqual(sum(HUB_WEIGHTS.values()), 1.0, places=6)
+
+    @patch('matching.scoring.score_produtos_interesse_hub', return_value=1.0)
+    def test_similaridade_maxima_resulta_em_100(self, _mock_produtos):
+        from matching.scoring import composite_score_hub
+        resultado = composite_score_hub(self.usuario, self.hub, self.model)
+        self.assertAlmostEqual(resultado['score'], 100.0, places=2)
+
+    @patch('matching.scoring.score_produtos_interesse_hub', return_value=0.5)
+    def test_breakdown_tem_todos_os_componentes(self, _mock_produtos):
+        from matching.scoring import HUB_WEIGHTS, composite_score_hub
+        resultado = composite_score_hub(self.usuario, self.hub, self.model)
+        self.assertEqual(set(resultado['breakdown']), set(HUB_WEIGHTS))
+
+    @patch('matching.scoring.score_produtos_interesse_hub', return_value=0.5)
+    def test_codifica_todos_os_textos_em_uma_chamada(self, _mock_produtos):
+        from matching.scoring import composite_score_hub
+        composite_score_hub(self.usuario, self.hub, self.model)
+        self.assertEqual(self.model.encode.call_count, 1)
+
+    @patch('matching.scoring.score_produtos_interesse_hub', return_value=0.0)
+    def test_componente_de_produtos_entra_com_o_proprio_peso(self, _mock_produtos):
+        from matching.scoring import HUB_WEIGHTS, composite_score_hub
+        resultado = composite_score_hub(self.usuario, self.hub, self.model)
+        esperado = (1.0 - HUB_WEIGHTS['produtos_interesse']) * 100
+        self.assertAlmostEqual(resultado['score'], esperado, places=2)
+
+
+class CompositeScoreProdutoTest(TestCase):
+    def _interesse(self, categoria='Drones', descricao='Drone para pulverização'):
+        i = MagicMock()
+        i.categoria_interesse = categoria
+        i.descricao_interesse = descricao
+        return i
+
+    def _produto(self, categoria='Drones', descricao='Drone agrícola'):
+        p = MagicMock()
+        p.categoria_produto = categoria
+        p.descricao_produto = descricao
+        return p
+
+    def test_pesos_somam_um(self):
+        from matching.scoring import PRODUCT_WEIGHTS
+        self.assertAlmostEqual(sum(PRODUCT_WEIGHTS.values()), 1.0, places=6)
+
+    def test_similaridade_maxima_resulta_em_100(self):
+        from matching.scoring import composite_score_produto
+        resultado = composite_score_produto(self._interesse(), self._produto(), _mock_model_ones())
+        self.assertAlmostEqual(resultado['score'], 100.0, places=2)
+
+    def test_ambos_os_lados_vazios_resulta_em_neutro(self):
+        from matching.scoring import composite_score_produto
+        resultado = composite_score_produto(
+            self._interesse(categoria='', descricao=''),
+            self._produto(categoria='', descricao=''),
+            _mock_model_ones(),
+        )
+        self.assertAlmostEqual(resultado['score'], 50.0, places=2)
+        self.assertEqual(resultado['breakdown'], {'categoria': 0.5, 'descricao': 0.5})
+
+
+# ── Signals de HubMatchScore ──────────────────────────────────────────────────
+
+class HubMatchScoreSignalTest(TestCase):
+    @patch('matching.signals._upsert_hub_scores_for_hub')
+    @patch('matching.signals.Hub')
+    @patch('matching.signals.EmpresaHub')
+    def test_vinculo_empresa_hub_recalcula_o_hub(self, mock_eh, mock_hub_cls, mock_upsert):
+        from matching.signals import sync_empresa_hub
+        hub = _mock_hub()
+        mock_hub_cls.objects.filter.return_value.first.return_value = hub
+
+        sync_empresa_hub(sender=None, instance=MagicMock(hub_id=3, pk=1))
+        mock_upsert.assert_called_once_with(hub)
+
+    @patch('matching.signals._upsert_hub_scores_for_hub')
+    def test_vinculo_sem_hub_e_ignorado(self, mock_upsert):
+        from matching.signals import sync_empresa_hub
+        sync_empresa_hub(sender=None, instance=MagicMock(hub_id=None, pk=1))
+        mock_upsert.assert_not_called()
+
+    @patch('matching.signals._upsert_hub_scores_for_hub')
+    @patch('matching.signals.EmpresaHub')
+    @patch('matching.signals.Hub')
+    def test_produto_recalcula_hubs_da_empresa(self, mock_hub_cls, mock_eh, mock_upsert):
+        from matching.signals import _recalcular_hubs_da_empresa
+        hub_a, hub_b = _mock_hub(), _mock_hub()
+        mock_eh.objects.filter.return_value.values_list.return_value = [1, 2]
+        mock_hub_cls.objects.filter.return_value = [hub_a, hub_b]
+
+        _recalcular_hubs_da_empresa(MagicMock())
+        self.assertEqual(mock_upsert.call_count, 2)
+
+    @patch('matching.signals.get_matcher')
+    @patch('matching.models.HubMatchScore')
+    def test_usuario_inativo_tem_scores_removidos_e_nao_recalculados(self, mock_hms, mock_get_matcher):
+        from matching.signals import _upsert_hub_scores_for_usuario
+        usuario = MagicMock()
+        usuario.user.is_active = False
+
+        _upsert_hub_scores_for_usuario(usuario)
+
+        mock_hms.objects.filter.assert_called_once_with(usuario=usuario)
+        mock_hms.objects.filter.return_value.delete.assert_called_once()
+        mock_get_matcher.assert_not_called()

@@ -2,7 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.http import JsonResponse
-from django.views.decorators.http import require_http_methods 
+from django.views.decorators.http import require_http_methods
+from django.db.models import FloatField, OuterRef, Subquery, Value
+from django.db.models.functions import Coalesce
 from core.models import *
 from empresa.models import *
 from django.contrib.auth.decorators import login_required
@@ -10,6 +12,15 @@ from decimal import Decimal, InvalidOperation
 from datetime import datetime
 
 from treinamento.models import Treinamento
+
+
+def _usuario_logado(request):
+    if not request.user.is_authenticated:
+        return None
+    try:
+        return Usuario.objects.get(user=request.user)
+    except Usuario.DoesNotExist:
+        return None
 
 def home(request):
     # Buscar notícias ativas que devem aparecer na home
@@ -28,11 +39,31 @@ def parceiros(request):
 
 def hubs(request):
     """View para a central de hubs"""
+    from matching.models import HubMatchScore
+
     hubs = Hub.objects.filter(isActive=True)
-    return render(request, 'hubs.html', {'hubs': hubs})
+    usuario_perfil = _usuario_logado(request)
+
+    ordenado_por_score = usuario_perfil is not None
+    if usuario_perfil:
+        score_subquery = HubMatchScore.objects.filter(
+            usuario=usuario_perfil,
+            hub=OuterRef('pk'),
+        ).values('score')[:1]
+
+        hubs = hubs.annotate(
+            match_score=Coalesce(
+                Subquery(score_subquery, output_field=FloatField()),
+                Value(0.0),
+            )
+        ).order_by('-match_score', 'nome_hub')
+
+    return render(request, 'hubs.html', {'hubs': hubs, 'ordenado_por_score': ordenado_por_score})
 
 def hub_detalhe(request, nome_hub):
     """View dinâmica para cada hub"""
+    from matching.models import ProdutoMatch
+
     hub = get_object_or_404(Hub, nome_hub=nome_hub, isActive=True)
     
     # Buscar notícias relacionadas ao hub
@@ -47,27 +78,37 @@ def hub_detalhe(request, nome_hub):
     #Empresas parceiras vinculadas ao hub
     empresas_hub = EmpresaHub.objects.filter(hub=hub).select_related('empresa__user')
 
+    #Produtos ofertados pelas empresas do hub, com compatibilidade com os interesses do usuário logado
+    empresa_ids = empresas_hub.values_list('empresa_id', flat=True)
+    produtos = Produto.objects.filter(
+        empresa_id__in=empresa_ids,
+        isActive=True,
+        empresa__user__is_active=True,
+    ).select_related('empresa')
+
+    usuario_perfil = _usuario_logado(request)
+    if usuario_perfil:
+        melhor_score_subquery = ProdutoMatch.objects.filter(
+            produto=OuterRef('pk'),
+            interesse__usuario=usuario_perfil,
+            interesse__isActive=True,
+        ).order_by('-score').values('score')[:1]
+
+        produtos = produtos.annotate(
+            match_score=Coalesce(
+                Subquery(melhor_score_subquery, output_field=FloatField()),
+                Value(0.0),
+            )
+        ).order_by('-match_score', 'nome_produto')
+
     context = {
         'hub': hub,
         'noticias': noticias,
         'treinamento': treinamneto,
-        'empresas_hub': empresas_hub
+        'empresas_hub': empresas_hub,
+        'produtos': produtos,
+        'ordenado_por_score_produto': usuario_perfil is not None,
     }
-    return render(request, 'hub.html', context)
-
-    # Buscar demandas
-    #demandas = Demanda.objects.filter(hub=hub, isActive=True)
-    
-    # Buscar empresas parceiras
-    #empresas = EmpresaParceira.objects.filter(hub=hub, isActive=True)
-    
-    context = {
-        'hub': hub,
-        'noticias': noticias,
-        #'demandas': demandas,
-        #'empresas': empresas,
-    }
-    
     return render(request, 'hub.html', context)
 
 def sobre(request):

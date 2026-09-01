@@ -29,6 +29,10 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 CHROMADB_PATH = BASE_DIR / "chromadb"
 
+# Limiar mínimo (0-100) de compatibilidade para gerar um Match interesse×produto.
+# Valor default pendente de validação do cliente (ver dependência do card "Match nos Hubs").
+PRODUCT_MATCH_THRESHOLD = float(os.environ.get("PRODUCT_MATCH_THRESHOLD", 55.0))
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
