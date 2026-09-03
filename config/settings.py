@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     "perfil",
     "eventos",
     "agendamento",
+    "marketplace",
 ]
 
 MIDDLEWARE = [
