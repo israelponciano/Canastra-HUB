@@ -453,6 +453,46 @@
 
 </div>
 
+<!-- ═══════════ HUBS DE INTERESSE ═══════════ -->
+<div class="card form-card mb-4">
+  <div class="card-body p-4 p-lg-5">
+
+    <div class="section-header">
+
+      <div>
+
+        <span class="section-badge">
+          Hubs de Interesse
+        </span>
+
+        <h5 class="section-title">
+          <i class="bi bi-diagram-3"></i>
+          Hubs
+        </h5>
+
+        <p class="section-subtitle">
+          Selecione os hubs que deseja utilizar ou consultar.
+        </p>
+
+      </div>
+
+    </div>
+
+    <div class="row">
+      {% for hub in hubs %}
+      <div class="col-md-4">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="hubs" value="{{ hub.id }}" {% if hub.id in hubs_vinculados %}checked{% endif %}>
+          <label class="form-check-label">{{ hub.nome_hub }}</label>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+  </div>
+
+</div>
+
 <!-- SCRIPT -->
 
 

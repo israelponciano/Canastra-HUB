@@ -89,7 +89,40 @@ def eventos_treinamentos(request):
 def hubs(request):
     """View para a central de hubs"""
     hubs = Hub.objects.filter(isActive=True)
-    return render(request, 'hubs.html', {'hubs': hubs})
+
+    hubs_vinculados = []
+    if request.user.is_authenticated and request.session.get('perfil') == 'usuario':
+        usuario = Usuario.objects.filter(user=request.user).first()
+        if usuario:
+            hubs_vinculados = list(
+                UsuarioHub.objects.filter(usuario=usuario).values_list('hub_id', flat=True)
+            )
+
+    return render(request, 'hubs.html', {
+        'hubs': hubs,
+        'hubs_vinculados': hubs_vinculados,
+        'pode_selecionar_hub': request.user.is_authenticated and request.session.get('perfil') == 'usuario',
+    })
+
+
+@login_required
+@require_http_methods(["POST"])
+def toggle_hub_interesse(request, hub_id):
+    """Marca/desmarca um hub como de interesse do usuário logado."""
+    if request.session.get('perfil') != 'usuario':
+        messages.error(request, 'Apenas usuários podem selecionar hubs de interesse.')
+        return redirect('core:hubs')
+
+    usuario = get_object_or_404(Usuario, user=request.user)
+    hub = get_object_or_404(Hub, id=hub_id, isActive=True)
+
+    vinculo = UsuarioHub.objects.filter(usuario=usuario, hub=hub)
+    if vinculo.exists():
+        vinculo.delete()
+    else:
+        UsuarioHub.objects.create(usuario=usuario, hub=hub)
+
+    return redirect('core:hubs')
 
 def hub_detalhe(request, nome_hub):
     """View dinâmica para cada hub"""
