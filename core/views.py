@@ -1,3 +1,5 @@
+import logging
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
@@ -8,10 +10,18 @@ from empresa.models import *
 from django.contrib.auth.decorators import login_required
 from decimal import Decimal, InvalidOperation
 from datetime import datetime
+import re
+import requests
+from django.conf import settings
+from django.urls import reverse
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.template.loader import render_to_string
 
-from treinamento.models import Treinamento
+from treinamento.models import Treinamento, InscricaoTreinamento
 from vagas.models import Vagas
-from eventos.models import Evento
+from eventos.models import Evento, InscricaoEvento
 
 
 def _parse_date(date_str):
@@ -36,6 +46,53 @@ def home(request):
 def parceiros(request):
 
     return render(request, 'parceiros.html')
+
+def eventos_treinamentos(request):
+    termo = request.GET.get('q', '').strip()
+
+    eventos = Evento.objects.select_related('hub').order_by('-data_evento_inicio')
+    treinamentos = Treinamento.objects.select_related('hub').prefetch_related('sessoes').order_by('-id')
+
+    if termo:
+        eventos = eventos.filter(
+            Q(nome_evento__icontains=termo)
+            | Q(descricao_evento__icontains=termo)
+            | Q(local_evento__icontains=termo)
+        ).distinct()
+        treinamentos = treinamentos.filter(
+            Q(nome__icontains=termo)
+            | Q(descricao__icontains=termo)
+            | Q(local__icontains=termo)
+        ).distinct()
+
+    inscritos_eventos = set()
+    inscritos_treinamentos = set()
+    if request.user.is_authenticated:
+        inscritos_eventos = set(
+            InscricaoEvento.objects.filter(usuario=request.user).values_list('evento_id', flat=True)
+        )
+        inscritos_treinamentos = set(
+            InscricaoTreinamento.objects.filter(usuario=request.user).values_list('treinamento_id', flat=True)
+        )
+
+    itens = []
+    for e in eventos:
+        e.tipo = 'evento'
+        e.data_ordenacao = e.data_evento_inicio
+        e.inscrito = e.id in inscritos_eventos
+        itens.append(e)
+    for t in treinamentos:
+        t.tipo = 'treinamento'
+        t.data_ordenacao = t.data_inicio
+        t.inscrito = t.id in inscritos_treinamentos
+        itens.append(t)
+
+    itens.sort(key=lambda i: i.data_ordenacao or datetime.min.date(), reverse=True)
+
+    return render(request, 'eventos_treinamentos.html', {
+        'itens': itens,
+        'termo': termo,
+    })
 
 def hubs(request):
     """View para a central de hubs"""
@@ -106,35 +163,82 @@ def render_cadastro_usuario(request):
 def cadastro_usuario(request):
     if request.user.is_authenticated:
         messages.warning(
-            request, 'Você já está logado, não é possível realizar outro cadastro.')
+            request,
+            'Você já está logado, não é possível realizar outro cadastro.'
+        )
         return redirect('core:home')
 
-    estados = Estado.objects.all().order_by('nome_estado')
-
     if request.method == 'POST':
-        nome_user = request.POST.get('txtNome')
+        # =========================
+        # DADOS PRINCIPAIS
+        # =========================
 
-        if not nome_user or not nome_user.strip():
+        nomeUser = request.POST.get('txtNome', '').strip()
+        email = request.POST.get('txtEmail', '').strip()
+        senha = request.POST.get('txtSenha', '')
+        confirmacaoSenha = request.POST.get('confirmar_Senha', '')
+
+        # =========================
+        # VALIDAÇÃO DO NOME
+        # =========================
+
+        if not nomeUser:
             messages.error(request, 'O nome é obrigatório.')
-            return render(request, 'cadastro_usuario.html', {'estados': estados})
+            return render_cadastro_usuario(request)
 
-        if len(nome_user.strip()) < 3:
-            messages.error(request, 'O nome deve possuir no mínimo 3 caracteres.')
-            return render(request, 'cadastro_usuario.html', {'estados': estados})
+        if len(nomeUser) < 3:
+            messages.error(
+                request,
+                'O nome deve possuir no mínimo 3 caracteres.'
+            )
+            return render_cadastro_usuario(request)
 
-        senha = request.POST.get('txtSenha')
-        confirmacao_senha = request.POST.get('confirmar_Senha')
-        if senha != confirmacao_senha:
+        # =========================
+        # VALIDAÇÃO DO E-MAIL
+        # =========================
+
+        if not email:
+            messages.error(request, 'O e-mail é obrigatório.')
+            return render_cadastro_usuario(request)
+
+        # Verifica se o e-mail já está cadastrado
+        if UsuarioBase.objects.filter(email=email).exists():
+            messages.error(
+                request,
+                'Já existe uma conta cadastrada com este e-mail.'
+            )
+            return render_cadastro_usuario(request)
+
+        # =========================
+        # VALIDAÇÃO DA SENHA
+        # =========================
+
+        if not senha.strip():
+            messages.error(request, 'A senha é obrigatória.')
+            return render_cadastro_usuario(request)
+
+        if not confirmacaoSenha.strip():
+            messages.error(
+                request,
+                'A confirmação da senha é obrigatória.'
+            )
+            return render_cadastro_usuario(request)
+
+        if senha != confirmacaoSenha:
             messages.error(request, 'As senhas devem ser iguais.')
-            return render(request, 'cadastro_usuario.html', {'estados': estados})
+            return render_cadastro_usuario(request)
 
-        nome_social = request.POST.get('txtNomeSocial')
-        data_nasc = _parse_date(request.POST.get('txtDataNasc'))
-        genero = request.POST.get('txtGenero') or ''
-        estado_civil = request.POST.get('txtEstadoCivil') or ''
-        nacionalidade = request.POST.get('txtNacionalidade') or ''
-        email = request.POST.get('txtEmail')
-        telefone = request.POST.get('txtTelefone') or ''
+        # =========================
+        # DEMAIS DADOS
+        # =========================
+
+        nomeSocial = request.POST.get('txtNomeSocial')
+        dataNasc = request.POST.get('txtDataNasc')
+        genero = request.POST.get('txtGenero')
+        estadoCivil = request.POST.get('txtEstadoCivil')
+        nacionalidade = request.POST.get('txtNacionalidade')
+
+        telefone = request.POST.get('txtTelefone')
         foto_user = request.FILES.get('fileFoto')
         cep = request.POST.get('txtCep') or ''
         rua = request.POST.get('txtRua') or ''
@@ -152,20 +256,63 @@ def cadastro_usuario(request):
             messages.error(request, 'Selecione um estado.')
             return render(request, 'cadastro_usuario.html', {'estados': estados})
 
-        if not Estado.objects.filter(id=estado_id).exists():
-            messages.error(request, 'Estado inválido.')
-            return render(request, 'cadastro_usuario.html', {'estados': estados})
+        # =========================
+        # VALIDAÇÃO DO ESTADO
+        # =========================
 
-        if not Cidade.objects.filter(id=cidade_id).exists():
+        if not estado_id:
+            messages.error(request, 'Selecione um estado.')
+            return render_cadastro_usuario(request)
+
+        if not str(estado_id).isdigit():
+            messages.error(request, 'Estado inválido.')
+            return render_cadastro_usuario(request)
+
+        try:
+            estado = Estado.objects.get(id=estado_id)
+        except Estado.DoesNotExist:
+            messages.error(request, 'Estado inválido.')
+            return render_cadastro_usuario(request)
+
+        # =========================
+        # VALIDAÇÃO DA CIDADE
+        # =========================
+
+        if not cidade_id:
+            messages.error(request, 'Selecione uma cidade.')
+            return render_cadastro_usuario(request)
+
+        if not str(cidade_id).isdigit():
             messages.error(request, 'Cidade inválida.')
+
             return render(request, 'cadastro_usuario.html', {'estados': estados})
 
         estado = Estado.objects.get(id=estado_id)
         cidade = Cidade.objects.get(id=cidade_id)
 
+        try:
+            cidade = Cidade.objects.get(
+                id=cidade_id,
+                estado_cidade_id=estado_id
+            )
+        except Cidade.DoesNotExist:
+            messages.error(
+                request,
+                'A cidade selecionada não pertence ao estado informado.'
+            )
+            return render_cadastro_usuario(request)
+
         if not data_nasc:
-            messages.error(request, 'Informe a data de nascimento.')
-            return render(request, 'cadastro_usuario.html', {'estados': estados})
+            messages.error(
+                request,
+                'Informe a data de nascimento.'
+            )
+            return render_cadastro_usuario(request)
+
+        # =========================
+        # CRIAÇÃO DO USUÁRIO
+        # =========================
+
 
         user = UsuarioBase.objects.create_user(
             email=email,
@@ -177,15 +324,9 @@ def cadastro_usuario(request):
             user.foto = foto_user
             user.save()
 
-        endereco = Endereco.objects.create(
-            cep=cep,
-            rua=rua,
-            bairro=bairro,
-            numero=numero,
-            complemento=complemento,
-            cidade=cidade,
-            estado=estado,
-        )
+        # =========================
+        # CRIAÇÃO DO PERFIL
+        # =========================
 
         usuario = Usuario.objects.create(
             user=user,
@@ -197,10 +338,23 @@ def cadastro_usuario(request):
             telefone=telefone,
             endereco=endereco,
         )
+
         request.session['usuario_email'] = usuario.user.email
 
-        messages.success(request, 'Cadastro inicial realizado! Complete seu perfil profissional!')
-        return redirect('core:login')
+        messages.success(
+            request,
+            'Cadastro inicial realizado! Complete seu perfil profissional!'
+        )
+
+
+               return redirect('core:login')
+
+    # =========================
+    # GET
+    # =========================
+
+    estados = Estado.objects.all().order_by('nome_estado')
+    return render(request, 'cadastro_usuario.html', {'estados': estados})
 
     return render(request, 'cadastro_usuario.html', {'estados': estados})
 
@@ -433,6 +587,80 @@ def logout(request):
 
     messages.success(request, 'Logout realizado com sucesso.')
     return redirect('core:home')
+
+
+def recuperar_senha(request):
+    if request.method == 'POST':
+        email = (request.POST.get('txtEmail') or '').strip().lower()
+        mensagem_padrao = 'Se o e-mail estiver cadastrado, você receberá as instruções.'
+
+        usuario = UsuarioBase.objects.filter(email=email).first()
+        if usuario:
+            uidb64 = urlsafe_base64_encode(force_bytes(usuario.pk))
+            token = default_token_generator.make_token(usuario)
+            link = request.build_absolute_uri(
+                reverse('core:redefinir_senha', kwargs={'uidb64': uidb64, 'token': token})
+            )
+
+            corpo_email = render_to_string('email/recuperar_senha_email.html', {
+                'nome': usuario.nome,
+                'link': link,
+                'expiracao_minutos': 30,
+            })
+
+            try:
+                requests.post(
+                    settings.RECUPERACAO_URL,
+                    json={
+                        'secret': settings.RECUPERACAO_API_KEY,
+                        'para': usuario.email,
+                        'assunto': 'Redefinição de senha — Canastra HUB',
+                        'mensagem': corpo_email,
+                        'html': True,
+                    },
+                    timeout=10,
+                )
+            except requests.RequestException:
+                logging.exception('Falha ao enviar e-mail de recuperação de senha')
+
+        messages.success(request, mensagem_padrao)
+        return redirect('core:login')
+
+    return render(request, 'recuperar_senha.html')
+
+
+def redefinir_senha(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        usuario = UsuarioBase.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, UsuarioBase.DoesNotExist):
+        usuario = None
+
+    token_valido = usuario is not None and default_token_generator.check_token(usuario, token)
+
+    if not token_valido:
+        messages.error(request, 'Este link é inválido ou expirou. Solicite a recuperação novamente.')
+        return redirect('core:recuperar_senha')
+
+    if request.method == 'POST':
+        senha = request.POST.get('txtSenha') or ''
+        confirmar_senha = request.POST.get('txtConfirmarSenha') or ''
+
+        if senha != confirmar_senha:
+            messages.error(request, 'As senhas não coincidem.')
+            return render(request, 'nova_senha.html')
+
+        if len(senha) < 8 or not re.search(r'[A-Z]', senha) or not re.search(r'[a-z]', senha) or not re.search(r'[0-9]', senha):
+            messages.error(request, 'A senha deve ter pelo menos 8 caracteres, com letras maiúsculas, minúsculas e números.')
+            return render(request, 'nova_senha.html')
+
+        usuario.set_password(senha)
+        usuario.save()
+
+        messages.success(request, 'Senha redefinida com sucesso! Faça login com sua nova senha.')
+        return redirect('core:login')
+
+    return render(request, 'nova_senha.html')
 
 
 @require_http_methods(["GET"])
