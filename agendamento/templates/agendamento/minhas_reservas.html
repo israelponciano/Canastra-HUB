@@ -20,6 +20,11 @@
                     <h2 class="fw-bold" style="color: #22c55e; margin-bottom: 0.2rem;">Espaços Reservados</h2>
                     <p class="text-muted small mb-0">Consulte a ocupação no mapa visual integrado à listagem detalhada.</p>
                 </div>
+                {% if user.is_admin %}
+                    <a href="{% url 'agendamento:gerador_qrcodes' %}" class="btn btn-outline-dark fw-semibold">
+                        <i class="bi bi-qr-code-scan me-1"></i> Painel de QR Codes
+                    </a>
+                {% endif %}
                 <a href="{% url 'agendamento:realizar_reserva' %}" class="btn text-white fw-bold shadow-sm" style="background-color: #22c55e; border-radius: 8px; padding: 10px 20px;">
                     + Nova Reserva
                 </a>
